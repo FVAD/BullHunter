@@ -34,9 +34,6 @@ public class Player : FSM
 
     private class MoveState : PlayerState
     {
-        Vector3 Forward => CameraManager.Instance.Vir.transform.forward.WithY(0).normalized;
-        Vector3 Right => Vector3.Cross(Vector3.up, Forward);
-
         private Vector3 target;
         private Vector2 input;
 
@@ -45,17 +42,27 @@ public class Player : FSM
         public override void OnUpdate(float delta)
         {
             input = InputManager.Instance.Actions.InGame.Move.ReadValue<Vector2>();
-            target = Forward * input.y + Right * input.x;
+            target = CameraManager.Instance.Forward * input.y + CameraManager.Instance.Right * input.x;
         }
 
         public override void OnFixedUpdate(float delta)
         {
-            if (input == Vector2.zero) return;
-            Rb.MovePosition(Config.BaseSpeed * delta * target + Trans.position);
-            Rb.MoveRotation(Quaternion.RotateTowards(Trans.rotation,
-                Quaternion.LookRotation(target, Vector3.up), Config.RotationSpeed));
+            switch (CameraManager.Instance.CurrentTarget)
+            {
+                case CameraManager.Target.Player:
+                    if (input == Vector2.zero) return;
+                    Rb.MovePosition(Config.BaseSpeed * delta * target + Trans.position);
+                    Rb.MoveRotation(Quaternion.RotateTowards(Trans.rotation,
+                        Quaternion.LookRotation(target, Vector3.up), Config.RotationSpeed));
+                    break;
+                case CameraManager.Target.Enemy:
+                    Rb.MoveRotation(Quaternion.RotateTowards(Trans.rotation,
+                        Quaternion.LookRotation(CameraManager.Instance.Forward, Vector3.up), Config.RotationSpeed));
+                    if (input == Vector2.zero) return;
+                    Rb.MovePosition(Config.BaseSpeed * delta * target + Trans.position);
+                    break;
+            }
         }
-            
     }
 
     private class AttackState : PlayerState
