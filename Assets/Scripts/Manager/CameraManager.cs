@@ -1,4 +1,4 @@
-using Bingyan;
+ï»¿using Bingyan;
 using Cinemachine;
 using System;
 using UnityEngine;
@@ -13,12 +13,15 @@ public class CameraManager : ManagerBase<CameraManager>
     public Transform Player { get; set; }
     public Transform Enemy { get; set; }
 
-    [Header("Ïà»ú")]
-    [SerializeField, Title("Ö÷Ïà»ú")] private Camera cam;
-    [SerializeField, Title("ĞéÄâÏà»ú")] private CinemachineVirtualCamera vir;
-    [Header("³õÊ¼ÉèÖÃ")]
-    [SerializeField, Title("Íæ¼Ò")] private Transform player;
-    [SerializeField, Title("µĞÈË")] private Transform enemy;
+    [Header("ç›¸æœº")]
+    [SerializeField, Title("ä¸»ç›¸æœº")] private Camera cam;
+    [SerializeField, Title("è™šæ‹Ÿç›¸æœº")] private CinemachineVirtualCamera vir;
+    [Header("ç›®æ ‡")]
+    [SerializeField, Title("ç©å®¶")] private Transform player;
+    [SerializeField, Title("æ•Œäºº")] private Transform enemy;
+    [Header("è§†è§’")]
+    [SerializeField, Title("Yè½´é™åˆ¶")] private FloatRange pitchBound;
+    [SerializeField, Title("çµæ•åº¦")] private Vector2 accuracy = new Vector2(1, 0.01f);
 
     private Target currentTarget;
     public Target CurrentTarget
@@ -32,6 +35,9 @@ public class CameraManager : ManagerBase<CameraManager>
     }
     public event Action<Target> OnTargetChanged;
 
+    private CinemachineOrbitalTransposer body;
+    private float boomLength, currentPitch;
+
     public override void Init()
     {
         base.Init();
@@ -39,11 +45,22 @@ public class CameraManager : ManagerBase<CameraManager>
         Player = player;
         Enemy = enemy;
 
+        body = vir.GetCinemachineComponent<CinemachineOrbitalTransposer>();
+        boomLength = body.m_FollowOffset.magnitude;
+        currentPitch = Mathf.Atan(-body.m_FollowOffset.y / body.m_FollowOffset.z);
+        body.m_XAxis.m_MaxSpeed = accuracy.x;
+
         OnTargetChanged += t => vir.LookAt = t switch
         {
             Target.Player => Player,
             Target.Enemy => Enemy,
             _ => Player
+        };
+
+        InputManager.Instance.Actions.InGame.Look.performed += ctx =>
+        {
+            currentPitch = Mathf.Clamp(currentPitch - ctx.ReadValue<Vector2>().y * accuracy.y, pitchBound.Min * Mathf.Deg2Rad, pitchBound.Max * Mathf.Deg2Rad);
+            body.m_FollowOffset = new Vector3(0, Mathf.Sin(currentPitch), -Mathf.Cos(currentPitch)) * boomLength;
         };
     }
 }

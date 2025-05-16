@@ -9,8 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
-  m_Name: AudioMap
+  m_Script: {fileID: 11500000, guid: 57182116041845140be12a223eda3166, type: 3}
+  m_Name: AudioMapConfig
   m_EditorClassIdentifier: Bingyan.DevKit:Bingyan:AudioMapConfig
-  scriptPath: Assets/Config/Audio/AudioMap.Generated.cs
-  groups: []
