@@ -51,6 +51,8 @@ public class CameraManager : ManagerBase<CameraManager>
     public CinemachineComposer Aim { get; private set; }
     private Vector2 playerOffset;
 
+    private CinemachineInputProvider provider;
+
     public override void Init()
     {
         base.Init();
@@ -65,22 +67,17 @@ public class CameraManager : ManagerBase<CameraManager>
         Aim = Vir.GetCinemachineComponent<CinemachineComposer>();
         playerOffset = Aim.m_TrackedObjectOffset;
 
+        provider = Vir.GetComponent<CinemachineInputProvider>();
+
         OnTargetChanged += t =>
         {
             switch (t)
             {
                 case Target.Player:
-                    var offset = Vir.transform.position - Player.transform.position;
-                    currentPitch = targetPitch = Mathf.Atan(-offset.y / offset.z);
-
-                    Body.enabled = true;
-                    Aim.m_TrackedObjectOffset = playerOffset;
-                    Vir.LookAt = Player;
+                    provider.enabled = true;
                     break;
                 case Target.Enemy:
-                    Body.enabled = false;
-                    Aim.m_TrackedObjectOffset = enemyOffset;
-                    Vir.LookAt = Enemy;
+                    provider.enabled = false;
                     break;
             }
         };
@@ -88,7 +85,7 @@ public class CameraManager : ManagerBase<CameraManager>
         InputManager.Instance.Actions.InGame.Target.started += _ => CurrentTarget = (Target)(((int)currentTarget + 1) % Enum.GetValues(typeof(Target)).Length);
     }
 
-    private void LateUpdate()
+    private void Update()
     {
         switch (currentTarget)
         {
@@ -100,13 +97,18 @@ public class CameraManager : ManagerBase<CameraManager>
                 break;
             case Target.Enemy:
                 var plane = (Player.transform.position - Enemy.transform.position).WithY(0);
-                var pitch = Mathf.Atan((playerOffset - enemyOffset).magnitude / plane.magnitude);
-                pitch = Mathf.Clamp(pitch, pitchBound.Min, pitchBound.Max);
-                var target = Player.transform.position +
-                    Mathf.Sin(pitch) * boomLength * Vector3.up +
-                    Mathf.Cos(pitch) * boomLength * plane.normalized;
-                var delta = target - Vir.transform.position;
-                Vir.transform.position += delta.magnitude > followSpeed ? delta.normalized * followSpeed : delta;
+                targetPitch = Mathf.Clamp(Mathf.Atan((playerOffset - enemyOffset).magnitude / plane.magnitude), pitchBound.Min * Mathf.Deg2Rad, pitchBound.Max * Mathf.Deg2Rad);
+                currentPitch = Mathf.Lerp(currentPitch, targetPitch, 0.1f);
+                Body.m_FollowOffset = new Vector3(0, Mathf.Sin(currentPitch), -Mathf.Cos(currentPitch)) * boomLength;
+
+                var targetYaw = Quaternion.LookRotation(Forward, Vector3.up).eulerAngles.y;
+                Body.m_XAxis.Value = Mathf.LerpAngle(Body.m_XAxis.Value, targetYaw, followSpeed);
+
+                //var target = Player.transform.position +
+                //    Mathf.Sin(pitch) * boomLength * Vector3.up +
+                //    Mathf.Cos(pitch) * boomLength * plane.normalized;
+                //var delta = target - Vir.transform.position;
+                //Vir.transform.position += delta.magnitude > followSpeed ? delta.normalized * followSpeed : delta;
                 break;
         }
     }
