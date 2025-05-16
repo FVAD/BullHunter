@@ -21,7 +21,9 @@ public class CameraManager : ManagerBase<CameraManager>
     [SerializeField, Title("敌人")] private Transform enemy;
     [Header("视角")]
     [SerializeField, Title("Y轴限制")] private FloatRange pitchBound;
-    [SerializeField, Title("灵敏度")] private Vector2 accuracy = new Vector2(1, 0.01f);
+
+    public Camera Cam => cam;
+    public CinemachineVirtualCamera Vir => vir;
 
     private Target currentTarget;
     public Target CurrentTarget
@@ -35,8 +37,8 @@ public class CameraManager : ManagerBase<CameraManager>
     }
     public event Action<Target> OnTargetChanged;
 
-    private CinemachineOrbitalTransposer body;
-    private float boomLength, currentPitch;
+    public CinemachineOrbitalTransposer Body { get;private set; }
+    private float boomLength, currentPitch, targetPitch;
 
     public override void Init()
     {
@@ -45,10 +47,9 @@ public class CameraManager : ManagerBase<CameraManager>
         Player = player;
         Enemy = enemy;
 
-        body = vir.GetCinemachineComponent<CinemachineOrbitalTransposer>();
-        boomLength = body.m_FollowOffset.magnitude;
-        currentPitch = Mathf.Atan(-body.m_FollowOffset.y / body.m_FollowOffset.z);
-        body.m_XAxis.m_MaxSpeed = accuracy.x;
+        Body = vir.GetCinemachineComponent<CinemachineOrbitalTransposer>();
+        boomLength = Body.m_FollowOffset.magnitude;
+        currentPitch = targetPitch = Mathf.Atan(-Body.m_FollowOffset.y / Body.m_FollowOffset.z);
 
         OnTargetChanged += t => vir.LookAt = t switch
         {
@@ -56,11 +57,13 @@ public class CameraManager : ManagerBase<CameraManager>
             Target.Enemy => Enemy,
             _ => Player
         };
+    }
 
-        InputManager.Instance.Actions.InGame.Look.performed += ctx =>
-        {
-            currentPitch = Mathf.Clamp(currentPitch - ctx.ReadValue<Vector2>().y * accuracy.y, pitchBound.Min * Mathf.Deg2Rad, pitchBound.Max * Mathf.Deg2Rad);
-            body.m_FollowOffset = new Vector3(0, Mathf.Sin(currentPitch), -Mathf.Cos(currentPitch)) * boomLength;
-        };
+    private void Update()
+    {
+        var deltaPitch = InputManager.Instance.Actions.InGame.Look.ReadValue<Vector2>().y;
+        if (deltaPitch != 0) targetPitch = Mathf.Clamp(currentPitch - deltaPitch, pitchBound.Min * Mathf.Deg2Rad, pitchBound.Max * Mathf.Deg2Rad);
+        currentPitch = Mathf.Lerp(currentPitch, targetPitch, 0.1f);
+        Body.m_FollowOffset = new Vector3(0, Mathf.Sin(currentPitch), -Mathf.Cos(currentPitch)) * boomLength;
     }
 }
