@@ -12,5 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9360f8ba17a66064a86ee5f17837ab6b, type: 3}
   m_Name: PlayerConfig
   m_EditorClassIdentifier: 
-  baseSpeed: 10
+  maxStamina: 90
+  staminaRetrive: 10
+  baseSpeed: 5
   rotateSpeed: 10
+  sprintSpeed: 10
+  sprintStamina: 10
+  invulnerableTime: 0.5
+  dodgeDistance: 2
+  dodgeStamina: 20
+  dodgeCooldown: 0.5
