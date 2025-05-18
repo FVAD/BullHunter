@@ -1,0 +1,16 @@
+{
+    "name": "Bingyan.DevKit.Editor",
+    "references": [
+        "Bingyan.DevKit"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
