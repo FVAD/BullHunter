@@ -2,6 +2,7 @@
 using Bingyan;
 using System;
 using UnityEngine.InputSystem;
+using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 
 public class Player : FSM
 {
@@ -96,7 +97,7 @@ public class Player : FSM
 
         public override void OnFixedUpdate(float delta)
         {
-            Rb.MovePosition(Stats.CurrentSpeed * delta * Target + Trans.position);
+            Rb.velocity = Stats.CurrentSpeed * Target;
 
             switch (CameraManager.Instance.CurrentTarget)
             {
@@ -208,6 +209,8 @@ public class Player : FSM
             var input = GetInput.InGame.Move.ReadValue<Vector2>();
             orient = (input == Vector2.zero ? -Trans.forward.WithY(0) :
                 CameraManager.Instance.Forward * input.y + CameraManager.Instance.Right * input.x).normalized;
+
+            Rb.velocity = Config.DodgeDistance * orient / Config.DodgeTime;
         }
         public override void OnExit()
         {
@@ -219,7 +222,6 @@ public class Player : FSM
         {
             Rb.MoveRotation(Quaternion.RotateTowards(Trans.rotation,
                 Quaternion.LookRotation(orient, Vector3.up), Config.DodgeRotate));
-            Rb.MovePosition(delta / Config.DodgeTime * Config.DodgeDistance * orient + Trans.position);
             if ((timer += delta) > Config.DodgeTime) Host.ChangeState<IdleState>();
         }
     }
