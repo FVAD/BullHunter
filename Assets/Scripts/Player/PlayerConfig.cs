@@ -7,12 +7,15 @@ public class PlayerConfig : ScriptableObject
     [Header("基础")]
     [SerializeField, Title("精力上限")] private float maxStamina = 90;
     [SerializeField, Title("精力恢复速度")] private float staminaRetrive = 10;
-    [Header("移动")]
-    [SerializeField, Title("基础速度")] private float baseSpeed = 5;
+    [SerializeField, Title("移动延迟")] private float idleDelay = 0.1f;
     [SerializeField, Title("旋转速度")] private float rotateSpeed = 2;
+    [Header("移动")]
+    [SerializeField, Title("基础速度")] private float walkSpeed = 5;
+    [SerializeField, Title("移动延迟")] private float walkDelay = 0.2f;
     [Header("冲刺")]
-    [SerializeField, Title("冲刺速度")] private float sprintSpeed = 15;
-    [SerializeField, Title("精力消耗")] private float sprintStamina = 10;
+    [SerializeField, Title("冲刺速度")] private float runSpeed = 10;
+    [SerializeField, Title("精力消耗")] private float runStamina = 10;
+    [SerializeField, Title("移动延迟")] private float runDelay = 0.2f;
     [Header("闪避")]
     [SerializeField, Title("无敌时间")] private float invulnerableTime = 0.5f;
     [SerializeField, Title("闪避距离")] private float dodgeDistance = 2;
@@ -21,12 +24,15 @@ public class PlayerConfig : ScriptableObject
 
     public float MaxStamina => maxStamina;
     public float StaminaRetrive => staminaRetrive;
-
-    public float BaseSpeed => baseSpeed;
+    public float IdleDelay => idleDelay;
     public float RotationSpeed => rotateSpeed;
 
-    public float SprintSpeed => sprintSpeed;
-    public float SprintStamina => sprintStamina;
+    public float WalkSpeed => walkSpeed;
+    public float WalkDelay => walkDelay;
+
+    public float RunSpeed => runSpeed;
+    public float RunStamina => runStamina;
+    public float RunDelay => runDelay;
 
     public float InvulnerableTime => invulnerableTime;
     public float DodgeDistance => dodgeDistance;

@@ -14,10 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxStamina: 90
   staminaRetrive: 10
-  baseSpeed: 5
+  idleDelay: 0.1
   rotateSpeed: 10
-  sprintSpeed: 10
-  sprintStamina: 10
+  walkSpeed: 5
+  walkDelay: 0.2
+  runSpeed: 10
+  runStamina: 10
+  runDelay: 0.2
   invulnerableTime: 0.5
   dodgeDistance: 2
   dodgeStamina: 20
