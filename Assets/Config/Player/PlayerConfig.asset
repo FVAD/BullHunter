@@ -26,3 +26,8 @@ MonoBehaviour:
   dodgeStamina: 10
   dodgeCooldown: 0.5
   dodgeRotate: 20
+  swordStartup: 0.5
+  swordJudge: 0.5
+  swordRecovery: 0.5
+  swordStamina: 30
+  swordDamage: 514

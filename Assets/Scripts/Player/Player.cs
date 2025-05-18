@@ -2,7 +2,6 @@
 using Bingyan;
 using System;
 using UnityEngine.InputSystem;
-using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 
 public class Player : FSM
 {
@@ -14,6 +13,13 @@ public class Player : FSM
         public float Stamina { get; set; }
         public float CurrentSpeed { get; set; }
         public bool Invulnerable { get; set; }
+        public enum Item
+        {
+            Sword,
+            Lance,
+            Close,
+        }
+        public Item CurrentItem { get; set; }
     }
 
     private Rigidbody rb;
@@ -38,7 +44,7 @@ public class Player : FSM
         AddState(new WalkState(this));
         AddState(new RunState(this));
         AddState(new DodgeState(this));
-        AddState(new AttackState(this));
+        AddState(new SwordState(this));
         AddState(new DeathState(this));
     }
     protected override Type GetDefaultState() => typeof(IdleState);
@@ -55,6 +61,17 @@ public class Player : FSM
 
         protected Rigidbody Rb => Host.rb;
         protected Transform Trans => Host.transform;
+
+        protected bool TryDodge()
+        {
+            if (!GetInput.InGame.Dodge.WasPressedThisFrame() ||
+                !DodgeState.Ready ||
+                Stats.Stamina < Config.DodgeStamina)
+                return false;
+            Stats.Stamina -= Config.DodgeStamina;
+            Host.ChangeState<DodgeState>();
+            return true;
+        }
     }
 
     private abstract class MoveState : PlayerState
@@ -81,11 +98,24 @@ public class Player : FSM
 
         public override void OnUpdate(float delta)
         {
-            if (GetInput.InGame.Dodge.WasPressedThisFrame() && DodgeState.Ready && Stats.Stamina >= Config.DodgeStamina)
+            if (TryDodge()) return;
+            if (GetInput.InGame.Attack.WasPressedThisFrame())
             {
-                Stats.Stamina -= Config.DodgeStamina;
-                Host.ChangeState<DodgeState>();
-                return;
+                switch (Stats.CurrentItem)
+                {
+                    case PlayerStats.Item.Sword:
+                        if (Stats.Stamina >= Config.SwordStamina)
+                        {
+                            Stats.Stamina -= Config.SwordStamina;
+                            Host.ChangeState<SwordState>();
+                            return;
+                        }
+                        break;
+                    case PlayerStats.Item.Lance:
+                        break;
+                    case PlayerStats.Item.Close:
+                        break;
+                }
             }
             if ((Input = GetInput.InGame.Move.ReadValue<Vector2>()) == Vector2.zero)
             {
@@ -226,9 +256,63 @@ public class Player : FSM
         }
     }
 
-    private class AttackState : PlayerState
+    private class SwordState : PlayerState
     {
-        public AttackState(Player host) : base(host) { }
+        private enum Phase
+        {
+            Startup,
+            Judge,
+            Recovery,
+        }
+
+        private Phase phase;
+        private float time, timer;
+
+        public SwordState(Player host) : base(host) { }
+
+        public override void OnEnter()
+        {
+            phase = Phase.Startup;
+            time = Config.SwordStartup;
+            timer = 0;
+
+            Rb.velocity = Vector2.zero;
+        }
+
+        public override void OnUpdate(float delta)
+        {
+            switch (phase)
+            {
+                case Phase.Startup:
+                    if (TryDodge()) return;
+                    break;
+                case Phase.Judge:
+                    break;
+                case Phase.Recovery:
+                    if (TryDodge()) return;
+                    break;
+            }
+            if ((timer += delta) <= time) return;
+            timer = 0;
+            switch (phase)
+            {
+                case Phase.Startup:
+                    time = Config.SwordJudge;
+                    phase = Phase.Judge;
+                    break;
+                case Phase.Judge:
+                    time = Config.SwordRecovery;
+                    phase = Phase.Recovery;
+                    break;
+                case Phase.Recovery:
+                    Host.ChangeState<IdleState>();
+                    break;
+            }
+        }
+        public override void OnExit()
+        {
+            Debug.Log(Stats.Stamina);
+        }
     }
 
     private class DeathState : PlayerState

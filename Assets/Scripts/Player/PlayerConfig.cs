@@ -22,6 +22,12 @@ public class PlayerConfig : ScriptableObject
     [SerializeField, Title("精力消耗")] private float dodgeStamina = 20;
     [SerializeField, Title("冷却时间")] private float dodgeCooldown = 0.5f;
     [SerializeField, Title("转向速度")] private float dodgeRotate = 10;
+    [Header("剑")]
+    [SerializeField, Title("前摇")] private float swordStartup = 0.5f;
+    [SerializeField, Title("时长")] private float swordJudge = 0.5f;
+    [SerializeField, Title("后摇")] private float swordRecovery = 0.5f;
+    [SerializeField, Title("精力")] private float swordStamina = 30;
+    [SerializeField, Title("伤害")] private float swordDamage = 514;
 
     public float MaxStamina => maxStamina;
     public float StaminaRetrive => staminaRetrive;
@@ -40,4 +46,10 @@ public class PlayerConfig : ScriptableObject
     public float DodgeStamina => dodgeStamina;
     public float DodgeCooldown => dodgeCooldown;
     public float DodgeRotate => dodgeRotate;
+
+    public float SwordStartup => swordStartup;
+    public float SwordJudge => swordJudge;
+    public float SwordRecovery => swordRecovery;
+    public float SwordStamina => swordStamina;
+    public float SwordDamage => swordDamage;
 }

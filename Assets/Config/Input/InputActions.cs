@@ -28,7 +28,7 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
             ""id"": ""a0b553b2-8719-4789-871b-0f30440488f5"",
             ""actions"": [
                 {
-                    ""name"": ""Decelerate"",
+                    ""name"": ""Move"",
                     ""type"": ""Value"",
                     ""id"": ""60f0d857-6e84-4a29-8aeb-f1661517ee15"",
                     ""expectedControlType"": ""Vector2"",
@@ -71,6 +71,15 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Attack"",
+                    ""type"": ""Button"",
+                    ""id"": ""3cab9688-3842-4e7e-ad5a-aa7ba33a2509"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -81,7 +90,7 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Decelerate"",
+                    ""action"": ""Move"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
@@ -92,7 +101,7 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Decelerate"",
+                    ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -103,7 +112,7 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Decelerate"",
+                    ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -114,7 +123,7 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Decelerate"",
+                    ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -125,7 +134,7 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Decelerate"",
+                    ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -136,7 +145,7 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Decelerate"",
+                    ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -147,7 +156,7 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Decelerate"",
+                    ""action"": ""Move"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -249,6 +258,28 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
                     ""action"": ""Dodge"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""12a50459-3026-4a7d-9681-c4761568bc8d"",
+                    ""path"": ""<XInputController>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d76c720a-c42e-4643-9a55-7276e5541ff1"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Attack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -257,11 +288,12 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
 }");
         // InGame
         m_InGame = asset.FindActionMap("InGame", throwIfNotFound: true);
-        m_InGame_Move = m_InGame.FindAction("Decelerate", throwIfNotFound: true);
+        m_InGame_Move = m_InGame.FindAction("Move", throwIfNotFound: true);
         m_InGame_Look = m_InGame.FindAction("Look", throwIfNotFound: true);
         m_InGame_Target = m_InGame.FindAction("Target", throwIfNotFound: true);
         m_InGame_Sprint = m_InGame.FindAction("Sprint", throwIfNotFound: true);
         m_InGame_Dodge = m_InGame.FindAction("Dodge", throwIfNotFound: true);
+        m_InGame_Attack = m_InGame.FindAction("Attack", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -326,6 +358,7 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
     private readonly InputAction m_InGame_Target;
     private readonly InputAction m_InGame_Sprint;
     private readonly InputAction m_InGame_Dodge;
+    private readonly InputAction m_InGame_Attack;
     public struct InGameActions
     {
         private @InputActions m_Wrapper;
@@ -335,6 +368,7 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
         public InputAction @Target => m_Wrapper.m_InGame_Target;
         public InputAction @Sprint => m_Wrapper.m_InGame_Sprint;
         public InputAction @Dodge => m_Wrapper.m_InGame_Dodge;
+        public InputAction @Attack => m_Wrapper.m_InGame_Attack;
         public InputActionMap Get() { return m_Wrapper.m_InGame; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -359,6 +393,9 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
                 @Dodge.started -= m_Wrapper.m_InGameActionsCallbackInterface.OnDodge;
                 @Dodge.performed -= m_Wrapper.m_InGameActionsCallbackInterface.OnDodge;
                 @Dodge.canceled -= m_Wrapper.m_InGameActionsCallbackInterface.OnDodge;
+                @Attack.started -= m_Wrapper.m_InGameActionsCallbackInterface.OnAttack;
+                @Attack.performed -= m_Wrapper.m_InGameActionsCallbackInterface.OnAttack;
+                @Attack.canceled -= m_Wrapper.m_InGameActionsCallbackInterface.OnAttack;
             }
             m_Wrapper.m_InGameActionsCallbackInterface = instance;
             if (instance != null)
@@ -378,6 +415,9 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
                 @Dodge.started += instance.OnDodge;
                 @Dodge.performed += instance.OnDodge;
                 @Dodge.canceled += instance.OnDodge;
+                @Attack.started += instance.OnAttack;
+                @Attack.performed += instance.OnAttack;
+                @Attack.canceled += instance.OnAttack;
             }
         }
     }
@@ -389,5 +429,6 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
         void OnTarget(InputAction.CallbackContext context);
         void OnSprint(InputAction.CallbackContext context);
         void OnDodge(InputAction.CallbackContext context);
+        void OnAttack(InputAction.CallbackContext context);
     }
 }
