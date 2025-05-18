@@ -17,10 +17,11 @@ public class PlayerConfig : ScriptableObject
     [SerializeField, Title("精力消耗")] private float runStamina = 10;
     [SerializeField, Title("移动延迟")] private float runDelay = 0.2f;
     [Header("闪避")]
-    [SerializeField, Title("无敌时间")] private float invulnerableTime = 0.5f;
+    [SerializeField, Title("无敌时间")] private float dodgeTime = 0.5f;
     [SerializeField, Title("闪避距离")] private float dodgeDistance = 2;
     [SerializeField, Title("精力消耗")] private float dodgeStamina = 20;
     [SerializeField, Title("冷却时间")] private float dodgeCooldown = 0.5f;
+    [SerializeField, Title("转向速度")] private float dodgeRotate = 10;
 
     public float MaxStamina => maxStamina;
     public float StaminaRetrive => staminaRetrive;
@@ -34,8 +35,9 @@ public class PlayerConfig : ScriptableObject
     public float RunStamina => runStamina;
     public float RunDelay => runDelay;
 
-    public float InvulnerableTime => invulnerableTime;
+    public float DodgeTime => dodgeTime;
     public float DodgeDistance => dodgeDistance;
     public float DodgeStamina => dodgeStamina;
     public float DodgeCooldown => dodgeCooldown;
+    public float DodgeRotate => dodgeRotate;
 }

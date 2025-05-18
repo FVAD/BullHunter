@@ -21,7 +21,8 @@ MonoBehaviour:
   runSpeed: 10
   runStamina: 10
   runDelay: 0.2
-  invulnerableTime: 0.5
-  dodgeDistance: 2
-  dodgeStamina: 20
+  dodgeTime: 0.25
+  dodgeDistance: 5
+  dodgeStamina: 10
   dodgeCooldown: 0.5
+  dodgeRotate: 20

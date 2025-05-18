@@ -12,6 +12,7 @@ public class Player : FSM
     {
         public float Stamina { get; set; }
         public float CurrentSpeed { get; set; }
+        public bool Invulnerable { get; set; }
     }
 
     private Rigidbody rb;
@@ -23,7 +24,8 @@ public class Player : FSM
         stats = new PlayerStats
         {
             Stamina = config.MaxStamina,
-            CurrentSpeed = 0
+            CurrentSpeed = 0,
+            Invulnerable = false,
         };
 
         rb = GetComponent<Rigidbody>();
@@ -78,7 +80,12 @@ public class Player : FSM
 
         public override void OnUpdate(float delta)
         {
-            Debug.Log(Stats.CurrentSpeed);
+            if (GetInput.InGame.Dodge.WasPressedThisFrame() && DodgeState.Ready && Stats.Stamina >= Config.DodgeStamina)
+            {
+                Stats.Stamina -= Config.DodgeStamina;
+                Host.ChangeState<DodgeState>();
+                return;
+            }
             if ((Input = GetInput.InGame.Move.ReadValue<Vector2>()) == Vector2.zero)
             {
                 Host.ChangeState<IdleState>();
@@ -185,7 +192,36 @@ public class Player : FSM
 
     private class DodgeState : PlayerState
     {
+        public static bool Ready { get; private set; } = true;
+
+        private Vector3 orient;
+        private float timer = 0;
+
         public DodgeState(Player host) : base(host) { }
+
+        public override void OnEnter()
+        {
+            Ready = false;
+            Stats.Invulnerable = true;
+            timer = 0;
+
+            var input = GetInput.InGame.Move.ReadValue<Vector2>();
+            orient = (input == Vector2.zero ? -Trans.forward.WithY(0) :
+                CameraManager.Instance.Forward * input.y + CameraManager.Instance.Right * input.x).normalized;
+        }
+        public override void OnExit()
+        {
+            Stats.Invulnerable = false;
+            Flow.Create().Delay(Config.DodgeCooldown).Then(() => Ready = true).Run();
+        }
+
+        public override void OnFixedUpdate(float delta)
+        {
+            Rb.MoveRotation(Quaternion.RotateTowards(Trans.rotation,
+                Quaternion.LookRotation(orient, Vector3.up), Config.DodgeRotate));
+            Rb.MovePosition(delta / Config.DodgeTime * Config.DodgeDistance * orient + Trans.position);
+            if ((timer += delta) > Config.DodgeTime) Host.ChangeState<IdleState>();
+        }
     }
 
     private class AttackState : PlayerState
