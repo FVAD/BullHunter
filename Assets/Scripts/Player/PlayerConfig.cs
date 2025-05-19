@@ -28,6 +28,12 @@ public class PlayerConfig : ScriptableObject
     [SerializeField, Title("后摇")] private float swordRecovery = 0.5f;
     [SerializeField, Title("精力")] private float swordStamina = 30;
     [SerializeField, Title("伤害")] private float swordDamage = 514;
+    [Header("枪")]
+    [SerializeField, Title("前摇")] private float lanceStartup = 0.25f;
+    [SerializeField, Title("时长")] private float lanceJudge = 0.5f;
+    [SerializeField, Title("后摇")] private float lanceRecovery = 0.25f;
+    [SerializeField, Title("精力")] private float lanceStamina = 30;
+    [SerializeField, Title("伤害")] private float lanceDamage = 114;
 
     public float MaxStamina => maxStamina;
     public float StaminaRetrive => staminaRetrive;
@@ -52,4 +58,10 @@ public class PlayerConfig : ScriptableObject
     public float SwordRecovery => swordRecovery;
     public float SwordStamina => swordStamina;
     public float SwordDamage => swordDamage;
+
+    public float LanceStartup => lanceStartup;
+    public float LanceJudge => lanceJudge;
+    public float LanceRecovery => lanceRecovery;
+    public float LanceStamina => lanceStamina;
+    public float LanceDamage => lanceDamage;
 }

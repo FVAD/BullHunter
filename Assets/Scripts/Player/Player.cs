@@ -2,6 +2,7 @@
 using Bingyan;
 using System;
 using UnityEngine.InputSystem;
+using System.Collections.Generic;
 
 public class Player : FSM
 {
@@ -15,9 +16,9 @@ public class Player : FSM
         public bool Invulnerable { get; set; }
         public enum Item
         {
-            Sword,
-            Lance,
             Close,
+            Lance,
+            Sword,
         }
         public Item CurrentItem { get; set; }
     }
@@ -33,21 +34,24 @@ public class Player : FSM
             Stamina = config.MaxStamina,
             CurrentSpeed = 0,
             Invulnerable = false,
+            CurrentItem = PlayerStats.Item.Sword,
         };
 
         rb = GetComponent<Rigidbody>();
+
+        InputManager.Instance.Actions.InGame.Close.started += _ => stats.CurrentItem = PlayerStats.Item.Close;
+        InputManager.Instance.Actions.InGame.Lance.started += _ => stats.CurrentItem = PlayerStats.Item.Lance;
+        InputManager.Instance.Actions.InGame.Sword.started += _ => stats.CurrentItem = PlayerStats.Item.Sword;
     }
 
     protected override void DefineStates()
     {
-        AddState(new IdleState(this));
-        AddState(new WalkState(this));
-        AddState(new RunState(this));
+        AddState(new MoveState(this));
         AddState(new DodgeState(this));
         AddState(new SwordState(this));
         AddState(new DeathState(this));
     }
-    protected override Type GetDefaultState() => typeof(IdleState);
+    protected override Type GetDefaultState() => typeof(MoveState);
 
     private abstract class PlayerState : FSMState
     {
@@ -74,149 +78,181 @@ public class Player : FSM
         }
     }
 
-    private abstract class MoveState : PlayerState
+    private class MoveState : PlayerState
     {
-        protected Vector2 Input { get; private set; }
-        protected Vector3 Target { get; private set; }
+        private readonly Dictionary<Type, MoveSubstate> substates;
+        private MoveSubstate current;
 
-        protected abstract float MaxSpeed { get; }
-        protected abstract float Delay { get; }
-
-        private TweenHandle handle;
-
-        public MoveState(Player host) : base(host) { }
-
-        public override void OnEnter()
+        private void ChangeSubstate<T>() where T : PlayerState
         {
-            var speed = Stats.CurrentSpeed;
-            handle = Tween.Linear(Delay).Once().Process(t => Stats.CurrentSpeed = Mathf.Lerp(speed, MaxSpeed, t)).Build().Play();
-        }
-        public override void OnExit()
-        {
-            handle.Stop();
-        }
-
-        public override void OnUpdate(float delta)
-        {
-            if (TryDodge()) return;
-            if (GetInput.InGame.Attack.WasPressedThisFrame())
+            if (substates.TryGetValue(typeof(T), out MoveSubstate state))
             {
-                switch (Stats.CurrentItem)
+                current.OnExit();
+                current = state;
+                current.OnEnter();
+            }
+            else Debug.Log($"未定义{typeof(T).Name}");
+        }
+
+        public MoveState(Player host) : base(host)
+        {
+            substates = new Dictionary<Type, MoveSubstate>
+            {
+                { typeof(IdleState), new IdleState(Host, this) },
+                { typeof(WalkState), new WalkState(Host, this) },
+                { typeof(RunState), new RunState(Host, this) }
+            };
+            current = substates[typeof(IdleState)];
+        }
+
+        public override void OnEnter() => ChangeSubstate<IdleState>();
+        public override void OnExit() => current.OnExit();
+
+        public override void OnUpdate(float delta) => current.OnUpdate(delta);
+        public override void OnFixedUpdate(float delta) => current.OnFixedUpdate(delta);
+
+        private abstract class MoveSubstate : PlayerState
+        {
+            protected Vector2 Input { get; private set; }
+            protected Vector3 Target { get; private set; }
+
+            protected MoveState Subhost;
+            public MoveSubstate(Player host, MoveState subhost) : base(host) => Subhost = subhost;
+
+            protected abstract float MaxSpeed { get; }
+            protected abstract float Delay { get; }
+
+            private TweenHandle handle;
+
+            public override void OnEnter()
+            {
+                var speed = Stats.CurrentSpeed;
+                handle = Tween.Linear(Delay).Once().Process(t => Stats.CurrentSpeed = Mathf.Lerp(speed, MaxSpeed, t)).Build().Play();
+            }
+            public override void OnExit() => handle.Stop();
+
+            public override void OnUpdate(float delta)
+            {
+                if (TryDodge()) return;
+                if (GetInput.InGame.Attack.WasPressedThisFrame())
                 {
-                    case PlayerStats.Item.Sword:
-                        if (Stats.Stamina >= Config.SwordStamina)
-                        {
-                            Stats.Stamina -= Config.SwordStamina;
-                            Host.ChangeState<SwordState>();
-                            return;
-                        }
+                    switch (Stats.CurrentItem)
+                    {
+                        case PlayerStats.Item.Sword:
+                            if (Stats.Stamina >= Config.SwordStamina)
+                            {
+                                Stats.Stamina -= Config.SwordStamina;
+                                Host.ChangeState<SwordState>();
+                                return;
+                            }
+                            break;
+                        case PlayerStats.Item.Lance:
+                            break;
+                        case PlayerStats.Item.Close:
+                            break;
+                    }
+                }
+                if ((Input = GetInput.InGame.Move.ReadValue<Vector2>()) == Vector2.zero)
+                {
+                    Subhost.ChangeSubstate<IdleState>();
+                    return;
+                }
+                Target = CameraManager.Instance.Forward * Input.y + CameraManager.Instance.Right * Input.x;
+            }
+
+            public override void OnFixedUpdate(float delta)
+            {
+                Rb.velocity = Stats.CurrentSpeed * Target;
+
+                switch (CameraManager.Instance.CurrentTarget)
+                {
+                    case CameraManager.Target.Player:
+                        if (Input != Vector2.zero)
+                            Rb.MoveRotation(Quaternion.RotateTowards(Trans.rotation,
+                                Quaternion.LookRotation(Target, Vector3.up), Config.RotationSpeed));
                         break;
-                    case PlayerStats.Item.Lance:
-                        break;
-                    case PlayerStats.Item.Close:
+                    case CameraManager.Target.Enemy:
+                        Rb.MoveRotation(Quaternion.RotateTowards(Trans.rotation,
+                            Quaternion.LookRotation(CameraManager.Instance.Forward, Vector3.up), Config.RotationSpeed));
                         break;
                 }
             }
-            if ((Input = GetInput.InGame.Move.ReadValue<Vector2>()) == Vector2.zero)
-            {
-                Host.ChangeState<IdleState>();
-                return;
-            }
-            Target = CameraManager.Instance.Forward * Input.y + CameraManager.Instance.Right * Input.x;
         }
 
-        public override void OnFixedUpdate(float delta)
+        private class IdleState : MoveSubstate
         {
-            Rb.velocity = Stats.CurrentSpeed * Target;
+            protected override float MaxSpeed => 0;
+            protected override float Delay => Config.IdleDelay;
 
-            switch (CameraManager.Instance.CurrentTarget)
+            public IdleState(Player host, MoveState substate) : base(host, substate) { }
+
+            public override void OnUpdate(float delta)
             {
-                case CameraManager.Target.Player:
-                    if (Input != Vector2.zero)
-                        Rb.MoveRotation(Quaternion.RotateTowards(Trans.rotation,
-                            Quaternion.LookRotation(Target, Vector3.up), Config.RotationSpeed));
-                    break;
-                case CameraManager.Target.Enemy:
-                    Rb.MoveRotation(Quaternion.RotateTowards(Trans.rotation,
-                        Quaternion.LookRotation(CameraManager.Instance.Forward, Vector3.up), Config.RotationSpeed));
-                    break;
+                Stats.Stamina = Mathf.Min(Config.StaminaRetrive * delta + Stats.Stamina, Config.MaxStamina);
+
+                base.OnUpdate(delta);
+                if (Input == Vector2.zero) return;
+
+                if (GetInput.InGame.Sprint.IsPressed()) Subhost.ChangeSubstate<RunState>();
+                else Subhost.ChangeSubstate<WalkState>();
             }
         }
-    }
 
-    private class IdleState : MoveState
-    {
-        protected override float MaxSpeed => 0;
-        protected override float Delay => Config.IdleDelay;
-
-        public IdleState(Player host) : base(host) { }
-
-        public override void OnUpdate(float delta)
+        private class WalkState : MoveSubstate
         {
-            Stats.Stamina = Mathf.Min(Config.StaminaRetrive * delta + Stats.Stamina, Config.MaxStamina);
+            protected override float MaxSpeed => Config.WalkSpeed;
+            protected override float Delay => Config.WalkDelay;
 
-            base.OnUpdate(delta);
-            if (Input == Vector2.zero) return;
+            public WalkState(Player host, MoveState subhost) : base(host, subhost) { }
 
-            if (GetInput.InGame.Sprint.IsPressed()) Host.ChangeState<RunState>();
-            else Host.ChangeState<WalkState>();
-        }
-    }
-
-    private class WalkState : MoveState
-    {
-        protected override float MaxSpeed => Config.WalkSpeed;
-        protected override float Delay => Config.WalkDelay;
-
-        public WalkState(Player host) : base(host) { }
-
-        public override void OnEnter()
-        {
-            base.OnEnter();
-            GetInput.InGame.Sprint.started += Accelerate;
-        }
-        public override void OnExit()
-        {
-            base.OnExit();
-            GetInput.InGame.Sprint.started -= Accelerate;
-        }
-        private void Accelerate(InputAction.CallbackContext ctx) => Host.ChangeState<RunState>();
-
-        public override void OnFixedUpdate(float delta)
-        {
-            base.OnFixedUpdate(delta);
-            Stats.Stamina = Mathf.Min(Config.StaminaRetrive * delta + Stats.Stamina, Config.MaxStamina);
-        }
-    }
-
-    private class RunState : MoveState
-    {
-        protected override float MaxSpeed => Config.RunSpeed;
-        protected override float Delay => Config.RunDelay;
-
-        public RunState(Player host) : base(host) { }
-
-        public override void OnEnter()
-        {
-            base.OnEnter();
-            GetInput.InGame.Sprint.canceled += Decelerate;
-        }
-        public override void OnExit()
-        {
-            base.OnExit();
-            GetInput.InGame.Sprint.canceled -= Decelerate;
-        }
-
-        private void Decelerate(InputAction.CallbackContext ctx) => Host.ChangeState<WalkState>();
-
-        public override void OnFixedUpdate(float delta)
-        {
-            base.OnFixedUpdate(delta);
-            if (Input == Vector2.zero) Stats.Stamina = Mathf.Min(Config.StaminaRetrive * delta + Stats.Stamina, Config.MaxStamina);
-            else
+            public override void OnEnter()
             {
-                Stats.Stamina = Mathf.Max(Stats.Stamina - Config.RunStamina * delta, 0);
-                if (Stats.Stamina == 0) Host.ChangeState<WalkState>();
+                base.OnEnter();
+                GetInput.InGame.Sprint.started += Accelerate;
+            }
+            public override void OnExit()
+            {
+                base.OnExit();
+                GetInput.InGame.Sprint.started -= Accelerate;
+            }
+            private void Accelerate(InputAction.CallbackContext ctx) => Subhost.ChangeSubstate<RunState>();
+
+            public override void OnFixedUpdate(float delta)
+            {
+                base.OnFixedUpdate(delta);
+                Stats.Stamina = Mathf.Min(Config.StaminaRetrive * delta + Stats.Stamina, Config.MaxStamina);
+            }
+        }
+
+        private class RunState : MoveSubstate
+        {
+            protected override float MaxSpeed => Config.RunSpeed;
+            protected override float Delay => Config.RunDelay;
+
+            public RunState(Player host, MoveState subhost) : base(host, subhost) { }
+
+            public override void OnEnter()
+            {
+                base.OnEnter();
+                GetInput.InGame.Sprint.canceled += Decelerate;
+            }
+            public override void OnExit()
+            {
+                base.OnExit();
+                GetInput.InGame.Sprint.canceled -= Decelerate;
+            }
+
+            private void Decelerate(InputAction.CallbackContext ctx) => Subhost.ChangeSubstate<WalkState>();
+
+            public override void OnFixedUpdate(float delta)
+            {
+                base.OnFixedUpdate(delta);
+                if (Input == Vector2.zero) Stats.Stamina = Mathf.Min(Config.StaminaRetrive * delta + Stats.Stamina, Config.MaxStamina);
+                else
+                {
+                    Stats.Stamina = Mathf.Max(Stats.Stamina - Config.RunStamina * delta, 0);
+                    if (Stats.Stamina == 0) Subhost.ChangeSubstate<WalkState>();
+                }
             }
         }
     }
@@ -252,7 +288,7 @@ public class Player : FSM
         {
             Rb.MoveRotation(Quaternion.RotateTowards(Trans.rotation,
                 Quaternion.LookRotation(orient, Vector3.up), Config.DodgeRotate));
-            if ((timer += delta) > Config.DodgeTime) Host.ChangeState<IdleState>();
+            if ((timer += delta) > Config.DodgeTime) Host.ChangeState<MoveState>();
         }
     }
 
@@ -305,13 +341,9 @@ public class Player : FSM
                     phase = Phase.Recovery;
                     break;
                 case Phase.Recovery:
-                    Host.ChangeState<IdleState>();
+                    Host.ChangeState<MoveState>();
                     break;
             }
-        }
-        public override void OnExit()
-        {
-            Debug.Log(Stats.Stamina);
         }
     }
 
