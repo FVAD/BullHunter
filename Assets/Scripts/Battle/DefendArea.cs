@@ -19,9 +19,9 @@ public class DefendArea : MonoBehaviour
     /// <summary>
     /// 受击事件，使用例：
     /// <code>
-    /// area.OnAttacked += f => hp -= f;
+    /// area.OnAttacked += (atk, def, f) => hp -= f;
     /// </code>
     /// </summary>
-    public event Action<float> OnAttacked = f => Debug.Log($"造成了{f}点伤害，效果拔群！");
-    public void ReceiveDamage(float damage) => OnAttacked?.Invoke(damage * factor);
+    public event Action<AttackArea, DefendArea, float> OnAttacked = (atk, def, f) => Debug.Log($"{atk.name}对{def.name}造成了{f}点伤害，效果拔群！");
+    public void ReceiveDamage(AttackArea atk, DefendArea def, float damage) => OnAttacked?.Invoke(atk, def, damage * factor);
 }

@@ -9,11 +9,7 @@ public class EnemyTest : MonoBehaviour
             .Then(() => GetComponentsInChildren<AttackArea>().ForEach(a =>
             {
                 a.Active = true;
-                a.OnAttacking += (atk, def) =>
-                {
-                    def.ReceiveDamage(0);
-                    def.gameObject.SetActive(false);
-                };
+                a.OnAttacking += (atk, def) => def.ReceiveDamage(atk, def, 0);
             }))
             .Run();
 }

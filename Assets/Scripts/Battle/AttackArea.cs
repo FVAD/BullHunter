@@ -37,7 +37,7 @@ public class AttackArea : MonoBehaviour
         target = owner switch { Owner.Player => "Enemy", Owner.Enemy => "Player", _ => "Default" };
     }
 
-    private void OnTriggerEnter(Collider collider)
+    private void OnTriggerStay(Collider collider)
     {
         if (Active && collider.CompareTag(target) &&
             collider.TryGetComponent(out DefendArea other))

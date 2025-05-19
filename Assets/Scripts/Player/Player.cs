@@ -10,8 +10,8 @@ public class Player : FSM
     [SerializeField, Title("剑区域")] private AttackArea swordArea;
     [SerializeField, Title("枪区域")] private AttackArea lanceArea;
 
-    private PlayerStats stats;
-    private class PlayerStats
+    public PlayerStats Stats { get; private set; }
+    public class PlayerStats
     {
         public float Stamina { get; set; }
         public float CurrentSpeed { get; set; }
@@ -31,7 +31,7 @@ public class Player : FSM
     {
         base.Init();
 
-        stats = new PlayerStats
+        Stats = new PlayerStats
         {
             Stamina = config.MaxStamina,
             CurrentSpeed = 0,
@@ -41,11 +41,17 @@ public class Player : FSM
 
         rb = GetComponent<Rigidbody>();
 
-        InputManager.Instance.Actions.InGame.Close.started += _ => stats.CurrentItem = PlayerStats.Item.Close;
-        InputManager.Instance.Actions.InGame.Lance.started += _ => stats.CurrentItem = PlayerStats.Item.Lance;
-        InputManager.Instance.Actions.InGame.Sword.started += _ => stats.CurrentItem = PlayerStats.Item.Sword;
+        InputManager.Instance.Actions.InGame.Close.started += _ => Stats.CurrentItem = PlayerStats.Item.Close;
+        InputManager.Instance.Actions.InGame.Lance.started += _ => Stats.CurrentItem = PlayerStats.Item.Lance;
+        InputManager.Instance.Actions.InGame.Sword.started += _ => Stats.CurrentItem = PlayerStats.Item.Sword;
 
-        GetComponentsInChildren<DefendArea>().ForEach(a => a.OnAttacked += _ => ChangeState<DeathState>());
+        GetComponentsInChildren<DefendArea>().ForEach(a => a.OnAttacked += (atk, def, f) =>
+        {
+            if (Stats.Invulnerable) return;
+            atk.Active = false;
+            def.gameObject.SetActive(false);
+            ChangeState<DeathState>();
+        });
     }
 
     protected override void DefineStates()
@@ -66,7 +72,7 @@ public class Player : FSM
         protected InputActions GetInput => InputManager.Instance.Actions;
 
         protected PlayerConfig Config => Host.config;
-        protected PlayerStats Stats => Host.stats;
+        protected PlayerStats Stats => Host.Stats;
 
         protected Rigidbody Rb => Host.rb;
         protected Transform Trans => Host.transform;
