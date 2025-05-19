@@ -48,6 +48,7 @@ public class Player : FSM
     {
         AddState(new MoveState(this));
         AddState(new DodgeState(this));
+        AddState(new LanceState(this));
         AddState(new SwordState(this));
         AddState(new DeathState(this));
     }
@@ -83,7 +84,7 @@ public class Player : FSM
         private readonly Dictionary<Type, MoveSubstate> substates;
         private MoveSubstate current;
 
-        private void ChangeSubstate<T>() where T : PlayerState
+        private void ChangeSubstate<T>() where T : MoveSubstate
         {
             if (substates.TryGetValue(typeof(T), out MoveSubstate state))
             {
@@ -147,6 +148,12 @@ public class Player : FSM
                             }
                             break;
                         case PlayerStats.Item.Lance:
+                            if (Stats.Stamina >= Config.LanceStamina)
+                            {
+                                Stats.Stamina -= Config.LanceStamina;
+                                Host.ChangeState<LanceState>();
+                                return;
+                            }
                             break;
                         case PlayerStats.Item.Close:
                             break;
@@ -253,6 +260,59 @@ public class Player : FSM
                     Stats.Stamina = Mathf.Max(Stats.Stamina - Config.RunStamina * delta, 0);
                     if (Stats.Stamina == 0) Subhost.ChangeSubstate<WalkState>();
                 }
+            }
+        }
+    }
+
+    private class LanceState : MoveState
+    {
+        private enum Phase
+        {
+            Startup,
+            Judge,
+            Recovery,
+        }
+
+        private Phase phase;
+        private float time, timer;
+
+        public LanceState(Player host) : base(host) { }
+
+        public override void OnEnter()
+        {
+            base.OnEnter();
+            phase = Phase.Startup;
+            time = Config.LanceStartup;
+            timer = 0;
+        }
+
+        public override void OnUpdate(float delta)
+        {
+            base.OnUpdate(delta);
+            switch (phase)
+            {
+                case Phase.Startup:
+                    break;
+                case Phase.Judge:
+                    break;
+                case Phase.Recovery:
+                    break;
+            }
+            if ((timer += delta) <= time) return;
+            timer = 0;
+            switch (phase)
+            {
+                case Phase.Startup:
+                    time = Config.LanceJudge;
+                    phase = Phase.Judge;
+                    break;
+                case Phase.Judge:
+                    time = Config.LanceRecovery;
+                    phase = Phase.Recovery;
+                    break;
+                case Phase.Recovery:
+                    Host.ChangeState<MoveState>();
+                    break;
             }
         }
     }
