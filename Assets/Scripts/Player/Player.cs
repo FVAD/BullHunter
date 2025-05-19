@@ -7,6 +7,8 @@ using System.Collections.Generic;
 public class Player : FSM
 {
     [SerializeField, Title("配置")] private PlayerConfig config;
+    [SerializeField, Title("剑区域")] private AttackArea swordArea;
+    [SerializeField, Title("枪区域")] private AttackArea lanceArea;
 
     private PlayerStats stats;
     private class PlayerStats
@@ -286,6 +288,12 @@ public class Player : FSM
             timer = 0;
         }
 
+        public override void OnExit()
+        {
+            base.OnExit();
+            Host.lanceArea.Active = false;
+        }
+
         public override void OnUpdate(float delta)
         {
             base.OnUpdate(delta);
@@ -305,10 +313,12 @@ public class Player : FSM
                 case Phase.Startup:
                     time = Config.LanceJudge;
                     phase = Phase.Judge;
+                    Host.lanceArea.Active = true;
                     break;
                 case Phase.Judge:
                     time = Config.LanceRecovery;
                     phase = Phase.Recovery;
+                    Host.lanceArea.Active = false;
                     break;
                 case Phase.Recovery:
                     Host.ChangeState<MoveState>();
@@ -375,6 +385,8 @@ public class Player : FSM
             Rb.velocity = Vector2.zero;
         }
 
+        public override void OnExit() => Host.swordArea.Active = false;
+
         public override void OnUpdate(float delta)
         {
             switch (phase)
@@ -395,10 +407,12 @@ public class Player : FSM
                 case Phase.Startup:
                     time = Config.SwordJudge;
                     phase = Phase.Judge;
+                    Host.swordArea.Active = true;
                     break;
                 case Phase.Judge:
                     time = Config.SwordRecovery;
                     phase = Phase.Recovery;
+                    Host.swordArea.Active = false;
                     break;
                 case Phase.Recovery:
                     Host.ChangeState<MoveState>();
