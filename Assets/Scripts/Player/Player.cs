@@ -44,6 +44,8 @@ public class Player : FSM
         InputManager.Instance.Actions.InGame.Close.started += _ => stats.CurrentItem = PlayerStats.Item.Close;
         InputManager.Instance.Actions.InGame.Lance.started += _ => stats.CurrentItem = PlayerStats.Item.Lance;
         InputManager.Instance.Actions.InGame.Sword.started += _ => stats.CurrentItem = PlayerStats.Item.Sword;
+
+        GetComponentsInChildren<DefendArea>().ForEach(a => a.OnAttacked += _ => ChangeState<DeathState>());
     }
 
     protected override void DefineStates()
