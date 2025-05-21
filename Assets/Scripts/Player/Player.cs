@@ -29,6 +29,7 @@ public class Player : FSM
     }
 
     private Rigidbody rb;
+    private Animator anim;
 
     public override void Init()
     {
@@ -44,6 +45,7 @@ public class Player : FSM
         };
 
         rb = GetComponent<Rigidbody>();
+        anim = GetComponentInChildren<Animator>();
 
         InputManager.Instance.Actions.InGame.Close.started += _ => Stats.CurrentItem = PlayerStats.Item.Close;
         InputManager.Instance.Actions.InGame.Lance.started += _ => Stats.CurrentItem = PlayerStats.Item.Lance;
@@ -53,7 +55,6 @@ public class Player : FSM
         {
             if (Stats.Invulnerable) return;
             atk.Active = false;
-            def.gameObject.SetActive(false);
             ChangeState<DeathState>();
         });
     }
@@ -86,6 +87,7 @@ public class Player : FSM
         protected PlayerStats Stats => Host.Stats;
 
         protected Rigidbody Rb => Host.rb;
+        protected Animator Anim => Host.anim;
         protected Transform Trans => Host.transform;
 
         protected bool TryDodge()
@@ -477,5 +479,7 @@ public class Player : FSM
     private class DeathState : PlayerState
     {
         public DeathState(Player host) : base(host) { }
+
+        public override void OnEnter() => Anim.SetTrigger("Die");
     }
 }
