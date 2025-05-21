@@ -28,6 +28,7 @@ public class Close : MonoBehaviour
     }
 
     private float timer;
+    public void Refresh() => timer = 0;
     public void Tick(float delta)
     {
         CloseConfig config = Dict[CurrentColour];
@@ -36,8 +37,7 @@ public class Close : MonoBehaviour
             timer = 0;
             return;
         }
-        timer = Mathf.Max(0, timer + delta);
-        if (timer >= config.Startup) Use();
+        if ((timer += delta) >= config.Startup) Use();
     }
 
     public void SetVisible(bool visible) => GetComponent<Renderer>().enabled = visible;
@@ -66,7 +66,7 @@ public class Close : MonoBehaviour
         CloseConfig config = Dict[CurrentColour];
         if (!config.Ready) return;
 
-        config.Tick(-114514);
+        config.Refresh();
         timer = 0;
 
         switch (CurrentColour)

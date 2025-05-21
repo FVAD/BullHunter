@@ -157,7 +157,7 @@ public class Player : FSM
 
             public override void OnUpdate(float delta)
             {
-                Input = GetInput.InGame.Move.ReadValue<Vector2>();
+                if ((Input = GetInput.InGame.Move.ReadValue<Vector2>()) == Vector2.zero) Subhost.ChangeSubstate<IdleState>();
                 Target = CameraManager.Instance.Forward * Input.y + CameraManager.Instance.Right * Input.x;
 
                 if (TryDodge()) return;
@@ -188,16 +188,12 @@ public class Player : FSM
                     Host.ChangeState<CloseState>();
                     return;
                 }
-                if (Input == Vector2.zero)
-                {
-                    Subhost.ChangeSubstate<IdleState>();
-                    return;
-                }
             }
 
             public override void OnFixedUpdate(float delta)
             {
                 Rb.velocity = Stats.CurrentSpeed * Target;
+                var animSpeed = Stats.CurrentSpeed / Config.RunSpeed;
 
                 switch (CameraManager.Instance.CurrentTarget)
                 {
@@ -209,8 +205,11 @@ public class Player : FSM
                     case CameraManager.Target.Enemy:
                         Rb.MoveRotation(Quaternion.RotateTowards(Trans.rotation,
                             Quaternion.LookRotation(CameraManager.Instance.Forward, Vector3.up), Config.RotationSpeed));
+                        if (Vector3.Dot(CameraManager.Instance.Forward, Target) < 0) animSpeed *= -1;
                         break;
                 }
+
+                Anim.SetFloat("Speed", animSpeed);
             }
         }
 
@@ -365,7 +364,7 @@ public class Player : FSM
         public override void OnExit()
         {
             base.OnExit();
-            Stats.Close.Tick(-114514);
+            Stats.Close.Refresh();
             Stats.Close.SetVisible(false);
         }
 

@@ -24,6 +24,7 @@ public class CloseConfig : ScriptableObject
     }
     public void Tick(float delta)
     {
-        if (!Ready) timer = Mathf.Clamp(timer + delta, 0, Cooldown);
+        if (!Ready) timer += delta;
     }
+    public void Refresh() => timer = 0;
 }
