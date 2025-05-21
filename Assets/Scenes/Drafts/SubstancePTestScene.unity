@@ -1136,9 +1136,37 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -5273446966595472559, guid: 8bd15d7f97b950c4a830b40e78314e93, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.087670654
+      objectReference: {fileID: 0}
+    - target: {fileID: -5273446966595472559, guid: 8bd15d7f97b950c4a830b40e78314e93, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.015995111
+      objectReference: {fileID: 0}
+    - target: {fileID: 51653493537585895, guid: 8bd15d7f97b950c4a830b40e78314e93, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.5476726
+      objectReference: {fileID: 0}
+    - target: {fileID: 51653493537585895, guid: 8bd15d7f97b950c4a830b40e78314e93, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.53696567
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 8bd15d7f97b950c4a830b40e78314e93, type: 3}
       propertyPath: m_Name
       value: Neko
+      objectReference: {fileID: 0}
+    - target: {fileID: 5866666021909216657, guid: 8bd15d7f97b950c4a830b40e78314e93, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 0988035e307e30c4d86bcc56630d1fb4, type: 2}
+    - target: {fileID: 7852870572401424311, guid: 8bd15d7f97b950c4a830b40e78314e93, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.036311045
+      objectReference: {fileID: 0}
+    - target: {fileID: 7852870572401424311, guid: 8bd15d7f97b950c4a830b40e78314e93, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.05412015
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8bd15d7f97b950c4a830b40e78314e93, type: 3}

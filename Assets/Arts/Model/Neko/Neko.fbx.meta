@@ -30,8 +30,7 @@ ModelImporter:
     resampleCurves: 1
     optimizeGameObjects: 0
     motionNodeName: 
-    rigImportErrors: "Invalid Avatar Rig Configuration. Missing or invalid transform:\n\tRequired
-      human bone 'LeftFoot' not found\n"
+    rigImportErrors: 
     rigImportWarnings: 
     animationImportErrors: 
     animationImportWarnings: 
@@ -338,17 +337,17 @@ ModelImporter:
     - name: Left shoulder
       parentName: Chest
       position: {x: -0.047018312, y: 0.300382, z: 0.004750089}
-      rotation: {x: 0.5476727, y: -0.4217935, z: -0.5369657, w: -0.48354194}
+      rotation: {x: 0.5476726, y: -0.4217935, z: -0.53696567, w: -0.48354194}
       scale: {x: 0.9999999, y: 0.99999994, z: 0.9999999}
     - name: Left arm
       parentName: Left shoulder
       position: {x: -0.000000007450581, y: 0.05099064, z: 0.00000009610085}
-      rotation: {x: -0.087672174, y: 0.0862483, z: -0.015995495, w: 0.9922797}
+      rotation: {x: 0.073261224, y: -0.36373407, z: 0.0033257194, w: 0.9286115}
       scale: {x: 0.99999994, y: 1, z: 1}
     - name: Left elbow
       parentName: Left arm
       position: {x: 0.000000027182978, y: 0.16679333, z: -0.000000067288056}
-      rotation: {x: -0.036310762, y: 0.014158962, z: 0.054120272, w: 0.9977736}
+      rotation: {x: 0.026207397, y: 0.0030635966, z: 0.0095089795, w: 0.9996066}
       scale: {x: 1, y: 1.0000001, z: 1}
     - name: Left wrist
       parentName: Left elbow
@@ -383,12 +382,12 @@ ModelImporter:
     - name: Right arm
       parentName: Right shoulder
       position: {x: 0.000000015599653, y: 0.050990578, z: -0.0000000036670826}
-      rotation: {x: -0.08767065, y: -0.08624676, z: 0.01599511, w: 0.99227995}
+      rotation: {x: 0.07325809, y: 0.36373466, z: -0.0033337213, w: 0.92861146}
       scale: {x: 0.99999994, y: 1, z: 0.99999994}
     - name: Right elbow
       parentName: Right arm
       position: {x: 0.000000017113052, y: 0.16679326, z: -0.000000044412445}
-      rotation: {x: -0.03631104, y: -0.01415935, z: -0.054120146, w: 0.9977735}
+      rotation: {x: 0.056762494, y: 0.25319397, z: 0.021690825, w: 0.96550524}
       scale: {x: 0.9999998, y: 0.9999999, z: 0.9999999}
     - name: Right wrist
       parentName: Right elbow
