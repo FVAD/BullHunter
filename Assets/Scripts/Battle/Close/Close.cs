@@ -65,7 +65,10 @@ public class Close : MonoBehaviour
     {
         CloseConfig config = Dict[CurrentColour];
         if (!config.Ready) return;
+
         config.Tick(-114514);
+        timer = 0;
+
         switch (CurrentColour)
         {
             case Colour.Red:
