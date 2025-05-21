@@ -402,6 +402,7 @@ public class Player : FSM
                 CameraManager.Instance.Forward * input.y + CameraManager.Instance.Right * input.x).normalized;
 
             Rb.velocity = Config.DodgeDistance * orient / Config.DodgeTime;
+            Anim.SetTrigger("Dodge");
         }
         public override void OnExit()
         {
