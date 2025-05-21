@@ -82,7 +82,7 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Close"",
+                    ""name"": ""Sword"",
                     ""type"": ""Button"",
                     ""id"": ""6ffa7cef-3c33-46b7-9852-87819e41224d"",
                     ""expectedControlType"": ""Button"",
@@ -100,13 +100,22 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Sword"",
+                    ""name"": ""Close"",
                     ""type"": ""Button"",
                     ""id"": ""5cf6b527-853e-46ea-9e82-b5c9a4bc0317"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""ChangeClose"",
+                    ""type"": ""Value"",
+                    ""id"": ""6940f58e-a295-47c1-8f0b-a9e47eab8130"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": ""Normalize(min=-1,max=1)"",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -315,7 +324,7 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Close"",
+                    ""action"": ""Sword"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -326,7 +335,7 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Close"",
+                    ""action"": ""Sword"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -359,7 +368,7 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Sword"",
+                    ""action"": ""Close"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -370,9 +379,53 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Sword"",
+                    ""action"": ""Close"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""750c4d08-078d-44cb-ba13-bdcf29f5e7d5"",
+                    ""path"": ""<Mouse>/scroll/y"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ChangeClose"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""1D Axis"",
+                    ""id"": ""0889fde4-9286-40d7-9d81-d68d0bc22348"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": ""Press(pressPoint=0.1)"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ChangeClose"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""5bf91fcf-9e25-4aa6-b9bd-f776038b4c68"",
+                    ""path"": ""<Gamepad>/leftTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ChangeClose"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""70fc3190-8f6c-42c8-8031-aee4363d3d59"",
+                    ""path"": ""<Gamepad>/rightTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ChangeClose"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         }
@@ -387,9 +440,10 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
         m_InGame_Sprint = m_InGame.FindAction("Sprint", throwIfNotFound: true);
         m_InGame_Dodge = m_InGame.FindAction("Dodge", throwIfNotFound: true);
         m_InGame_Attack = m_InGame.FindAction("Attack", throwIfNotFound: true);
-        m_InGame_Close = m_InGame.FindAction("Close", throwIfNotFound: true);
-        m_InGame_Lance = m_InGame.FindAction("Lance", throwIfNotFound: true);
         m_InGame_Sword = m_InGame.FindAction("Sword", throwIfNotFound: true);
+        m_InGame_Lance = m_InGame.FindAction("Lance", throwIfNotFound: true);
+        m_InGame_Close = m_InGame.FindAction("Close", throwIfNotFound: true);
+        m_InGame_ChangeClose = m_InGame.FindAction("ChangeClose", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -455,9 +509,10 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
     private readonly InputAction m_InGame_Sprint;
     private readonly InputAction m_InGame_Dodge;
     private readonly InputAction m_InGame_Attack;
-    private readonly InputAction m_InGame_Close;
-    private readonly InputAction m_InGame_Lance;
     private readonly InputAction m_InGame_Sword;
+    private readonly InputAction m_InGame_Lance;
+    private readonly InputAction m_InGame_Close;
+    private readonly InputAction m_InGame_ChangeClose;
     public struct InGameActions
     {
         private @InputActions m_Wrapper;
@@ -468,9 +523,10 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
         public InputAction @Sprint => m_Wrapper.m_InGame_Sprint;
         public InputAction @Dodge => m_Wrapper.m_InGame_Dodge;
         public InputAction @Attack => m_Wrapper.m_InGame_Attack;
-        public InputAction @Close => m_Wrapper.m_InGame_Close;
-        public InputAction @Lance => m_Wrapper.m_InGame_Lance;
         public InputAction @Sword => m_Wrapper.m_InGame_Sword;
+        public InputAction @Lance => m_Wrapper.m_InGame_Lance;
+        public InputAction @Close => m_Wrapper.m_InGame_Close;
+        public InputAction @ChangeClose => m_Wrapper.m_InGame_ChangeClose;
         public InputActionMap Get() { return m_Wrapper.m_InGame; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -498,15 +554,18 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
                 @Attack.started -= m_Wrapper.m_InGameActionsCallbackInterface.OnAttack;
                 @Attack.performed -= m_Wrapper.m_InGameActionsCallbackInterface.OnAttack;
                 @Attack.canceled -= m_Wrapper.m_InGameActionsCallbackInterface.OnAttack;
-                @Close.started -= m_Wrapper.m_InGameActionsCallbackInterface.OnClose;
-                @Close.performed -= m_Wrapper.m_InGameActionsCallbackInterface.OnClose;
-                @Close.canceled -= m_Wrapper.m_InGameActionsCallbackInterface.OnClose;
-                @Lance.started -= m_Wrapper.m_InGameActionsCallbackInterface.OnLance;
-                @Lance.performed -= m_Wrapper.m_InGameActionsCallbackInterface.OnLance;
-                @Lance.canceled -= m_Wrapper.m_InGameActionsCallbackInterface.OnLance;
                 @Sword.started -= m_Wrapper.m_InGameActionsCallbackInterface.OnSword;
                 @Sword.performed -= m_Wrapper.m_InGameActionsCallbackInterface.OnSword;
                 @Sword.canceled -= m_Wrapper.m_InGameActionsCallbackInterface.OnSword;
+                @Lance.started -= m_Wrapper.m_InGameActionsCallbackInterface.OnLance;
+                @Lance.performed -= m_Wrapper.m_InGameActionsCallbackInterface.OnLance;
+                @Lance.canceled -= m_Wrapper.m_InGameActionsCallbackInterface.OnLance;
+                @Close.started -= m_Wrapper.m_InGameActionsCallbackInterface.OnClose;
+                @Close.performed -= m_Wrapper.m_InGameActionsCallbackInterface.OnClose;
+                @Close.canceled -= m_Wrapper.m_InGameActionsCallbackInterface.OnClose;
+                @ChangeClose.started -= m_Wrapper.m_InGameActionsCallbackInterface.OnChangeClose;
+                @ChangeClose.performed -= m_Wrapper.m_InGameActionsCallbackInterface.OnChangeClose;
+                @ChangeClose.canceled -= m_Wrapper.m_InGameActionsCallbackInterface.OnChangeClose;
             }
             m_Wrapper.m_InGameActionsCallbackInterface = instance;
             if (instance != null)
@@ -529,15 +588,18 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
                 @Attack.started += instance.OnAttack;
                 @Attack.performed += instance.OnAttack;
                 @Attack.canceled += instance.OnAttack;
-                @Close.started += instance.OnClose;
-                @Close.performed += instance.OnClose;
-                @Close.canceled += instance.OnClose;
-                @Lance.started += instance.OnLance;
-                @Lance.performed += instance.OnLance;
-                @Lance.canceled += instance.OnLance;
                 @Sword.started += instance.OnSword;
                 @Sword.performed += instance.OnSword;
                 @Sword.canceled += instance.OnSword;
+                @Lance.started += instance.OnLance;
+                @Lance.performed += instance.OnLance;
+                @Lance.canceled += instance.OnLance;
+                @Close.started += instance.OnClose;
+                @Close.performed += instance.OnClose;
+                @Close.canceled += instance.OnClose;
+                @ChangeClose.started += instance.OnChangeClose;
+                @ChangeClose.performed += instance.OnChangeClose;
+                @ChangeClose.canceled += instance.OnChangeClose;
             }
         }
     }
@@ -550,8 +612,9 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
         void OnSprint(InputAction.CallbackContext context);
         void OnDodge(InputAction.CallbackContext context);
         void OnAttack(InputAction.CallbackContext context);
-        void OnClose(InputAction.CallbackContext context);
-        void OnLance(InputAction.CallbackContext context);
         void OnSword(InputAction.CallbackContext context);
+        void OnLance(InputAction.CallbackContext context);
+        void OnClose(InputAction.CallbackContext context);
+        void OnChangeClose(InputAction.CallbackContext context);
     }
 }

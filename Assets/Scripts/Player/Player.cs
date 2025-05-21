@@ -9,6 +9,8 @@ public class Player : FSM
     [SerializeField, Title("配置")] private PlayerConfig config;
     [SerializeField, Title("剑区域")] private AttackArea swordArea;
     [SerializeField, Title("枪区域")] private AttackArea lanceArea;
+    [SerializeField, Title("布预制")] private GameObject closePrefab;
+    [SerializeField, Title("布位置")] private Transform closeRoot;
 
     public PlayerStats Stats { get; private set; }
     public class PlayerStats
@@ -23,6 +25,7 @@ public class Player : FSM
             Sword,
         }
         public Item CurrentItem { get; set; }
+        public Close Close { get; set; }
     }
 
     private Rigidbody rb;
@@ -37,6 +40,7 @@ public class Player : FSM
             CurrentSpeed = 0,
             Invulnerable = false,
             CurrentItem = PlayerStats.Item.Sword,
+            Close = Instantiate(closePrefab, closeRoot).GetComponent<Close>(),
         };
 
         rb = GetComponent<Rigidbody>();
@@ -54,11 +58,18 @@ public class Player : FSM
         });
     }
 
+    protected override void Update()
+    {
+        base.Update();
+        Stats.Close.Dict.ForEach(kvp => kvp.Value.Tick(Time.deltaTime));
+    }
+
     protected override void DefineStates()
     {
         AddState(new MoveState(this));
         AddState(new DodgeState(this));
         AddState(new LanceState(this));
+        AddState(new CloseState(this));
         AddState(new SwordState(this));
         AddState(new DeathState(this));
     }
@@ -144,6 +155,9 @@ public class Player : FSM
 
             public override void OnUpdate(float delta)
             {
+                Input = GetInput.InGame.Move.ReadValue<Vector2>();
+                Target = CameraManager.Instance.Forward * Input.y + CameraManager.Instance.Right * Input.x;
+
                 if (TryDodge()) return;
                 if (GetInput.InGame.Attack.WasPressedThisFrame())
                 {
@@ -165,16 +179,18 @@ public class Player : FSM
                                 return;
                             }
                             break;
-                        case PlayerStats.Item.Close:
-                            break;
                     }
                 }
-                if ((Input = GetInput.InGame.Move.ReadValue<Vector2>()) == Vector2.zero)
+                if (Stats.CurrentItem == PlayerStats.Item.Close)
+                {
+                    Host.ChangeState<CloseState>();
+                    return;
+                }
+                if (Input == Vector2.zero)
                 {
                     Subhost.ChangeSubstate<IdleState>();
                     return;
                 }
-                Target = CameraManager.Instance.Forward * Input.y + CameraManager.Instance.Right * Input.x;
             }
 
             public override void OnFixedUpdate(float delta)
@@ -332,6 +348,35 @@ public class Player : FSM
                     Host.ChangeState<MoveState>();
                     break;
             }
+        }
+    }
+
+    private class CloseState : MoveState
+    {
+        public CloseState(Player host) : base(host) { }
+
+        public override void OnEnter()
+        {
+            base.OnEnter();
+            Stats.Close.SetVisible(true);
+        }
+        public override void OnExit()
+        {
+            base.OnExit();
+            Stats.Close.Tick(-114514);
+            Stats.Close.SetVisible(false);
+        }
+
+        public override void OnUpdate(float delta)
+        {
+            base.OnUpdate(delta);
+            Stats.Close.Tick(delta);
+
+            var input = GetInput.InGame.ChangeClose.ReadValue<float>();
+            if (input > 0.5f) Stats.Close.Next();
+            if (input < -0.5f) Stats.Close.Prev();
+
+            if (Stats.CurrentItem != PlayerStats.Item.Close) Host.ChangeState<MoveState>();
         }
     }
 

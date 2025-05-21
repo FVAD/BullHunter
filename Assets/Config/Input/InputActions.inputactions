@@ -60,7 +60,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Close",
+                    "name": "Sword",
                     "type": "Button",
                     "id": "6ffa7cef-3c33-46b7-9852-87819e41224d",
                     "expectedControlType": "Button",
@@ -78,13 +78,22 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Sword",
+                    "name": "Close",
                     "type": "Button",
                     "id": "5cf6b527-853e-46ea-9e82-b5c9a4bc0317",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "ChangeClose",
+                    "type": "Value",
+                    "id": "6940f58e-a295-47c1-8f0b-a9e47eab8130",
+                    "expectedControlType": "Axis",
+                    "processors": "Normalize(min=-1,max=1)",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -293,7 +302,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Close",
+                    "action": "Sword",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -304,7 +313,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Close",
+                    "action": "Sword",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -337,7 +346,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Sword",
+                    "action": "Close",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -348,9 +357,53 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Sword",
+                    "action": "Close",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "750c4d08-078d-44cb-ba13-bdcf29f5e7d5",
+                    "path": "<Mouse>/scroll/y",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ChangeClose",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "1D Axis",
+                    "id": "0889fde4-9286-40d7-9d81-d68d0bc22348",
+                    "path": "1DAxis",
+                    "interactions": "Press(pressPoint=0.1)",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ChangeClose",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "negative",
+                    "id": "5bf91fcf-9e25-4aa6-b9bd-f776038b4c68",
+                    "path": "<Gamepad>/leftTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ChangeClose",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "positive",
+                    "id": "70fc3190-8f6c-42c8-8031-aee4363d3d59",
+                    "path": "<Gamepad>/rightTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ChangeClose",
+                    "isComposite": false,
+                    "isPartOfComposite": true
                 }
             ]
         }
