@@ -354,12 +354,15 @@ public class Player : FSM
 
     private class CloseState : MoveState
     {
+        private bool changed;
+
         public CloseState(Player host) : base(host) { }
 
         public override void OnEnter()
         {
             base.OnEnter();
             Stats.Close.SetVisible(true);
+            changed = false;
         }
         public override void OnExit()
         {
@@ -374,8 +377,10 @@ public class Player : FSM
             Stats.Close.Tick(delta);
 
             var input = GetInput.InGame.ChangeClose.ReadValue<float>();
-            if (input > 0.5f) Stats.Close.Next();
-            if (input < -0.5f) Stats.Close.Prev();
+            var threshold = 0.5f;
+            if (!changed && input > threshold) Stats.Close.Next();
+            if (!changed && input < -threshold) Stats.Close.Prev();
+            changed = Mathf.Abs(input) > threshold;
 
             if (Stats.CurrentItem != PlayerStats.Item.Close) Host.ChangeState<MoveState>();
         }

@@ -376,15 +376,15 @@
                     "name": "1D Axis",
                     "id": "0889fde4-9286-40d7-9d81-d68d0bc22348",
                     "path": "1DAxis",
-                    "interactions": "Press(pressPoint=0.1)",
-                    "processors": "",
+                    "interactions": "",
+                    "processors": "Normalize(min=-1,max=1)",
                     "groups": "",
                     "action": "ChangeClose",
                     "isComposite": true,
                     "isPartOfComposite": false
                 },
                 {
-                    "name": "negative",
+                    "name": "Negative",
                     "id": "5bf91fcf-9e25-4aa6-b9bd-f776038b4c68",
                     "path": "<Gamepad>/leftTrigger",
                     "interactions": "",
@@ -395,7 +395,7 @@
                     "isPartOfComposite": true
                 },
                 {
-                    "name": "positive",
+                    "name": "Positive",
                     "id": "70fc3190-8f6c-42c8-8031-aee4363d3d59",
                     "path": "<Gamepad>/rightTrigger",
                     "interactions": "",

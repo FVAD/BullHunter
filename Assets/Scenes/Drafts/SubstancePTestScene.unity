@@ -962,7 +962,7 @@ MonoBehaviour:
   player: {fileID: 469145835}
   enemy: {fileID: 582135397}
   pitchBound:
-    min: -5
+    min: 5
     max: 55
   enemyOffset: {x: 0, y: -3}
   followSpeed: 0.1
