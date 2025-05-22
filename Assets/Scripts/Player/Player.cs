@@ -7,10 +7,18 @@ using System.Collections.Generic;
 public class Player : FSM
 {
     [SerializeField, Title("配置")] private PlayerConfig config;
+    [Header("判定")]
     [SerializeField, Title("剑区域")] private AttackArea swordArea;
     [SerializeField, Title("枪区域")] private AttackArea lanceArea;
+    [Header("槽位")]
+    [SerializeField, Title("布位置")] private Transform clothSlot;
+    [SerializeField, Title("剑槽位")] private Transform swordSlot;
+    [SerializeField, Title("枪槽位")] private Transform lanceSlot;
+    [SerializeField, Title("后槽位")] private Transform weaponSlot;
+    [Header("预制")]
     [SerializeField, Title("布预制")] private GameObject clothPrefab;
-    [SerializeField, Title("布位置")] private Transform clothRoot;
+    [SerializeField, Title("剑预制")] private GameObject swordPrefab;
+    [SerializeField, Title("枪预制")] private GameObject lancePrefab;
 
     public PlayerStats Stats { get; private set; }
     public class PlayerStats
@@ -18,14 +26,15 @@ public class Player : FSM
         public float Stamina { get; set; }
         public float CurrentSpeed { get; set; }
         public bool Invulnerable { get; set; }
-        public enum Item
+        public enum Weapon
         {
             Cloth,
             Lance,
             Sword,
         }
-        public Item CurrentItem { get; set; }
+        public Weapon CurrentWeapon { get; set; }
         public ClothWeapon Cloth { get; set; }
+        public GameObject WeaponObject { get; set; }
     }
 
     private Rigidbody rb;
@@ -40,16 +49,13 @@ public class Player : FSM
             Stamina = config.MaxStamina,
             CurrentSpeed = 0,
             Invulnerable = false,
-            CurrentItem = PlayerStats.Item.Sword,
-            Cloth = Instantiate(clothPrefab, clothRoot).GetComponent<ClothWeapon>(),
+            CurrentWeapon = PlayerStats.Weapon.Sword,
+            Cloth = Instantiate(clothPrefab, clothSlot).GetComponent<ClothWeapon>(),
+            WeaponObject = Instantiate(swordPrefab, weaponSlot),
         };
 
         rb = GetComponent<Rigidbody>();
         anim = GetComponentInChildren<Animator>();
-
-        InputManager.Instance.Actions.InGame.Close.started += _ => Stats.CurrentItem = PlayerStats.Item.Cloth;
-        InputManager.Instance.Actions.InGame.Lance.started += _ => Stats.CurrentItem = PlayerStats.Item.Lance;
-        InputManager.Instance.Actions.InGame.Sword.started += _ => Stats.CurrentItem = PlayerStats.Item.Sword;
 
         GetComponentsInChildren<DefendArea>().ForEach(a => a.OnAttacked += (atk, def, f) =>
         {
@@ -100,20 +106,61 @@ public class Player : FSM
             Host.ChangeState<DodgeState>();
             return true;
         }
+        protected bool TryChange(bool show)
+        {
+            if (GetInput.InGame.Cloth.WasPressedThisFrame() && Stats.CurrentWeapon != PlayerStats.Weapon.Cloth)
+            {
+                Stats.CurrentWeapon = PlayerStats.Weapon.Cloth;
+                HideWeapon();
+                Host.ChangeState<ClothState>();
+                return true;
+            }
+            if (GetInput.InGame.Sword.WasPressedThisFrame() && Stats.CurrentWeapon != PlayerStats.Weapon.Sword)
+            {
+                Stats.CurrentWeapon = PlayerStats.Weapon.Sword;
+                if (show) ShowWeapon();
+            }
+            if (GetInput.InGame.Lance.WasPressedThisFrame() && Stats.CurrentWeapon != PlayerStats.Weapon.Lance)
+            {
+                Stats.CurrentWeapon = PlayerStats.Weapon.Lance;
+                if (show) ShowWeapon();
+            }
+            return false;
+        }
+
+        protected void ShowWeapon()
+        {
+            HideWeapon();
+            switch (Stats.CurrentWeapon)
+            {
+                case PlayerStats.Weapon.Sword:
+                    Stats.WeaponObject = Instantiate(Host.swordPrefab, Host.weaponSlot);
+                    break;
+                case PlayerStats.Weapon.Lance:
+                    Stats.WeaponObject = Instantiate(Host.lancePrefab, Host.weaponSlot);
+                    break;
+            }
+        }
+        protected void HideWeapon()
+        {
+            if (Stats.WeaponObject) Destroy(Stats.WeaponObject);
+            Stats.WeaponObject = null;
+        }
     }
 
     private class MoveState : PlayerState
     {
         private readonly Dictionary<Type, MoveSubstate> substates;
-        private MoveSubstate current;
+        protected MoveSubstate Current { get; private set; }
 
         private void ChangeSubstate<T>() where T : MoveSubstate
         {
             if (substates.TryGetValue(typeof(T), out MoveSubstate state))
             {
-                current.OnExit();
-                current = state;
-                current.OnEnter();
+                if (Current == state) return;
+                Current?.OnExit();
+                Current = state;
+                Current.OnEnter();
             }
             else Debug.Log($"未定义{typeof(T).Name}");
         }
@@ -126,19 +173,40 @@ public class Player : FSM
                 { typeof(WalkState), new WalkState(Host, this) },
                 { typeof(RunState), new RunState(Host, this) }
             };
-            current = substates[typeof(IdleState)];
         }
 
-        public override void OnEnter() => ChangeSubstate<IdleState>();
-        public override void OnExit() => current.OnExit();
+        protected Vector2 Input { get; private set; }
+        protected Vector3 Target { get; private set; }
 
-        public override void OnUpdate(float delta) => current.OnUpdate(delta);
-        public override void OnFixedUpdate(float delta) => current.OnFixedUpdate(delta);
-
-        private abstract class MoveSubstate : PlayerState
+        public void UpdateMoveInput()
         {
-            protected Vector2 Input { get; private set; }
-            protected Vector3 Target { get; private set; }
+            if ((Input = GetInput.InGame.Move.ReadValue<Vector2>()) == Vector2.zero) ChangeSubstate<IdleState>();
+            Target = CameraManager.Instance.Forward * Input.y + CameraManager.Instance.Right * Input.x;
+        }
+
+        public override void OnEnter()
+        {
+            ChangeSubstate<IdleState>();
+            ShowWeapon();
+        }
+        public override void OnExit()
+        {
+            Current.OnExit();
+            HideWeapon();
+        }
+
+        public override void OnUpdate(float delta)
+        {
+            UpdateMoveInput();
+            if (TryDodge() || TryChange(true)) return;
+            Current.OnUpdate(delta);
+        }
+        public override void OnFixedUpdate(float delta) => Current.OnFixedUpdate(delta);
+
+        protected abstract class MoveSubstate : PlayerState
+        {
+            protected Vector2 Input => Subhost.Input;
+            protected Vector3 Target => Subhost.Target;
 
             protected MoveState Subhost;
             public MoveSubstate(Player host, MoveState subhost) : base(host) => Subhost = subhost;
@@ -157,15 +225,11 @@ public class Player : FSM
 
             public override void OnUpdate(float delta)
             {
-                if ((Input = GetInput.InGame.Move.ReadValue<Vector2>()) == Vector2.zero) Subhost.ChangeSubstate<IdleState>();
-                Target = CameraManager.Instance.Forward * Input.y + CameraManager.Instance.Right * Input.x;
-
-                if (TryDodge()) return;
                 if (GetInput.InGame.Attack.WasPressedThisFrame())
                 {
-                    switch (Stats.CurrentItem)
+                    switch (Stats.CurrentWeapon)
                     {
-                        case PlayerStats.Item.Sword:
+                        case PlayerStats.Weapon.Sword:
                             if (Stats.Stamina >= Config.SwordStamina)
                             {
                                 Stats.Stamina -= Config.SwordStamina;
@@ -173,7 +237,7 @@ public class Player : FSM
                                 return;
                             }
                             break;
-                        case PlayerStats.Item.Lance:
+                        case PlayerStats.Weapon.Lance:
                             if (Stats.Stamina >= Config.LanceStamina)
                             {
                                 Stats.Stamina -= Config.LanceStamina;
@@ -182,11 +246,6 @@ public class Player : FSM
                             }
                             break;
                     }
-                }
-                if (Stats.CurrentItem == PlayerStats.Item.Cloth)
-                {
-                    Host.ChangeState<ClothState>();
-                    return;
                 }
             }
 
@@ -303,6 +362,8 @@ public class Player : FSM
         private Phase phase;
         private float time, timer;
 
+        private GameObject lance;
+
         public LanceState(Player host) : base(host) { }
 
         public override void OnEnter()
@@ -313,17 +374,23 @@ public class Player : FSM
             timer = 0;
 
             Anim.SetTrigger("Lance");
+            HideWeapon();
+            lance = Instantiate(Host.lancePrefab, Host.lanceSlot);
         }
 
         public override void OnExit()
         {
             base.OnExit();
             Host.lanceArea.Active = false;
+
+            Destroy(lance);
+            lance = null;
         }
 
         public override void OnUpdate(float delta)
         {
-            base.OnUpdate(delta);
+            UpdateMoveInput();
+            if (TryDodge()) return;
             switch (phase)
             {
                 case Phase.Startup:
@@ -378,13 +445,13 @@ public class Player : FSM
             base.OnUpdate(delta);
             Stats.Cloth.Tick(delta);
 
-            var input = GetInput.InGame.ChangeClose.ReadValue<float>();
+            var input = GetInput.InGame.ChangeCloth.ReadValue<float>();
             var threshold = 0.5f;
             if (!changed && input > threshold) Stats.Cloth.Next();
             if (!changed && input < -threshold) Stats.Cloth.Prev();
             changed = Mathf.Abs(input) > threshold;
 
-            if (Stats.CurrentItem != PlayerStats.Item.Cloth) Host.ChangeState<MoveState>();
+            if (Stats.CurrentWeapon != PlayerStats.Weapon.Cloth) Host.ChangeState<MoveState>();
         }
     }
 
@@ -409,6 +476,8 @@ public class Player : FSM
 
             Rb.velocity = Config.DodgeDistance * orient / Config.DodgeTime;
             Anim.SetTrigger("Dodge");
+
+            HideWeapon();
         }
         public override void OnExit()
         {
@@ -436,6 +505,8 @@ public class Player : FSM
         private Phase phase;
         private float time, timer;
 
+        private GameObject sword;
+
         public SwordState(Player host) : base(host) { }
 
         public override void OnEnter()
@@ -446,9 +517,18 @@ public class Player : FSM
 
             Rb.velocity = Vector2.zero;
             Anim.SetTrigger("Sword");
+
+            HideWeapon();
+            sword = Instantiate(Host.swordPrefab, Host.swordSlot);
         }
 
-        public override void OnExit() => Host.swordArea.Active = false;
+        public override void OnExit()
+        {
+            Host.swordArea.Active = false;
+
+            Destroy(sword);
+            sword = null;
+        }
 
         public override void OnUpdate(float delta)
         {

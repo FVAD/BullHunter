@@ -78,7 +78,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Close",
+                    "name": "Cloth",
                     "type": "Button",
                     "id": "5cf6b527-853e-46ea-9e82-b5c9a4bc0317",
                     "expectedControlType": "Button",
@@ -87,7 +87,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "ChangeClose",
+                    "name": "ChangeCloth",
                     "type": "Value",
                     "id": "6940f58e-a295-47c1-8f0b-a9e47eab8130",
                     "expectedControlType": "Axis",
@@ -335,7 +335,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Close",
+                    "action": "Cloth",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -346,7 +346,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Close",
+                    "action": "Cloth",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -357,7 +357,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "ChangeClose",
+                    "action": "ChangeCloth",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -368,7 +368,7 @@
                     "interactions": "",
                     "processors": "Normalize(min=-1,max=1)",
                     "groups": "",
-                    "action": "ChangeClose",
+                    "action": "ChangeCloth",
                     "isComposite": true,
                     "isPartOfComposite": false
                 },
@@ -379,7 +379,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "ChangeClose",
+                    "action": "ChangeCloth",
                     "isComposite": false,
                     "isPartOfComposite": true
                 },
@@ -390,7 +390,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "ChangeClose",
+                    "action": "ChangeCloth",
                     "isComposite": false,
                     "isPartOfComposite": true
                 }

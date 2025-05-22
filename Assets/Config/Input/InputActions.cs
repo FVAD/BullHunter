@@ -100,7 +100,7 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Close"",
+                    ""name"": ""Cloth"",
                     ""type"": ""Button"",
                     ""id"": ""5cf6b527-853e-46ea-9e82-b5c9a4bc0317"",
                     ""expectedControlType"": ""Button"",
@@ -109,7 +109,7 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""ChangeClose"",
+                    ""name"": ""ChangeCloth"",
                     ""type"": ""Value"",
                     ""id"": ""6940f58e-a295-47c1-8f0b-a9e47eab8130"",
                     ""expectedControlType"": ""Axis"",
@@ -357,7 +357,7 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Close"",
+                    ""action"": ""Cloth"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -368,7 +368,7 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Close"",
+                    ""action"": ""Cloth"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -379,7 +379,7 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""ChangeClose"",
+                    ""action"": ""ChangeCloth"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -390,7 +390,7 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": ""Normalize(min=-1,max=1)"",
                     ""groups"": """",
-                    ""action"": ""ChangeClose"",
+                    ""action"": ""ChangeCloth"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
@@ -401,7 +401,7 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""ChangeClose"",
+                    ""action"": ""ChangeCloth"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -412,7 +412,7 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""ChangeClose"",
+                    ""action"": ""ChangeCloth"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 }
@@ -431,8 +431,8 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
         m_InGame_Attack = m_InGame.FindAction("Attack", throwIfNotFound: true);
         m_InGame_Sword = m_InGame.FindAction("Sword", throwIfNotFound: true);
         m_InGame_Lance = m_InGame.FindAction("Lance", throwIfNotFound: true);
-        m_InGame_Close = m_InGame.FindAction("Close", throwIfNotFound: true);
-        m_InGame_ChangeClose = m_InGame.FindAction("ChangeClose", throwIfNotFound: true);
+        m_InGame_Cloth = m_InGame.FindAction("Cloth", throwIfNotFound: true);
+        m_InGame_ChangeCloth = m_InGame.FindAction("ChangeCloth", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -500,8 +500,8 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
     private readonly InputAction m_InGame_Attack;
     private readonly InputAction m_InGame_Sword;
     private readonly InputAction m_InGame_Lance;
-    private readonly InputAction m_InGame_Close;
-    private readonly InputAction m_InGame_ChangeClose;
+    private readonly InputAction m_InGame_Cloth;
+    private readonly InputAction m_InGame_ChangeCloth;
     public struct InGameActions
     {
         private @InputActions m_Wrapper;
@@ -514,8 +514,8 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
         public InputAction @Attack => m_Wrapper.m_InGame_Attack;
         public InputAction @Sword => m_Wrapper.m_InGame_Sword;
         public InputAction @Lance => m_Wrapper.m_InGame_Lance;
-        public InputAction @Close => m_Wrapper.m_InGame_Close;
-        public InputAction @ChangeClose => m_Wrapper.m_InGame_ChangeClose;
+        public InputAction @Cloth => m_Wrapper.m_InGame_Cloth;
+        public InputAction @ChangeCloth => m_Wrapper.m_InGame_ChangeCloth;
         public InputActionMap Get() { return m_Wrapper.m_InGame; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -549,12 +549,12 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
                 @Lance.started -= m_Wrapper.m_InGameActionsCallbackInterface.OnLance;
                 @Lance.performed -= m_Wrapper.m_InGameActionsCallbackInterface.OnLance;
                 @Lance.canceled -= m_Wrapper.m_InGameActionsCallbackInterface.OnLance;
-                @Close.started -= m_Wrapper.m_InGameActionsCallbackInterface.OnClose;
-                @Close.performed -= m_Wrapper.m_InGameActionsCallbackInterface.OnClose;
-                @Close.canceled -= m_Wrapper.m_InGameActionsCallbackInterface.OnClose;
-                @ChangeClose.started -= m_Wrapper.m_InGameActionsCallbackInterface.OnChangeClose;
-                @ChangeClose.performed -= m_Wrapper.m_InGameActionsCallbackInterface.OnChangeClose;
-                @ChangeClose.canceled -= m_Wrapper.m_InGameActionsCallbackInterface.OnChangeClose;
+                @Cloth.started -= m_Wrapper.m_InGameActionsCallbackInterface.OnCloth;
+                @Cloth.performed -= m_Wrapper.m_InGameActionsCallbackInterface.OnCloth;
+                @Cloth.canceled -= m_Wrapper.m_InGameActionsCallbackInterface.OnCloth;
+                @ChangeCloth.started -= m_Wrapper.m_InGameActionsCallbackInterface.OnChangeCloth;
+                @ChangeCloth.performed -= m_Wrapper.m_InGameActionsCallbackInterface.OnChangeCloth;
+                @ChangeCloth.canceled -= m_Wrapper.m_InGameActionsCallbackInterface.OnChangeCloth;
             }
             m_Wrapper.m_InGameActionsCallbackInterface = instance;
             if (instance != null)
@@ -583,12 +583,12 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
                 @Lance.started += instance.OnLance;
                 @Lance.performed += instance.OnLance;
                 @Lance.canceled += instance.OnLance;
-                @Close.started += instance.OnClose;
-                @Close.performed += instance.OnClose;
-                @Close.canceled += instance.OnClose;
-                @ChangeClose.started += instance.OnChangeClose;
-                @ChangeClose.performed += instance.OnChangeClose;
-                @ChangeClose.canceled += instance.OnChangeClose;
+                @Cloth.started += instance.OnCloth;
+                @Cloth.performed += instance.OnCloth;
+                @Cloth.canceled += instance.OnCloth;
+                @ChangeCloth.started += instance.OnChangeCloth;
+                @ChangeCloth.performed += instance.OnChangeCloth;
+                @ChangeCloth.canceled += instance.OnChangeCloth;
             }
         }
     }
@@ -603,7 +603,7 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
         void OnAttack(InputAction.CallbackContext context);
         void OnSword(InputAction.CallbackContext context);
         void OnLance(InputAction.CallbackContext context);
-        void OnClose(InputAction.CallbackContext context);
-        void OnChangeClose(InputAction.CallbackContext context);
+        void OnCloth(InputAction.CallbackContext context);
+        void OnChangeCloth(InputAction.CallbackContext context);
     }
 }
