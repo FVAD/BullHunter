@@ -9,8 +9,8 @@ public class Player : FSM
     [SerializeField, Title("配置")] private PlayerConfig config;
     [SerializeField, Title("剑区域")] private AttackArea swordArea;
     [SerializeField, Title("枪区域")] private AttackArea lanceArea;
-    [SerializeField, Title("布预制")] private GameObject closePrefab;
-    [SerializeField, Title("布位置")] private Transform closeRoot;
+    [SerializeField, Title("布预制")] private GameObject clothPrefab;
+    [SerializeField, Title("布位置")] private Transform clothRoot;
 
     public PlayerStats Stats { get; private set; }
     public class PlayerStats
@@ -20,12 +20,12 @@ public class Player : FSM
         public bool Invulnerable { get; set; }
         public enum Item
         {
-            Close,
+            Cloth,
             Lance,
             Sword,
         }
         public Item CurrentItem { get; set; }
-        public Close Close { get; set; }
+        public ClothWeapon Cloth { get; set; }
     }
 
     private Rigidbody rb;
@@ -41,13 +41,13 @@ public class Player : FSM
             CurrentSpeed = 0,
             Invulnerable = false,
             CurrentItem = PlayerStats.Item.Sword,
-            Close = Instantiate(closePrefab, closeRoot).GetComponent<Close>(),
+            Cloth = Instantiate(clothPrefab, clothRoot).GetComponent<ClothWeapon>(),
         };
 
         rb = GetComponent<Rigidbody>();
         anim = GetComponentInChildren<Animator>();
 
-        InputManager.Instance.Actions.InGame.Close.started += _ => Stats.CurrentItem = PlayerStats.Item.Close;
+        InputManager.Instance.Actions.InGame.Close.started += _ => Stats.CurrentItem = PlayerStats.Item.Cloth;
         InputManager.Instance.Actions.InGame.Lance.started += _ => Stats.CurrentItem = PlayerStats.Item.Lance;
         InputManager.Instance.Actions.InGame.Sword.started += _ => Stats.CurrentItem = PlayerStats.Item.Sword;
 
@@ -62,7 +62,7 @@ public class Player : FSM
     protected override void Update()
     {
         base.Update();
-        Stats.Close.Dict.ForEach(kvp => kvp.Value.Tick(Time.deltaTime));
+        Stats.Cloth.Dict.ForEach(kvp => kvp.Value.Tick(Time.deltaTime));
     }
 
     protected override void DefineStates()
@@ -70,7 +70,7 @@ public class Player : FSM
         AddState(new MoveState(this));
         AddState(new DodgeState(this));
         AddState(new LanceState(this));
-        AddState(new CloseState(this));
+        AddState(new ClothState(this));
         AddState(new SwordState(this));
         AddState(new DeathState(this));
     }
@@ -183,9 +183,9 @@ public class Player : FSM
                             break;
                     }
                 }
-                if (Stats.CurrentItem == PlayerStats.Item.Close)
+                if (Stats.CurrentItem == PlayerStats.Item.Cloth)
                 {
-                    Host.ChangeState<CloseState>();
+                    Host.ChangeState<ClothState>();
                     return;
                 }
             }
@@ -354,37 +354,37 @@ public class Player : FSM
         }
     }
 
-    private class CloseState : MoveState
+    private class ClothState : MoveState
     {
         private bool changed;
 
-        public CloseState(Player host) : base(host) { }
+        public ClothState(Player host) : base(host) { }
 
         public override void OnEnter()
         {
             base.OnEnter();
-            Stats.Close.SetVisible(true);
+            Stats.Cloth.SetVisible(true);
             changed = false;
         }
         public override void OnExit()
         {
             base.OnExit();
-            Stats.Close.Refresh();
-            Stats.Close.SetVisible(false);
+            Stats.Cloth.Refresh();
+            Stats.Cloth.SetVisible(false);
         }
 
         public override void OnUpdate(float delta)
         {
             base.OnUpdate(delta);
-            Stats.Close.Tick(delta);
+            Stats.Cloth.Tick(delta);
 
             var input = GetInput.InGame.ChangeClose.ReadValue<float>();
             var threshold = 0.5f;
-            if (!changed && input > threshold) Stats.Close.Next();
-            if (!changed && input < -threshold) Stats.Close.Prev();
+            if (!changed && input > threshold) Stats.Cloth.Next();
+            if (!changed && input < -threshold) Stats.Cloth.Prev();
             changed = Mathf.Abs(input) > threshold;
 
-            if (Stats.CurrentItem != PlayerStats.Item.Close) Host.ChangeState<MoveState>();
+            if (Stats.CurrentItem != PlayerStats.Item.Cloth) Host.ChangeState<MoveState>();
         }
     }
 

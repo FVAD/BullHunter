@@ -4,11 +4,11 @@ using System.Linq;
 using UnityEngine;
 
 [RequireComponent(typeof(Renderer))]
-public class Close : MonoBehaviour
+public class ClothWeapon : MonoBehaviour
 {
-    [SerializeField, Title("配置")] private CloseConfig[] configs;
+    [SerializeField, Title("配置")] private ClothConfig[] configs;
 
-    public Dictionary<Colour, CloseConfig> Dict { get; private set; }
+    public Dictionary<Colour, ClothConfig> Dict { get; private set; }
     public List<Colour> Colours { get; private set; }
     private int idx;
 
@@ -31,7 +31,7 @@ public class Close : MonoBehaviour
     public void Refresh() => timer = 0;
     public void Tick(float delta)
     {
-        CloseConfig config = Dict[CurrentColour];
+        ClothConfig config = Dict[CurrentColour];
         if (!config.Ready)
         {
             timer = 0;
@@ -63,7 +63,7 @@ public class Close : MonoBehaviour
 
     private void Use()
     {
-        CloseConfig config = Dict[CurrentColour];
+        ClothConfig config = Dict[CurrentColour];
         if (!config.Ready) return;
 
         config.Refresh();
