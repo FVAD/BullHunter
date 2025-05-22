@@ -9,7 +9,6 @@ public class Player : FSM
     [SerializeField, Title("配置")] private PlayerConfig config;
     [Header("判定")]
     [SerializeField, Title("剑区域")] private AttackArea swordArea;
-    [SerializeField, Title("枪区域")] private AttackArea lanceArea;
     [Header("槽位")]
     [SerializeField, Title("布位置")] private Transform clothSlot;
     [SerializeField, Title("剑槽位")] private Transform swordSlot;
@@ -199,6 +198,11 @@ public class Player : FSM
         {
             UpdateMoveInput();
             if (TryDodge() || TryChange(true)) return;
+            if (Stats.CurrentWeapon == PlayerStats.Weapon.Cloth)
+            {
+                Host.ChangeState<ClothState>();
+                return;
+            }
             Current.OnUpdate(delta);
         }
         public override void OnFixedUpdate(float delta) => Current.OnFixedUpdate(delta);
@@ -362,7 +366,7 @@ public class Player : FSM
         private Phase phase;
         private float time, timer;
 
-        private GameObject lance;
+        private LanceWeapon lance;
 
         public LanceState(Player host) : base(host) { }
 
@@ -375,25 +379,27 @@ public class Player : FSM
 
             Anim.SetTrigger("Lance");
             HideWeapon();
-            lance = Instantiate(Host.lancePrefab, Host.lanceSlot);
+            lance = Instantiate(Host.lancePrefab,
+                                Host.lanceSlot.position,
+                                Host.lanceSlot.rotation,
+                                Host.transform).GetComponent<LanceWeapon>();
         }
 
         public override void OnExit()
         {
             base.OnExit();
-            Host.lanceArea.Active = false;
-
-            Destroy(lance);
-            lance = null;
+            if (lance && lance.transform.parent == Host.transform) Destroy(lance.gameObject);
         }
 
         public override void OnUpdate(float delta)
         {
             UpdateMoveInput();
             if (TryDodge()) return;
+            Current.OnUpdate(delta);
             switch (phase)
             {
                 case Phase.Startup:
+                    lance.transform.position = Host.lanceSlot.position;
                     break;
                 case Phase.Judge:
                     break;
@@ -407,12 +413,12 @@ public class Player : FSM
                 case Phase.Startup:
                     time = Config.LanceJudge;
                     phase = Phase.Judge;
-                    Host.lanceArea.Active = true;
+                    lance.Activate();
                     break;
                 case Phase.Judge:
                     time = Config.LanceRecovery;
                     phase = Phase.Recovery;
-                    Host.lanceArea.Active = false;
+                    if (lance.transform.parent == Host.transform) lance.Move(Host.transform.forward);
                     break;
                 case Phase.Recovery:
                     Host.ChangeState<MoveState>();
@@ -442,7 +448,11 @@ public class Player : FSM
 
         public override void OnUpdate(float delta)
         {
-            base.OnUpdate(delta);
+            UpdateMoveInput();
+            if (TryDodge()) return;
+            TryChange(true);
+            Current.OnUpdate(delta);
+
             Stats.Cloth.Tick(delta);
 
             var input = GetInput.InGame.ChangeCloth.ReadValue<float>();

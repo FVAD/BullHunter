@@ -31,8 +31,8 @@ MonoBehaviour:
   swordRecovery: 0.7
   swordStamina: 30
   swordDamage: 514
-  lanceStartup: 0.25
-  lanceJudge: 0.5
-  lanceRecovery: 0.25
+  lanceStartup: 0.2
+  lanceJudge: 0.1
+  lanceRecovery: 0.7
   lanceStamina: 30
   lanceDamage: 114
