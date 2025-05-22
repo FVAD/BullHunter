@@ -311,6 +311,8 @@ public class Player : FSM
             phase = Phase.Startup;
             time = Config.LanceStartup;
             timer = 0;
+
+            Anim.SetTrigger("Lance");
         }
 
         public override void OnExit()
@@ -443,6 +445,7 @@ public class Player : FSM
             timer = 0;
 
             Rb.velocity = Vector2.zero;
+            Anim.SetTrigger("Sword");
         }
 
         public override void OnExit() => Host.swordArea.Active = false;
