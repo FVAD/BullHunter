@@ -134,15 +134,17 @@ public class Player : FSM
             {
                 case PlayerStats.Weapon.Sword:
                     Stats.WeaponObject = Instantiate(Host.swordPrefab, Host.weaponSlot);
+                    Stats.WeaponObject.GetComponent<WeaponVisualizer>().Show();
                     break;
                 case PlayerStats.Weapon.Lance:
                     Stats.WeaponObject = Instantiate(Host.lancePrefab, Host.weaponSlot);
+                    Stats.WeaponObject.GetComponent<WeaponVisualizer>().Show();
                     break;
             }
         }
         protected void HideWeapon()
         {
-            if (Stats.WeaponObject) Destroy(Stats.WeaponObject);
+            if (Stats.WeaponObject) Stats.WeaponObject.GetComponent<WeaponVisualizer>().Hide(); //Destroy(Stats.WeaponObject);
             Stats.WeaponObject = null;
         }
     }
@@ -383,12 +385,13 @@ public class Player : FSM
                                 Host.lanceSlot.position,
                                 Host.lanceSlot.rotation,
                                 Host.transform).GetComponent<LanceWeapon>();
+            lance.GetComponent<WeaponVisualizer>().Show();
         }
 
         public override void OnExit()
         {
             base.OnExit();
-            if (lance && lance.transform.parent == Host.transform) Destroy(lance.gameObject);
+            if (lance && lance.transform.parent == Host.transform) lance.GetComponent<WeaponVisualizer>().Hide();
         }
 
         public override void OnUpdate(float delta)
@@ -515,7 +518,7 @@ public class Player : FSM
         private Phase phase;
         private float time, timer;
 
-        private GameObject sword;
+        private WeaponVisualizer sword;
 
         public SwordState(Player host) : base(host) { }
 
@@ -529,15 +532,14 @@ public class Player : FSM
             Anim.SetTrigger("Sword");
 
             HideWeapon();
-            sword = Instantiate(Host.swordPrefab, Host.swordSlot);
+            sword = Instantiate(Host.swordPrefab, Host.swordSlot).GetComponent<WeaponVisualizer>().Show();
         }
 
         public override void OnExit()
         {
             Host.swordArea.Active = false;
 
-            Destroy(sword);
-            sword = null;
+            sword.Hide();
         }
 
         public override void OnUpdate(float delta)

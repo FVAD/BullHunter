@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6473720078455457516}
   - component: {fileID: 2154795253776627113}
   - component: {fileID: 817120020674629518}
+  - component: {fileID: 1086366090450969051}
   m_Layer: 0
   m_Name: Excalibar
   m_TagString: Untagged
@@ -81,3 +82,17 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &1086366090450969051
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8822856881649896396}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff3ab10cac652ca40839fb12be65f770, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  show: 0.2
+  hide: 0.24
