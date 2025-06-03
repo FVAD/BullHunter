@@ -417,6 +417,105 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": true
                 }
             ]
+        },
+        {
+            ""name"": ""UIStart"",
+            ""id"": ""6972c688-3297-4fd8-b154-5b12735c6dbe"",
+            ""actions"": [
+                {
+                    ""name"": ""Navigate"",
+                    ""type"": ""Value"",
+                    ""id"": ""b0a15242-4bc1-453e-9ceb-3dde96275826"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""ScrollWheel"",
+                    ""type"": ""PassThrough"",
+                    ""id"": ""ca4e9a27-06df-4fac-b6ca-257c16a6b949"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Submit"",
+                    ""type"": ""Button"",
+                    ""id"": ""ad4c515b-50a4-458d-a9e6-d2af30215df4"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Cancel"",
+                    ""type"": ""Button"",
+                    ""id"": ""4bfb32cb-c36c-4902-b995-74edf0c209c6"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""2ac7730f-7394-4b76-b23e-a51677d5d1c7"",
+                    ""path"": ""<Gamepad>/leftStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""52601e95-e3e0-42e4-9d86-e97f11f4ff5e"",
+                    ""path"": ""<Gamepad>/dpad"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""57f2b0d8-6b5d-47df-a78e-de578f62c4aa"",
+                    ""path"": ""<Mouse>/scroll/y"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ScrollWheel"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""74049785-fbc5-426a-8baa-fb63703c7c97"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": ""Press"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Submit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2cad267a-3f70-4aab-97aa-ae16968f1454"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Cancel"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -433,6 +532,12 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
         m_InGame_Lance = m_InGame.FindAction("Lance", throwIfNotFound: true);
         m_InGame_Cloth = m_InGame.FindAction("Cloth", throwIfNotFound: true);
         m_InGame_ChangeCloth = m_InGame.FindAction("ChangeCloth", throwIfNotFound: true);
+        // UIStart
+        m_UIStart = asset.FindActionMap("UIStart", throwIfNotFound: true);
+        m_UIStart_Navigate = m_UIStart.FindAction("Navigate", throwIfNotFound: true);
+        m_UIStart_ScrollWheel = m_UIStart.FindAction("ScrollWheel", throwIfNotFound: true);
+        m_UIStart_Submit = m_UIStart.FindAction("Submit", throwIfNotFound: true);
+        m_UIStart_Cancel = m_UIStart.FindAction("Cancel", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -593,6 +698,63 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
         }
     }
     public InGameActions @InGame => new InGameActions(this);
+
+    // UIStart
+    private readonly InputActionMap m_UIStart;
+    private IUIStartActions m_UIStartActionsCallbackInterface;
+    private readonly InputAction m_UIStart_Navigate;
+    private readonly InputAction m_UIStart_ScrollWheel;
+    private readonly InputAction m_UIStart_Submit;
+    private readonly InputAction m_UIStart_Cancel;
+    public struct UIStartActions
+    {
+        private @InputActions m_Wrapper;
+        public UIStartActions(@InputActions wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Navigate => m_Wrapper.m_UIStart_Navigate;
+        public InputAction @ScrollWheel => m_Wrapper.m_UIStart_ScrollWheel;
+        public InputAction @Submit => m_Wrapper.m_UIStart_Submit;
+        public InputAction @Cancel => m_Wrapper.m_UIStart_Cancel;
+        public InputActionMap Get() { return m_Wrapper.m_UIStart; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(UIStartActions set) { return set.Get(); }
+        public void SetCallbacks(IUIStartActions instance)
+        {
+            if (m_Wrapper.m_UIStartActionsCallbackInterface != null)
+            {
+                @Navigate.started -= m_Wrapper.m_UIStartActionsCallbackInterface.OnNavigate;
+                @Navigate.performed -= m_Wrapper.m_UIStartActionsCallbackInterface.OnNavigate;
+                @Navigate.canceled -= m_Wrapper.m_UIStartActionsCallbackInterface.OnNavigate;
+                @ScrollWheel.started -= m_Wrapper.m_UIStartActionsCallbackInterface.OnScrollWheel;
+                @ScrollWheel.performed -= m_Wrapper.m_UIStartActionsCallbackInterface.OnScrollWheel;
+                @ScrollWheel.canceled -= m_Wrapper.m_UIStartActionsCallbackInterface.OnScrollWheel;
+                @Submit.started -= m_Wrapper.m_UIStartActionsCallbackInterface.OnSubmit;
+                @Submit.performed -= m_Wrapper.m_UIStartActionsCallbackInterface.OnSubmit;
+                @Submit.canceled -= m_Wrapper.m_UIStartActionsCallbackInterface.OnSubmit;
+                @Cancel.started -= m_Wrapper.m_UIStartActionsCallbackInterface.OnCancel;
+                @Cancel.performed -= m_Wrapper.m_UIStartActionsCallbackInterface.OnCancel;
+                @Cancel.canceled -= m_Wrapper.m_UIStartActionsCallbackInterface.OnCancel;
+            }
+            m_Wrapper.m_UIStartActionsCallbackInterface = instance;
+            if (instance != null)
+            {
+                @Navigate.started += instance.OnNavigate;
+                @Navigate.performed += instance.OnNavigate;
+                @Navigate.canceled += instance.OnNavigate;
+                @ScrollWheel.started += instance.OnScrollWheel;
+                @ScrollWheel.performed += instance.OnScrollWheel;
+                @ScrollWheel.canceled += instance.OnScrollWheel;
+                @Submit.started += instance.OnSubmit;
+                @Submit.performed += instance.OnSubmit;
+                @Submit.canceled += instance.OnSubmit;
+                @Cancel.started += instance.OnCancel;
+                @Cancel.performed += instance.OnCancel;
+                @Cancel.canceled += instance.OnCancel;
+            }
+        }
+    }
+    public UIStartActions @UIStart => new UIStartActions(this);
     public interface IInGameActions
     {
         void OnMove(InputAction.CallbackContext context);
@@ -605,5 +767,12 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
         void OnLance(InputAction.CallbackContext context);
         void OnCloth(InputAction.CallbackContext context);
         void OnChangeCloth(InputAction.CallbackContext context);
+    }
+    public interface IUIStartActions
+    {
+        void OnNavigate(InputAction.CallbackContext context);
+        void OnScrollWheel(InputAction.CallbackContext context);
+        void OnSubmit(InputAction.CallbackContext context);
+        void OnCancel(InputAction.CallbackContext context);
     }
 }
