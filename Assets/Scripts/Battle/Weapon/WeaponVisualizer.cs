@@ -37,7 +37,7 @@ public class WeaponVisualizer : MonoBehaviour
         handle.Stop();
         var current = progress;
         Tween.Linear(current * hide)
-             .Process(f => mat.SetFloat(id, progress = current * (1 - f)))
+             .Process(f => mat?.SetFloat(id, progress = current * (1 - f)))
              .Finish(() => Destroy(gameObject))
              .Build()
              .Play();
