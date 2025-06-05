@@ -142,6 +142,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   velocity: 10
   time: 0.5
+  config: {fileID: 11400000, guid: a882168a793d11a49bbd0baacdf35748, type: 2}
 --- !u!114 &2173918480961247724
 MonoBehaviour:
   m_ObjectHideFlags: 0

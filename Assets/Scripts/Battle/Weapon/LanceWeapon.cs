@@ -6,6 +6,7 @@ public class LanceWeapon : MonoBehaviour
 {
     [SerializeField, Title("飞行速度")] private float velocity = 10;
     [SerializeField, Title("飞行时间")] private float time = 0.5f;
+    [SerializeField, Title("配置文件")] private PlayerConfig config;
 
     private float timer = 0;
     private bool move = false;
@@ -28,6 +29,8 @@ public class LanceWeapon : MonoBehaviour
         {
             area.Active = false;
             transform.parent = def.transform;
+            // 触发受击事件
+            def.ReceiveDamage(atk, def, config.LanceDamage);
         };
     }
 

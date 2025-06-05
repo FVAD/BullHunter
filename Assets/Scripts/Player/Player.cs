@@ -533,6 +533,12 @@ public class Player : FSM
 
             HideWeapon();
             sword = Instantiate(Host.swordPrefab, Host.swordSlot).GetComponent<WeaponVisualizer>().Show();
+
+            Host.swordArea.OnAttacking += (atk, def) =>
+            {
+                Host.swordArea.Active = false;
+                def.ReceiveDamage(atk, def, Config.SwordDamage);
+            };
         }
 
         public override void OnExit()
