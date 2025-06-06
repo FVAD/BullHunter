@@ -12,3 +12,147 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57182116041845140be12a223eda3166, type: 3}
   m_Name: AudioMapConfig
   m_EditorClassIdentifier: Bingyan.DevKit:Bingyan:AudioMapConfig
+  scriptPath: Assets/Config/Audio/AudioMap.Generated.cs
+  groups:
+  - Name: BGM
+    Bus: {fileID: 2924595204158660967, guid: 18354a452b4022041b9c489a2dfb1082, type: 2}
+    Infos:
+    - Name: Title
+      Clips:
+      - {fileID: 8300000, guid: a1b452020b82bbe4cadd868b85963365, type: 3}
+      Loop: 1
+      Range: 0
+      Pitch:
+        min: 0
+        max: 0
+      Bus: {fileID: 2924595204158660967, guid: 18354a452b4022041b9c489a2dfb1082, type: 2}
+    - Name: Battle
+      Clips:
+      - {fileID: 8300000, guid: f5d03257d0b8c8143879ee5a1d32e6d5, type: 3}
+      Loop: 1
+      Range: 0
+      Pitch:
+        min: 0
+        max: 0
+      Bus: {fileID: 2924595204158660967, guid: 18354a452b4022041b9c489a2dfb1082, type: 2}
+  - Name: UI
+    Bus: {fileID: -2652002863448231291, guid: 18354a452b4022041b9c489a2dfb1082, type: 2}
+    Infos:
+    - Name: Point
+      Clips:
+      - {fileID: 8300000, guid: 2d4175a02d4ff544287a09ffdfcda6fa, type: 3}
+      Loop: 0
+      Range: 0
+      Pitch:
+        min: -0.2
+        max: 0.2
+      Bus: {fileID: -2652002863448231291, guid: 18354a452b4022041b9c489a2dfb1082, type: 2}
+    - Name: Click
+      Clips:
+      - {fileID: 8300000, guid: 464df82192c95774d966111c41e2d7f6, type: 3}
+      Loop: 0
+      Range: 0
+      Pitch:
+        min: -0.2
+        max: 0.2
+      Bus: {fileID: -2652002863448231291, guid: 18354a452b4022041b9c489a2dfb1082, type: 2}
+    - Name: Popup
+      Clips:
+      - {fileID: 8300000, guid: 8cb3a43e6589c744685d5a9c45b2191a, type: 3}
+      - {fileID: 8300000, guid: c8cae7f36e1c2ce4eb38e3c9286940d6, type: 3}
+      - {fileID: 8300000, guid: b6235589603683d4a87b96427b836a84, type: 3}
+      Loop: 0
+      Range: 0
+      Pitch:
+        min: -0.2
+        max: 0.2
+      Bus: {fileID: -2652002863448231291, guid: 18354a452b4022041b9c489a2dfb1082, type: 2}
+  - Name: Sword
+    Bus: {fileID: -2652002863448231291, guid: 18354a452b4022041b9c489a2dfb1082, type: 2}
+    Infos:
+    - Name: Use
+      Clips:
+      - {fileID: 8300000, guid: 01dcf42bd79ca694d8b3c627ad69ba8f, type: 3}
+      Loop: 0
+      Range: 0
+      Pitch:
+        min: -0.2
+        max: 0.2
+      Bus: {fileID: -2652002863448231291, guid: 18354a452b4022041b9c489a2dfb1082, type: 2}
+    - Name: Hit
+      Clips:
+      - {fileID: 8300000, guid: d8d258be8b258964d9834a779f6c64ef, type: 3}
+      Loop: 0
+      Range: 0
+      Pitch:
+        min: -0.2
+        max: 0.2
+      Bus: {fileID: -2652002863448231291, guid: 18354a452b4022041b9c489a2dfb1082, type: 2}
+  - Name: Lance
+    Bus: {fileID: -2652002863448231291, guid: 18354a452b4022041b9c489a2dfb1082, type: 2}
+    Infos:
+    - Name: Use
+      Clips:
+      - {fileID: 8300000, guid: 7c12278c34335194ca94b083d4f11758, type: 3}
+      Loop: 0
+      Range: 0
+      Pitch:
+        min: -0.2
+        max: 0.2
+      Bus: {fileID: -2652002863448231291, guid: 18354a452b4022041b9c489a2dfb1082, type: 2}
+    - Name: Hit
+      Clips:
+      - {fileID: 8300000, guid: b0c0440c733451c4891cdf24d9da79cd, type: 3}
+      Loop: 0
+      Range: 0
+      Pitch:
+        min: -0.2
+        max: 0.2
+      Bus: {fileID: -2652002863448231291, guid: 18354a452b4022041b9c489a2dfb1082, type: 2}
+  - Name: Cat
+    Bus: {fileID: -2652002863448231291, guid: 18354a452b4022041b9c489a2dfb1082, type: 2}
+    Infos:
+    - Name: Walk
+      Clips:
+      - {fileID: 8300000, guid: 6803bb633cf6aae41bb0507e5b6462e3, type: 3}
+      - {fileID: 8300000, guid: d6313596314040344a0a36eaede5deb4, type: 3}
+      Loop: 1
+      Range: 0
+      Pitch:
+        min: -0.2
+        max: 0.2
+      Bus: {fileID: -2652002863448231291, guid: 18354a452b4022041b9c489a2dfb1082, type: 2}
+    - Name: Die
+      Clips:
+      - {fileID: 8300000, guid: 46df48863d6dce1409872aa73871e747, type: 3}
+      - {fileID: 8300000, guid: 2c26a5dc24f2fc941b50905420e51817, type: 3}
+      - {fileID: 8300000, guid: 33b3b8f4f6e79394cb26110f785701c1, type: 3}
+      - {fileID: 8300000, guid: 3b576084bc8f3d74d8eabdd855d74428, type: 3}
+      Loop: 0
+      Range: 0
+      Pitch:
+        min: 0
+        max: 0
+      Bus: {fileID: -2652002863448231291, guid: 18354a452b4022041b9c489a2dfb1082, type: 2}
+    - Name: Run
+      Clips:
+      - {fileID: 8300000, guid: bee86eedd6ec7c448935c4c1cb4068d2, type: 3}
+      - {fileID: 8300000, guid: 880a4aad553990b4fa603deaf82b53f0, type: 3}
+      Loop: 1
+      Range: 0
+      Pitch:
+        min: -0.2
+        max: 0.2
+      Bus: {fileID: -2652002863448231291, guid: 18354a452b4022041b9c489a2dfb1082, type: 2}
+  - Name: Bull
+    Bus: {fileID: -2652002863448231291, guid: 18354a452b4022041b9c489a2dfb1082, type: 2}
+    Infos:
+    - Name: Roar
+      Clips:
+      - {fileID: 8300000, guid: 336bc2c75acf22748b7e023f0b7757eb, type: 3}
+      Loop: 0
+      Range: 0
+      Pitch:
+        min: 0
+        max: 0
+      Bus: {fileID: -2652002863448231291, guid: 18354a452b4022041b9c489a2dfb1082, type: 2}

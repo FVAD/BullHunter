@@ -31,6 +31,8 @@ public class LanceWeapon : MonoBehaviour
             transform.parent = def.transform;
             // 触发受击事件
             def.ReceiveDamage(atk, def, config.LanceDamage);
+
+            AudioMap.Lance.Hit.Play();
         };
     }
 

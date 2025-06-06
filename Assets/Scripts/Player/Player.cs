@@ -67,6 +67,8 @@ public class Player : FSM
         {
             swordArea.Active = false;
             def.ReceiveDamage(atk, def, config.SwordDamage);
+
+            AudioMap.Sword.Hit.Play();
         };
     }
 
@@ -314,11 +316,15 @@ public class Player : FSM
             {
                 base.OnEnter();
                 GetInput.InGame.Sprint.started += Accelerate;
+
+                AudioMap.Cat.Walk.Play();
             }
             public override void OnExit()
             {
                 base.OnExit();
                 GetInput.InGame.Sprint.started -= Accelerate;
+
+                AudioMap.Cat.Walk.Stop();
             }
             private void Accelerate(InputAction.CallbackContext ctx) => Subhost.ChangeSubstate<RunState>();
 
@@ -340,11 +346,15 @@ public class Player : FSM
             {
                 base.OnEnter();
                 GetInput.InGame.Sprint.canceled += Decelerate;
+
+                AudioMap.Cat.Run.Play();
             }
             public override void OnExit()
             {
                 base.OnExit();
                 GetInput.InGame.Sprint.canceled -= Decelerate;
+
+                AudioMap.Cat.Run.Stop();
             }
 
             private void Decelerate(InputAction.CallbackContext ctx) => Subhost.ChangeSubstate<WalkState>();
@@ -392,6 +402,8 @@ public class Player : FSM
                                 Host.lanceSlot.rotation,
                                 Host.transform).GetComponent<LanceWeapon>();
             lance.GetComponent<WeaponVisualizer>().Show();
+
+            AudioMap.Lance.Use.Play();
         }
 
         public override void OnExit()
@@ -539,6 +551,8 @@ public class Player : FSM
 
             HideWeapon();
             sword = Instantiate(Host.swordPrefab, Host.swordSlot).GetComponent<WeaponVisualizer>().Show();
+
+            AudioMap.Sword.Use.Play();
         }
 
         public override void OnExit()
@@ -586,6 +600,10 @@ public class Player : FSM
     {
         public DeathState(Player host) : base(host) { }
 
-        public override void OnEnter() => Anim.SetTrigger("Die");
+        public override void OnEnter()
+        {
+            Anim.SetTrigger("Die");
+            AudioMap.Cat.Die.Play();
+        }
     }
 }
