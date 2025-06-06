@@ -12,18 +12,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6598b912f3f03904d97848a4946f03f1, type: 3}
   m_Name: BullConfig
   m_EditorClassIdentifier: 
+  invulnerableTime: 1
+  idleDirChangeLockTime:
+  - 1
+  - 2
   health_bull1: 2000
   takeDamageRate_bull1: 1
-  speed_bull1: 30
+  speed_bull1: 5
   attackPower_bull1: 10
-  dashSpeed_bull1: 30
+  dashSpeed_bull1: 15
   dashBeforeDelay_bull1: 1
   dashAfterDelay_bull1: 2
+  bigCircleSpeed_bull1: 180
+  bigCircleBeforeDelay_bull1: 1
+  bigCircleAfterDelay_bull1: 2
   idleMaintainTargetDistance_bull1: 8
-  idleMaintainTargetDistanceOffset_bull1: 0.3
-  idleTriggerBigCircleDistance_bull1: 2
+  idleMaintainTargetDistanceOffset_bull1: 3
+  idleTriggerBigCircleDistance_bull1: 3
   takeDamageRateIdle_bull1: 0.85
   idleMoveDirectionAdjustMinTime_bull1: 5
+  idleAngryConvertTime_bull1: 30
   takeDamageRateVeryAngry_bull1: 1.25
   veryAngrySpeedRate_bull1: 1.5
   takeDamageRateTired_bull1: 1.5
