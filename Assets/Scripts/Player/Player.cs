@@ -120,6 +120,8 @@ public class Player : FSM
                 Stats.CurrentWeapon = PlayerStats.Weapon.Cloth;
                 HideWeapon();
                 Host.ChangeState<ClothState>();
+
+                AudioMap.Cloth.Change.Play();
                 return true;
             }
             if (GetInput.InGame.Sword.WasPressedThisFrame() && Stats.CurrentWeapon != PlayerStats.Weapon.Sword)
@@ -463,8 +465,6 @@ public class Player : FSM
             base.OnEnter();
             Stats.Cloth.SetVisible(true);
             changed = false;
-
-            AudioMap.Cloth.Change.Play();
         }
         public override void OnExit()
         {
