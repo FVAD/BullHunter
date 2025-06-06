@@ -126,11 +126,15 @@ public class Player : FSM
             {
                 Stats.CurrentWeapon = PlayerStats.Weapon.Sword;
                 if (show) ShowWeapon();
+
+                AudioMap.Weapon.Change.Play();
             }
             if (GetInput.InGame.Lance.WasPressedThisFrame() && Stats.CurrentWeapon != PlayerStats.Weapon.Lance)
             {
                 Stats.CurrentWeapon = PlayerStats.Weapon.Lance;
                 if (show) ShowWeapon();
+
+                AudioMap.Weapon.Change.Play();
             }
             return false;
         }
@@ -459,6 +463,8 @@ public class Player : FSM
             base.OnEnter();
             Stats.Cloth.SetVisible(true);
             changed = false;
+
+            AudioMap.Cloth.Change.Play();
         }
         public override void OnExit()
         {
@@ -509,6 +515,8 @@ public class Player : FSM
             Anim.SetTrigger("Dodge");
 
             HideWeapon();
+
+            AudioMap.Cat.Dodge.Play();
         }
         public override void OnExit()
         {

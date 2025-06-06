@@ -144,6 +144,15 @@ MonoBehaviour:
         min: -0.2
         max: 0.2
       Bus: {fileID: -2652002863448231291, guid: 18354a452b4022041b9c489a2dfb1082, type: 2}
+    - Name: Dodge
+      Clips:
+      - {fileID: 8300000, guid: 8f45f5e468e3a8b41815798e5c0723ff, type: 3}
+      Loop: 0
+      Range: 0
+      Pitch:
+        min: -0.2
+        max: 0.2
+      Bus: {fileID: -2652002863448231291, guid: 18354a452b4022041b9c489a2dfb1082, type: 2}
   - Name: Bull
     Bus: {fileID: -2652002863448231291, guid: 18354a452b4022041b9c489a2dfb1082, type: 2}
     Infos:
@@ -155,4 +164,37 @@ MonoBehaviour:
       Pitch:
         min: 0
         max: 0
+      Bus: {fileID: -2652002863448231291, guid: 18354a452b4022041b9c489a2dfb1082, type: 2}
+  - Name: Cloth
+    Bus: {fileID: -2652002863448231291, guid: 18354a452b4022041b9c489a2dfb1082, type: 2}
+    Infos:
+    - Name: Use
+      Clips:
+      - {fileID: 8300000, guid: 28d79d072daa0814092ec561c2647add, type: 3}
+      Loop: 0
+      Range: 0
+      Pitch:
+        min: -0.2
+        max: 0.2
+      Bus: {fileID: -2652002863448231291, guid: 18354a452b4022041b9c489a2dfb1082, type: 2}
+    - Name: Change
+      Clips:
+      - {fileID: 8300000, guid: 89bf95d7896d3c0408d87d270b5fcf2a, type: 3}
+      Loop: 0
+      Range: 0
+      Pitch:
+        min: -0.2
+        max: 0.2
+      Bus: {fileID: -2652002863448231291, guid: 18354a452b4022041b9c489a2dfb1082, type: 2}
+  - Name: Weapon
+    Bus: {fileID: -2652002863448231291, guid: 18354a452b4022041b9c489a2dfb1082, type: 2}
+    Infos:
+    - Name: Change
+      Clips:
+      - {fileID: 8300000, guid: c8af07687ef24a3439d1a098e48e638c, type: 3}
+      Loop: 0
+      Range: 0
+      Pitch:
+        min: -0.2
+        max: 0.2
       Bus: {fileID: -2652002863448231291, guid: 18354a452b4022041b9c489a2dfb1082, type: 2}

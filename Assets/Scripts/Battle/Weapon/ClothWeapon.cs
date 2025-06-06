@@ -57,6 +57,8 @@ public class ClothWeapon : MonoBehaviour
         idx = target;
         rend.material = Dict[CurrentColour].Mat;
         timer = 0;
+
+        AudioMap.Cloth.Change.Play();
     }
     public void Next() => Change(1);
     public void Prev() => Change(-1);
@@ -79,5 +81,7 @@ public class ClothWeapon : MonoBehaviour
                 break;
         }
         Debug.Log($"使用了{CurrentColour}斗牛布");
+
+        AudioMap.Cloth.Use.Play();
     }
 }

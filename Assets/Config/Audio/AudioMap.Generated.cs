@@ -27,9 +27,19 @@ public static class AudioMap
 		public static readonly AudioRef Walk = new AudioRef("Cat/Walk");
 		public static readonly AudioRef Die = new AudioRef("Cat/Die");
 		public static readonly AudioRef Run = new AudioRef("Cat/Run");
+		public static readonly AudioRef Dodge = new AudioRef("Cat/Dodge");
 	}
 	public static class Bull
 	{
 		public static readonly AudioRef Roar = new AudioRef("Bull/Roar");
+	}
+	public static class Cloth
+	{
+		public static readonly AudioRef Use = new AudioRef("Cloth/Use");
+		public static readonly AudioRef Change = new AudioRef("Cloth/Change");
+	}
+	public static class Weapon
+	{
+		public static readonly AudioRef Change = new AudioRef("Weapon/Change");
 	}
 }
