@@ -526,13 +526,13 @@ MonoBehaviour:
       - m_Target: {fileID: 1929634100}
         m_TargetAssemblyTypeName: SceneLoader, Assembly-CSharp
         m_MethodName: LoadStartScene
-        m_Mode: 1
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument: Start
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &306027612
@@ -580,18 +580,18 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 306027610}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 257829359}
-  m_Father: {fileID: 1410245776}
+  m_Father: {fileID: 1538857933}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 762.8, y: -620.81}
-  m_SizeDelta: {x: 165.25, y: 66.8}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 764.2201, y: -455.32333}
+  m_SizeDelta: {x: -1751.9099, y: -1003.36}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &356313954
 GameObject:
@@ -1292,8 +1292,6 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 1538857933}
-  - {fileID: 1621778412}
-  - {fileID: 306027614}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1385,7 +1383,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1656145570}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.2530928
+  m_Size: 0.19284302
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -1460,6 +1458,8 @@ RectTransform:
   m_Children:
   - {fileID: 212630883}
   - {fileID: 1451054922}
+  - {fileID: 306027614}
+  - {fileID: 1621778412}
   m_Father: {fileID: 1410245776}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1623,6 +1623,7 @@ GameObject:
   - component: {fileID: 1554015156}
   - component: {fileID: 1554015155}
   - component: {fileID: 1554015154}
+  - component: {fileID: 1554015157}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1695,6 +1696,39 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1554015157
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1554015153}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_RenderShadows: 1
+  m_RequiresDepthTextureOption: 2
+  m_RequiresOpaqueTextureOption: 2
+  m_CameraType: 0
+  m_Cameras: []
+  m_RendererIndex: -1
+  m_VolumeLayerMask:
+    serializedVersion: 2
+    m_Bits: 1
+  m_VolumeTrigger: {fileID: 0}
+  m_VolumeFrameworkUpdateModeOption: 2
+  m_RenderPostProcessing: 0
+  m_Antialiasing: 0
+  m_AntialiasingQuality: 2
+  m_StopNaN: 0
+  m_Dithering: 0
+  m_ClearDepth: 1
+  m_AllowXRRendering: 1
+  m_RequiresDepthTexture: 0
+  m_RequiresColorTexture: 0
+  m_Version: 2
 --- !u!1 &1621778411
 GameObject:
   m_ObjectHideFlags: 0
@@ -1718,13 +1752,13 @@ RectTransform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1621778411}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 28992303}
-  m_Father: {fileID: 1410245776}
-  m_RootOrder: 1
+  m_Father: {fileID: 1538857933}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
@@ -1953,3 +1987,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89f98173d4422bd4f8b8680a6e95a0dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Startname: Start
+  FirsLevelname: 
+  LastLevelname: 
