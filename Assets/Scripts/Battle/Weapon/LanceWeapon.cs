@@ -1,5 +1,6 @@
 ﻿using Bingyan;
 using UnityEngine;
+using UnityEngine.AddressableAssets;
 
 [RequireComponent(typeof(AttackArea))]
 public class LanceWeapon : MonoBehaviour
@@ -33,6 +34,8 @@ public class LanceWeapon : MonoBehaviour
             def.ReceiveDamage(atk, def, config.LanceDamage);
 
             AudioMap.Lance.Hit.Play();
+            Addressables.LoadAssetAsync<GameObject>(PathHelper.EFF_BLOOD_LANCE).Completed += handle =>
+                Instantiate(handle.Result, atk.HitPoint, Quaternion.identity).GetComponent<ParticleSystem>().Play();
         };
     }
 

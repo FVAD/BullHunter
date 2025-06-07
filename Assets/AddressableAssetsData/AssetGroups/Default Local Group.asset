@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Default Local Group
+  m_EditorClassIdentifier: 
+  m_GroupName: Default Local Group
+  m_Data:
+    m_SerializedData: []
+  m_GUID: ae3d02f6b5803504c9deaa708d56840d
+  m_SerializeEntries:
+  - m_GUID: 7e4b236565bcb664a9571fe135291f20
+    m_Address: Assets/Arts/Effect/eff_blood_lance.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  - m_GUID: 5da81d5d1c0490f4a9c14433d8b62e7a
+    m_Address: Assets/Arts/Effect/eff_blood_sword.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: 158091eb9aad3924789882b97051febb, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 943d95962d24a9c4cb03673389ffb859, type: 2}
+    - {fileID: 11400000, guid: 1ebb0ec63242f2b43b96b386bdaefa72, type: 2}

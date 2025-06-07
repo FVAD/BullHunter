@@ -22,6 +22,10 @@ public class AttackArea : MonoBehaviour
     public event Action<AttackArea, DefendArea> OnAttacking = (atk, def) => Debug.Log($"{atk.name}对{def.name}发起攻击");
     private Collider col;
 
+    private RaycastHit[] hits;
+    private const int MAX_HIT = 19;
+    public Vector3 HitPoint { get; private set; }
+
     private bool active;
     public bool Active
     {
@@ -35,12 +39,29 @@ public class AttackArea : MonoBehaviour
         Active = false;
         tag = owner.ToString();
         target = owner switch { Owner.Player => "Enemy", Owner.Enemy => "Player", _ => "Default" };
+        hits = new RaycastHit[MAX_HIT];
     }
 
     private void OnTriggerStay(Collider collider)
     {
-        if (Active && collider.CompareTag(target) &&
-            collider.TryGetComponent(out DefendArea other))
-            OnAttacking?.Invoke(this, other);
+        if (!Active || !collider.CompareTag(target) ||
+            !collider.TryGetComponent(out DefendArea other))
+            return;
+
+        var dir = (owner switch
+        {
+            Owner.Player => BattleManager.Instance.Enemy.transform,
+            Owner.Enemy => BattleManager.Instance.Player.transform,
+            _ => throw new Exception()
+        }).position - transform.position;
+        var cnt = Physics.RaycastNonAlloc(transform.position, dir, hits);
+        for (int i = 0; i < cnt; i++)
+        {
+            if (!hits[i].collider.CompareTag(target)) continue;
+            HitPoint = hits[i].point;
+            break;
+        }
+
+        OnAttacking?.Invoke(this, other);
     }
 }

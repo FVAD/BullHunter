@@ -3,6 +3,7 @@ using Bingyan;
 using System;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
+using UnityEngine.AddressableAssets;
 
 public class Player : FSM
 {
@@ -69,6 +70,8 @@ public class Player : FSM
             def.ReceiveDamage(atk, def, config.SwordDamage);
 
             AudioMap.Sword.Hit.Play();
+            Addressables.LoadAssetAsync<GameObject>(PathHelper.EFF_BLOOD_SWORD).Completed += handle =>
+                Instantiate(handle.Result, atk.HitPoint, Quaternion.identity).GetComponent<ParticleSystem>().Play();
         };
     }
 
