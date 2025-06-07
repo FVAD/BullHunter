@@ -22,6 +22,7 @@ public class Player : FSM
     [Header("特效")]
     [SerializeField, Title("走")] private ParticleSystem walkEff;
     [SerializeField, Title("跑")] private ParticleSystem runEff;
+    [SerializeField, Title("冲")] private ParticleSystem dodgeEff;
 
     public PlayerStats Stats { get; private set; }
     public class PlayerStats
@@ -527,11 +528,14 @@ public class Player : FSM
             HideWeapon();
 
             AudioMap.Cat.Dodge.Play();
+            Host.dodgeEff.Play();
         }
         public override void OnExit()
         {
             Stats.Invulnerable = false;
             Flow.Create().Delay(Config.DodgeCooldown).Then(() => Ready = true).Run();
+
+            Host.dodgeEff.Stop();
         }
 
         public override void OnFixedUpdate(float delta)
