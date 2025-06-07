@@ -144,6 +144,7 @@ public class Bull1 : FSM
             }
         };
 
+        AudioMap.Bull.Roar.Play();
     }
 
     protected override void Update()
@@ -493,6 +494,8 @@ public class Bull1 : FSM
             // 这里可以实现愤怒状态的逻辑，比如增加攻击力、改变行为等
             Debug.Log("进入愤怒状态");
             adjustDistanceFlag = true;
+
+            AudioMap.Bull.Roar.Play();
         }
 
         public override void OnUpdate(float delta)

@@ -19,6 +19,9 @@ public class Player : FSM
     [SerializeField, Title("布预制")] private GameObject clothPrefab;
     [SerializeField, Title("剑预制")] private GameObject swordPrefab;
     [SerializeField, Title("枪预制")] private GameObject lancePrefab;
+    [Header("特效")]
+    [SerializeField, Title("走")] private ParticleSystem walkEff;
+    [SerializeField, Title("跑")] private ParticleSystem runEff;
 
     public PlayerStats Stats { get; private set; }
     public class PlayerStats
@@ -327,6 +330,7 @@ public class Player : FSM
                 GetInput.InGame.Sprint.started += Accelerate;
 
                 AudioMap.Cat.Walk.Play();
+                Host.walkEff.Play();
             }
             public override void OnExit()
             {
@@ -334,6 +338,7 @@ public class Player : FSM
                 GetInput.InGame.Sprint.started -= Accelerate;
 
                 AudioMap.Cat.Walk.Stop();
+                Host.walkEff.Stop();
             }
             private void Accelerate(InputAction.CallbackContext ctx) => Subhost.ChangeSubstate<RunState>();
 
@@ -357,6 +362,7 @@ public class Player : FSM
                 GetInput.InGame.Sprint.canceled += Decelerate;
 
                 AudioMap.Cat.Run.Play();
+                Host.runEff.Play();
             }
             public override void OnExit()
             {
@@ -364,6 +370,7 @@ public class Player : FSM
                 GetInput.InGame.Sprint.canceled -= Decelerate;
 
                 AudioMap.Cat.Run.Stop();
+                Host.runEff.Stop();
             }
 
             private void Decelerate(InputAction.CallbackContext ctx) => Subhost.ChangeSubstate<WalkState>();
