@@ -16,3 +16,4 @@ MonoBehaviour:
   startup: 2
   cooldown: 120
   mat: {fileID: 2100000, guid: 2f324d4e0cda18445acae1f7c9ee0ca8, type: 2}
+  eff: {fileID: 2470709781123877521, guid: a110421e8b294fe4b8194888352382e2, type: 3}

@@ -83,5 +83,6 @@ public class ClothWeapon : MonoBehaviour
         Debug.Log($"使用了{CurrentColour}斗牛布");
 
         AudioMap.Cloth.Use.Play();
+        Instantiate(config.Eff, transform).GetComponent<ParticleSystem>().Play();
     }
 }

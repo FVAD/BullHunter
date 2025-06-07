@@ -8,11 +8,13 @@ public class ClothConfig : ScriptableObject
     [SerializeField, Title("使用前摇")] private float startup = 2;
     [SerializeField, Title("冷却时间")] private float cooldown = 120;
     [SerializeField, Title("材质")] private Material mat;
+    [SerializeField, Title("使用特效")] private GameObject eff;
 
     public ClothWeapon.Colour Colour => colour;
     public float Startup => startup;
     public float Cooldown => cooldown;
     public Material Mat => mat;
+    public GameObject Eff => eff;
 
     public bool Ready => timer >= Cooldown;
     private float timer;
