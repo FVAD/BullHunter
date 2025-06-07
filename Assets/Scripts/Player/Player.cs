@@ -27,7 +27,18 @@ public class Player : FSM
     public PlayerStats Stats { get; private set; }
     public class PlayerStats
     {
-        public float Stamina { get; set; }
+        private float stamina;
+        public float Stamina
+        {
+            get => stamina;
+            set
+            {
+                stamina = value;
+                OnStaminaChange?.Invoke(stamina);
+            }
+        }
+        public Action<float> OnStaminaChange;
+
         public float CurrentSpeed { get; set; }
         public bool Invulnerable { get; set; }
         public enum Weapon

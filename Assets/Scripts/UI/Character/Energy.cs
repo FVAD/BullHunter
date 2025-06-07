@@ -5,23 +5,24 @@ using UnityEngine.UI;
 
 public class Energy : MonoBehaviour
 {
-    [SerializeField]private Slider energySlider; 
-    [Range(0,Mathf.Infinity)]private float energyValue;
+    [SerializeField] private Slider energySlider;
+    [Range(0, Mathf.Infinity)] private float energyValue;
     private float maxEnergy;
     private void UpdateEnergy(float value)
     {
         if (energyValue > maxEnergy) energyValue = maxEnergy;
         if (energyValue <= 0) energyValue = 0;
-        energySlider.value = value/maxEnergy;
+        energySlider.value = value / maxEnergy;
     }
     public void SetMaxEnergy(float value)
     {
         maxEnergy = value;
     }
-    private void Update()
-    {
-        
-        UpdateEnergy(energyValue);
 
+    private void Start()
+    {
+        var stats = BattleManager.Instance.Player.Stats;
+        stats.OnStaminaChange += UpdateEnergy;
+        maxEnergy = stats.Stamina;
     }
 }
