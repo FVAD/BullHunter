@@ -32,6 +32,7 @@ public static class AudioMap
 	public static class Bull
 	{
 		public static readonly AudioRef Roar = new AudioRef("Bull/Roar");
+		public static readonly AudioRef Warning = new AudioRef("Bull/Warning");
 	}
 	public static class Cloth
 	{

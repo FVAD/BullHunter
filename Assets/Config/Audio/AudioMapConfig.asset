@@ -165,6 +165,15 @@ MonoBehaviour:
         min: 0
         max: 0
       Bus: {fileID: -2652002863448231291, guid: 18354a452b4022041b9c489a2dfb1082, type: 2}
+    - Name: Warning
+      Clips:
+      - {fileID: 8300000, guid: 9a68a567413f0624cbae282325bebec7, type: 3}
+      Loop: 0
+      Range: 0
+      Pitch:
+        min: 0
+        max: 0
+      Bus: {fileID: -2652002863448231291, guid: 18354a452b4022041b9c489a2dfb1082, type: 2}
   - Name: Cloth
     Bus: {fileID: -2652002863448231291, guid: 18354a452b4022041b9c489a2dfb1082, type: 2}
     Infos:

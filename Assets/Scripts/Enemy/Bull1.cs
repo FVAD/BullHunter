@@ -276,6 +276,8 @@ public class Bull1 : FSM
             // 这里可以实现冲刺攻击的协程逻辑
             // 比如计算冲刺方向和速度，处理前摇和后摇等
             // Anim.SetTrigger("DashAttack");
+            AudioMap.Bull.Warning.Play();
+
             Debug.Log("开始冲刺攻击");
             yield return new WaitForSeconds(Config.DashBeforeDelayBull1); // 前摇时间
             Vector3 direction = (targetPosition - Host.transform.position).normalized;
