@@ -8,6 +8,7 @@ using UnityEngine.AddressableAssets;
 public class Player : FSM
 {
     [SerializeField, Title("配置")] private PlayerConfig config;
+    [SerializeField, Title("当前实例Flag控制器引用")] private GlobalFlagController flagController;
     [Header("判定")]
     [SerializeField, Title("剑区域")] private AttackArea swordArea;
     [Header("槽位")]

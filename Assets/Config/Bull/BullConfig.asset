@@ -13,12 +13,13 @@ MonoBehaviour:
   m_Name: BullConfig
   m_EditorClassIdentifier: 
   invulnerableTime: 1
+  checkMapEdgeDistance: 2
   idleDirChangeLockTime:
   - 1
   - 2
   health_bull1: 2000
   takeDamageRate_bull1: 1
-  speed_bull1: 5
+  speed_bull1: 4
   attackPower_bull1: 10
   dashSpeed_bull1: 15
   dashBeforeDelay_bull1: 1
@@ -26,9 +27,9 @@ MonoBehaviour:
   bigCircleSpeed_bull1: 180
   bigCircleBeforeDelay_bull1: 1
   bigCircleAfterDelay_bull1: 2
-  idleMaintainTargetDistance_bull1: 8
+  idleMaintainTargetDistance_bull1: 10
   idleMaintainTargetDistanceOffset_bull1: 3
-  idleTriggerBigCircleDistance_bull1: 3
+  idleTriggerBigCircleDistance_bull1: 4
   takeDamageRateIdle_bull1: 0.85
   idleMoveDirectionAdjustMinTime_bull1: 5
   idleAngryConvertTime_bull1: 30

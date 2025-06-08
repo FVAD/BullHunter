@@ -6,6 +6,7 @@ public class BullConfig : ScriptableObject
 {
     [Header("通用")]
     [SerializeField, Title("受击无敌时间")] private float invulnerableTime = 1f;
+    [SerializeField, Title("检测地图边缘距离")] private float checkMapEdgeDistance = 2f;
     [SerializeField, Header("IDLE状态随机调整速度时间（靠近远离， 环绕）")] private float[] idleDirChangeLockTime = new float[2] { 1f, 2f };
     [Header("基础")]
     [SerializeField, Title("bull1生命值")] private float health_bull1 = 100f;
@@ -26,11 +27,14 @@ public class BullConfig : ScriptableObject
     [SerializeField, Title("bull1IDLE承伤系数")] private float takeDamageRateIdle_bull1 = 0.85f;
     [SerializeField, Title("bull1IDLE移动方向调整最小时间")] private float idleMoveDirectionAdjustMinTime_bull1 = 5f;
     [SerializeField, Title("bull1IDLE愤怒转换时间")] private float idleAngryConvertTime_bull1 = 30f;
+    [SerializeField, Title("bull1IDLE疲劳转换生命值丢失阈值")] private float idleToTiredHealthDeRate_bull1 = 0.1f;
+    [SerializeField, Title("bull1Angry调整距离最大时间")] private float angryAdjustMaxTime_bull1 = 10f;
     [SerializeField, Title("bull1VeryAngry承伤系数")] private float takeDamageRateVeryAngry_bull1 = 1.25f;
     [SerializeField, Title("bull1VeryAngry速度加成系数")] private float veryAngrySpeedRate_bull1 = 1.5f;
     [SerializeField, Title("bull1Tired承伤系数")] private float takeDamageRateTired_bull1 = 1.5f;
     [SerializeField, Title("bull1Tired持续时长（s）")] private float tiredDuration_bull1 = 3f;
     [SerializeField, Title("bull1Tired持续时生命值丢失阈值")] private float tiredHealthDeRate_bull1 = 0.2f;
+    [SerializeField, Title("bull1犹疑冲刺前摇比率（>100%）")] private float hesitateDashBeforeDelayRate_bull1 = 1.5f;
 
     public float HealthBull1 => health_bull1;
     public float TakeDamageRateBull1 => takeDamageRate_bull1;
@@ -53,7 +57,11 @@ public class BullConfig : ScriptableObject
     public float TiredDurationBull1 => tiredDuration_bull1;
     public float TiredHealthDeRateBull1 => tiredHealthDeRate_bull1;
     public float InvulnerableTime => invulnerableTime;
+    public float CheckMapEdgeDistance => checkMapEdgeDistance;
 
     public float[] IdleDirChangeLockTime => idleDirChangeLockTime;
     public float IdleAngryConvertTimeBull1 => idleAngryConvertTime_bull1;
+    public float IdleToTiredHealthDeRateBull1 => idleToTiredHealthDeRate_bull1;
+    public float AngryAdjustMaxTimeBull1 => angryAdjustMaxTime_bull1;
+    public float HesitateDashBeforeDelayRateBull1 => hesitateDashBeforeDelayRate_bull1;
 }

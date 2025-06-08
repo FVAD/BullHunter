@@ -2,12 +2,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Bingyan;
+using Cinemachine;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class Bull1 : FSM
 {
     [SerializeField, Title("配置")] private BullConfig config;
+    [SerializeField, Title("地图中心定位（半径为scale.y）")] private Transform mapCenter;
     public BullStats Stats { get; private set; }
     public class BullStats
     {
@@ -19,10 +21,13 @@ public class Bull1 : FSM
         public int lanceAttackedCount { get; set; } // 用于记录枪攻击次数
         public float invulnerableTimeCounter { get; set; } // 用于记录无敌时间计数器
         public bool passionateFlag { get; set; } = false; // 激昂状态Flag
+        public float passionateTimeCounter { get; set; } // 激昂状态时间计数器
         public bool hesitateFlag { get; set; } = false; // 犹疑状态Flag
+        public float hesitateTimeCounter { get; set; } // 犹疑状态时间计数器
         public bool moveAbleFlag { get; set; }  // 移动标志，触发Bull技能时这个标志应当变为False
         public bool dashFlag { get; set; } // 冲刺正在进行标志
         public bool bigCircleFlag { get; set; } // 大回旋正在进行标志
+
     }
 
     private Rigidbody rb;
@@ -50,40 +55,56 @@ public class Bull1 : FSM
 
     private Quaternion _targetRotation;
 
-    private RaycastHit frontHitInfo, backHitInfo;
-    private RaycastResult frontRaycastResult, backRaycastResult;
-
-    private void DetectFrontAndBack()
+    public void SetPassionateFlag(bool flag = true)
     {
-        // 检测前方和后方是否会有空洞，用于判断前方和后方是否是有效的地面（地图边缘确定）
-        Ray frontRay = new Ray(transform.position, transform.forward);
-        Ray backRay = new Ray(transform.position, -transform.forward);
-
-        if (Physics.Raycast(frontRay, out frontHitInfo, 1f))
+        // 设置Bull1的激昂状态标志
+        Stats.passionateFlag = flag;
+        if (flag)
         {
-            frontRaycastResult = new RaycastResult
-            {
-                gameObject = frontHitInfo.collider.gameObject,
-                distance = frontHitInfo.distance
-            };
+            Stats.passionateTimeCounter = 90f; // 重置激昂时间计数器（90s）
+            Debug.Log("Bull1 进入激昂状态");
         }
         else
         {
-            frontRaycastResult = default;
+            Stats.passionateTimeCounter = 0f; // 清除激昂时间计数器
+            Debug.Log("Bull1 离开激昂状态");
+            // 激昂状态一旦结束，Bull1会进入Tired状态
+            ChangeState(typeof(TiredState)); // 进入Tired状态
         }
+    }
 
-        if (Physics.Raycast(backRay, out backHitInfo, 1f))
+    public void SetHesitateFlag(bool flag = true)
+    {
+        // 设置Bull1的犹疑状态标志
+        Stats.hesitateFlag = flag;
+        if (flag)
         {
-            backRaycastResult = new RaycastResult
-            {
-                gameObject = backHitInfo.collider.gameObject,
-                distance = backHitInfo.distance
-            };
+            Stats.hesitateTimeCounter = 60f; // 重置犹疑时间计数器（60s）
+            Debug.Log("Bull1 进入犹疑状态");
+            // 该状态一进入就会立刻进入Idle
+            ChangeState(typeof(IdleState)); // 进入Idle状态
         }
         else
         {
-            backRaycastResult = default;
+            Stats.hesitateTimeCounter = 0f; // 清除犹疑时间计数器
+            Debug.Log("Bull1 离开犹疑状态");
         }
+    }
+
+    protected bool DetectMapEdge()
+    {
+        // 检测Bull1是否接近地图边缘，地图定义为mapCenter为中心，scale.y为半径
+        // 为了防止Bull1走出地图边缘，当bull1的移动方向上的一定距离的点超出了范围，则返回True
+        Vector3 position = transform.position;
+        Vector3 direction = Velocity.normalized; // 获取当前移动方向
+        if ((position + direction * config.CheckMapEdgeDistance - mapCenter.position).magnitude > mapCenter.localScale.y)
+        {
+            // 如果Bull1接近地图边缘，则返回True，并且调整速度至面向玩家
+            Velocity = (player.transform.position - position).normalized * config.SpeedBull1; // 面向玩家
+            return true;
+        }
+
+        return false; // 没有接近地图边缘
     }
 
     private void RotateToTarget(Quaternion targetRotation)
@@ -161,6 +182,28 @@ public class Bull1 : FSM
                 Stats.invulnerableTimeCounter = 0f; // 确保计数器不小于0
             }
         }
+
+        // 激昂和犹疑计时器变化
+        if (Stats.passionateFlag)
+        {
+            // 如果Bull1处于激昂状态，则减少激昂时间计数器
+            Stats.passionateTimeCounter -= Time.deltaTime;
+            if (Stats.passionateTimeCounter <= 0f)
+            {
+                // 激昂时间结束，退出激昂状态
+                SetPassionateFlag(false);
+            }
+        }
+        if (Stats.hesitateFlag)
+        {
+            // 如果Bull1处于犹疑状态，则减少犹疑时间计数器
+            Stats.hesitateTimeCounter -= Time.deltaTime;
+            if (Stats.hesitateTimeCounter <= 0f)
+            {
+                // 犹疑时间结束，退出犹疑状态
+                SetHesitateFlag(false);
+            }
+        }
     }
 
     protected override void DefineStates()
@@ -189,8 +232,10 @@ public class Bull1 : FSM
         protected Animator Anim => Host.anim;
         protected Transform Trans => Host.transform;
         protected Player PlayerRef => Host.player;
+        protected bool healthFirstLowerThan20p = false; // 用于标记是否第一次生命值低于20%
+        protected int angryStateCounter = 0; // 愤怒状态计数器，记录一共愤怒次数，用于检测是否进入红温状态
 
-        
+
 
         protected Coroutine dashCoroutine; // 冲刺协程
         protected bool bigCircleFlag = false; // 大回旋攻击标志
@@ -251,7 +296,7 @@ public class Bull1 : FSM
             // 比如检测玩家位置，计算冲刺方向和速度等
             // 然后触发动画和伤害逻辑
             // Anim.SetTrigger("DashAttack");
-            
+
             if (Stats.dashFlag)
             {
                 // 如果已经在冲刺中，则不再触发新的冲刺
@@ -280,22 +325,47 @@ public class Bull1 : FSM
             AudioMap.Bull.Warning.Play();
 
             Debug.Log("开始冲刺攻击");
-            yield return new WaitForSeconds(Config.DashBeforeDelayBull1); // 前摇时间
+            if (Stats.hesitateFlag)
+            {
+                // 如果处于犹疑状态，则前摇时间增加
+                yield return new WaitForSeconds(Config.DashBeforeDelayBull1 * Config.HesitateDashBeforeDelayRateBull1);
+            }
+            else
+            {
+                yield return new WaitForSeconds(Config.DashBeforeDelayBull1); // 前摇时间
+            }
             Vector3 direction = (targetPosition - Host.transform.position).normalized;
             direction.y = 0; // 保持水平运动
             Vector3 startPosition = Host.transform.position; // 记录运动距离
 
             // 进入冲刺
             Host.Velocity = direction * Config.DashSpeedBull1; // 设置冲刺速度
-            while (Vector3.Distance(Host.transform.position, targetPosition) > 0.1f)
+            float targetDistance = new Vector3(targetPosition.x - startPosition.x, 0, targetPosition.z - startPosition.z).magnitude; // 计算目标距离
+
+            Vector3 finishedDistance = Host.transform.position - startPosition; // 计算当前位置与起始位置的距离
+            while (targetDistance - finishedDistance.magnitude > 0.1f)
             {
                 // Rb.MovePosition(Host.transform.position + direction * Config.DashSpeedBull1 * Time.deltaTime);
+                finishedDistance = Host.transform.position - startPosition;
                 yield return null; // 等待下一帧
             }
-
+            Host.Velocity = Vector3.zero; // 停止冲刺
             // 冲刺结束，进入后摇
             Debug.Log("冲刺攻击结束");
-            yield return new WaitForSeconds(Config.DashAfterDelayBull1); // 后摇时间
+            if (Stats.passionateFlag)
+            {
+                yield return new WaitForSeconds(Config.DashAfterDelayBull1 / 2f); // 后摇时间，激昂时减半
+            }
+            else if (Stats.hesitateFlag)
+            {
+                // 如果处于犹疑状态，则后摇时间略微缩短
+                yield return new WaitForSeconds(Config.DashAfterDelayBull1 * 3f / 4f);
+            }
+            else
+            {
+                yield return new WaitForSeconds(Config.DashAfterDelayBull1); // 后摇时间
+            }
+
             Stats.dashFlag = false;
             Stats.moveAbleFlag = true; // 恢复移动能力
             onComplete?.Invoke(); // 处理后续事件
@@ -309,6 +379,8 @@ public class Bull1 : FSM
         private float idleDirAdjustTime;
         private float dirChangeLockTimer; // 用于锁定方向变化的计时器
         private float angryTransitionTimer = 0f; // 愤怒状态转换计时器
+        private float lastDamage; // 上次受到的伤害，用于判断是否需要转换到红温状态
+        private float passionateTransToAngryTimer = 0f; // 激昂状态转换到愤怒状态的计时器
 
         private IEnumerator getDirFlag()
         {
@@ -336,10 +408,24 @@ public class Bull1 : FSM
             idleDirFlag = 0f;
             angryTransitionTimer = Config.IdleAngryConvertTimeBull1; // 设置愤怒状态转换计时器
 
+            // 添加额外的受伤操作
+            Host.GetComponentInChildren<DefendArea>().OnAttacked += IdleSpecialOnAttackEvent;
+
+            // 设置激昂状态下的愤怒计时器
+            passionateTransToAngryTimer = 5f;
             // 启动获取方向的协程
             getDirFlagCoroutine = Host.StartCoroutine(getDirFlag());
 
 
+        }
+
+        private void IdleSpecialOnAttackEvent(AttackArea area1, DefendArea area2, float arg3)
+        {
+            if (Stats.invulnerableTimeCounter > 0f) return;
+            Stats.invulnerableTimeCounter = Config.InvulnerableTime; // 设置无敌时间
+            angryTransitionTimer = Config.IdleAngryConvertTimeBull1; // 重置愤怒状态转换计时器
+
+            lastDamage = arg3 * Stats.takeDamageRate; // 记录上次受到的伤害
         }
 
         public override void OnExit()
@@ -353,6 +439,8 @@ public class Bull1 : FSM
                 Host.StopCoroutine(getDirFlagCoroutine);
                 getDirFlagCoroutine = null;
             }
+
+            Host.GetComponentInChildren<DefendArea>().OnAttacked -= IdleSpecialOnAttackEvent;
         }
 
         public override void OnUpdate(float delta)
@@ -404,8 +492,21 @@ public class Bull1 : FSM
                 // 检测是否转换到愤怒状态
                 TransToAngryState();
             }
+
+            if (DetectTransToVeryAngryState())
+            {
+                // 检测是否转换到红温状态
+                TransToVeryAngryState();
+            }
+
+            if (DetectTransToTiredState())
+            {
+                // 检测是否转换到疲劳状态
+                TransToTiredState();
+            }
         }
 
+        #region Idle状态转换检测
         private bool DetectTransToAngryState()
         {
             // 检测是否转换到愤怒状态
@@ -428,8 +529,21 @@ public class Bull1 : FSM
                 return true;
             }
 
+            // 2.5 激昂状态的计时器
+            if (Stats.passionateFlag)
+            {
+                // 如果Bull1处于激昂状态，则减少激昂时间计数器
+                passionateTransToAngryTimer -= Time.deltaTime;
+                if (passionateTransToAngryTimer <= 0f)
+                {
+                    // 激昂时间结束，转换到愤怒状态
+                    Debug.Log("Bull1 激昂状态愤怒转换计时器到达，转换到愤怒状态");
+                    return true;
+                }
+            }
+
             // 3. 场地边缘检测（目前未定义场地边缘，暂不实现）
-            if (false) // 这里可以添加具体的场地边缘检测逻辑
+            if (Host.DetectMapEdge()) // 这里可以添加具体的场地边缘检测逻辑
             {
                 // 如果Bull1接近场地边缘，则转换到愤怒状态
                 Debug.Log("Bull1 接近场地边缘，转换到愤怒状态");
@@ -449,6 +563,66 @@ public class Bull1 : FSM
             Debug.Log("转换到愤怒状态");
             Host.ChangeState(typeof(AngryState));
         }
+
+        private bool DetectTransToVeryAngryState()
+        {
+            // 检测是否转换到红温状态
+            // 这里可以根据具体逻辑判断是否需要转换状态
+            // 比如检测玩家位置、血量等
+            // 0. 首先不能是犹疑状态
+            if (Stats.hesitateFlag)
+            {
+                // 如果处于犹疑状态，则不转换到红温状态
+                return false;
+            }
+
+            // 1. 伤害检测
+            if (lastDamage >= (Host.Stats.Health + lastDamage) / 2f)
+            {
+                // 如果单次受到伤害超过半数生命值，则转换到红温状态
+                Debug.Log("Bull1 单次受到伤害超过半数生命值，转换到红温状态");
+                return true;
+            }
+
+            return false;
+        }
+
+        private void TransToVeryAngryState()
+        {
+            // 转换到红温状态
+            // 这里可以实现转换状态的逻辑
+            // 比如触发动画、改变状态机等
+            Debug.Log("转换到红温状态");
+            Host.ChangeState(typeof(VeryAngryState));
+        }
+
+        private bool DetectTransToTiredState()
+        {
+            // 检测是否转换到疲劳状态
+            // 这里可以根据具体逻辑判断是否需要转换状态
+            // 比如检测玩家位置、血量等
+
+            // 1. 生命值检测
+            if (Stats.Health <= Config.HealthBull1 * Config.IdleToTiredHealthDeRateBull1)
+            {
+                // 如果生命值低于一定比例，则转换到疲劳状态
+                Debug.Log($"Bull1 生命值低于{Config.IdleToTiredHealthDeRateBull1}阈值，转换到疲劳状态");
+                return true;
+            }
+
+            return false;
+        }
+
+        private void TransToTiredState()
+        {
+            // 转换到疲劳状态
+            // 这里可以实现转换状态的逻辑
+            // 比如触发动画、改变状态机等
+            Debug.Log("转换到疲劳状态");
+            Host.ChangeState(typeof(TiredState));
+        }
+
+        #endregion
 
         private void MaintainDistanceFromPlayer(float distance)
         {
@@ -481,6 +655,8 @@ public class Bull1 : FSM
     {
 
         private bool adjustDistanceFlag = false; // 是否需要调整距离的标志
+        private float adjustDistanceTimer = 0f; // 调整距离的计时器
+        private int maxCounter = 3;
         public AngryState(Bull1 host) : base(host)
         {
         }
@@ -488,12 +664,25 @@ public class Bull1 : FSM
         public override void OnEnter()
         {
             base.OnEnter();
+            // 计数器+1
+            angryStateCounter++;
+
+
             // Anim.SetTrigger("Angry");
             // 愤怒状态下承伤系数为100%
             Stats.takeDamageRate = Config.TakeDamageRateBull1;
             // 这里可以实现愤怒状态的逻辑，比如增加攻击力、改变行为等
             Debug.Log("进入愤怒状态");
             adjustDistanceFlag = true;
+            adjustDistanceTimer = Config.AngryAdjustMaxTimeBull1; // 设置调整距离的最大时间
+
+            // 如果愤怒状态计数器大于3，且不犹疑，则转换到红温状态
+            if (!Stats.hesitateFlag && angryStateCounter > maxCounter)
+            {
+                Debug.Log("Bull1 愤怒状态计数器超过3，转换到红温状态");
+                Host.ChangeState(typeof(VeryAngryState));
+                return; // 直接转换状态，不再执行后续逻辑
+            }
 
             AudioMap.Bull.Roar.Play();
         }
@@ -503,13 +692,43 @@ public class Bull1 : FSM
             base.OnUpdate(delta);
             // 处理愤怒状态逻辑
             // 比如检测玩家位置，触发冲刺攻击等
+            if (angryStateCounter > maxCounter) return;
+            if (!healthFirstLowerThan20p)
+            {
+                // 如果生命值第一次低于20%且不犹疑，则转换到红温状态
+                if (Stats.Health <= Config.HealthBull1 * 0.2f)
+                {
+                    healthFirstLowerThan20p = true;
+                    if (!Stats.hesitateFlag)
+                    {
+                        Host.ChangeState(typeof(VeryAngryState));
+                    }
+                    return; // 直接转换状态，不再执行后续逻辑
+                }
+            }
+
+            if (adjustDistanceFlag && Host.DetectMapEdge())
+            {
+                // 如果接近地图边缘，则调整距离
+                adjustDistanceFlag = false; // 停止调整距离
+                Debug.Log("Bull1 接近地图边缘，停止调整距离");
+            }
+
             if (adjustDistanceFlag)
             {
                 // 尝试去远离玩家，这里之后需要调整使得能够修改flag，目前的考虑是给一个协程每隔一定时间更新一个位置，比较前后位置的距离差
-                Vector3 direction = (PlayerRef.transform.position - Host.transform.position).normalized;
+                Vector3 direction = (Host.transform.position - PlayerRef.transform.position).normalized;
                 direction.y = 0f;
 
                 Host.Velocity = direction * Stats.Speed; // 设置Bull1的速度
+                adjustDistanceTimer -= delta; // 减少调整距离的计时器
+                if (adjustDistanceTimer <= 0f)
+                {
+                    // 如果调整距离的计时器小于等于0，则停止调整距离
+                    Debug.Log("Bull1 达到调整最大时间，停止调整距离");
+                    adjustDistanceFlag = false;
+                    adjustDistanceTimer = 0f; // 确保计时器不小于0
+                }
             }
             else
             {
@@ -539,17 +758,8 @@ public class Bull1 : FSM
             Stats.Speed = Config.SpeedBull1 * Config.VeryAngrySpeedRateBull1;
             // 这里可以实现红温状态的逻辑，比如增加攻击力、改变行为等
             Debug.Log("进入红温状态");
-            DashAttack(() =>
-            {
-                DashAttack(() =>
-                {
-                    DashAttack(() =>
-                    {
-                        Host.ChangeState(typeof(TiredState));
-                    }
-                    );
-                });
-            });
+
+            DashAttack(() => DashAttack(() => DashAttack(() => Host.ChangeState(typeof(TiredState)))));
         }
 
         public override void OnExit()
@@ -581,7 +791,9 @@ public class Bull1 : FSM
             Debug.Log("进入疲劳状态");
             initHealth = Stats.Health;
             Stats.takeDamageRate = Config.TakeDamageRateTiredBull1;
-            Flow.Create().Delay(Config.TiredDurationBull1).Then(() =>
+            Flow.Create()
+            .Delay(Host.Stats.passionateFlag ? (Config.TiredDurationBull1 / 2f) : Config.TiredDurationBull1) // 激昂状态下这个时间减半
+            .Then(() =>
             {
                 if (healthRate <= Config.TiredHealthDeRateBull1)
                 {
