@@ -3,21 +3,12 @@ using UnityEngine.SceneManagement;
 
 public class SceneLoader : MonoBehaviour
 {
-    [SerializeField] private string Startname;
-    [SerializeField] private string FirsLevelname;
-    [SerializeField] private string LastLevelname;
-    public void LoadStartScene(string Startname)
+
+    public void LoadScene(string name)
     {
-        SceneManager.LoadScene(Startname);
+        SceneManager.LoadScene(name);
     }
-    public void LoadFirstScene(string FirsLevelname)
-    {
-        SceneManager.LoadScene(FirsLevelname);
-    }
-    public void LoadLastScene(string LastLevelname)
-    {
-        SceneManager.LoadScene(LastLevelname);
-    }
+
     public void QuitE()
     {
 #if UNITY_EDITOR
