@@ -8,7 +8,6 @@ using UnityEngine.AddressableAssets;
 public class Player : FSM
 {
     [SerializeField, Title("配置")] private PlayerConfig config;
-    [SerializeField, Title("当前实例Flag控制器引用")] private GlobalFlagController flagController;
     [Header("判定")]
     [SerializeField, Title("剑区域")] private AttackArea swordArea;
     [Header("槽位")]
@@ -271,7 +270,6 @@ public class Player : FSM
                         case PlayerStats.Weapon.Sword:
                             if (Stats.Stamina >= Config.SwordStamina)
                             {
-                                Stats.Stamina -= Config.SwordStamina;
                                 Host.ChangeState<SwordState>();
                                 return;
                             }
@@ -279,7 +277,6 @@ public class Player : FSM
                         case PlayerStats.Weapon.Lance:
                             if (Stats.Stamina >= Config.LanceStamina)
                             {
-                                Stats.Stamina -= Config.LanceStamina;
                                 Host.ChangeState<LanceState>();
                                 return;
                             }
@@ -431,6 +428,8 @@ public class Player : FSM
                                 Host.lanceSlot.rotation,
                                 Host.transform).GetComponent<LanceWeapon>();
             lance.GetComponent<WeaponVisualizer>().Show();
+
+            Stats.Stamina -= Config.LanceStamina;
 
             AudioMap.Lance.Use.Play();
         }
@@ -585,6 +584,8 @@ public class Player : FSM
 
             HideWeapon();
             sword = Instantiate(Host.swordPrefab, Host.swordSlot).GetComponent<WeaponVisualizer>().Show();
+
+            Stats.Stamina -= Config.SwordStamina;
 
             AudioMap.Sword.Use.Play();
         }

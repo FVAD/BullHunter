@@ -164,15 +164,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2117074186662949320, guid: e44fc07367cabd147a5e9fa4a444d46b, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.049813703
+      value: 0.0498137
       objectReference: {fileID: 0}
     - target: {fileID: 2117074186662949320, guid: e44fc07367cabd147a5e9fa4a444d46b, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 8.266097e-11
+      value: -0.0000000042135944
       objectReference: {fileID: 0}
     - target: {fileID: 2117074186662949320, guid: e44fc07367cabd147a5e9fa4a444d46b, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -4.1227555e-12
+      value: 2.1015562e-10
       objectReference: {fileID: 0}
     - target: {fileID: 2117074186662949327, guid: e44fc07367cabd147a5e9fa4a444d46b, type: 3}
       propertyPath: m_Follow
@@ -184,15 +184,15 @@ PrefabInstance:
       objectReference: {fileID: 4251608688120140178}
     - target: {fileID: 2117074187099863969, guid: e44fc07367cabd147a5e9fa4a444d46b, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.049813703
+      value: 0.0498137
       objectReference: {fileID: 0}
     - target: {fileID: 2117074187099863969, guid: e44fc07367cabd147a5e9fa4a444d46b, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 8.266097e-11
+      value: -0.0000000042135944
       objectReference: {fileID: 0}
     - target: {fileID: 2117074187099863969, guid: e44fc07367cabd147a5e9fa4a444d46b, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -4.1227555e-12
+      value: 2.1015562e-10
       objectReference: {fileID: 0}
     - target: {fileID: 2117074187871527564, guid: e44fc07367cabd147a5e9fa4a444d46b, type: 3}
       propertyPath: mNoiseOffsets.x
@@ -365,6 +365,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4251608686694106216}
     m_Modifications:
+    - target: {fileID: 6081560351088648697, guid: e95662df4cf77a8429c8a09c78d47775, type: 3}
+      propertyPath: flag
+      value: 
+      objectReference: {fileID: 3310040480494276013}
     - target: {fileID: 6081560351088648697, guid: e95662df4cf77a8429c8a09c78d47775, type: 3}
       propertyPath: enemy
       value: 
