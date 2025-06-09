@@ -104,7 +104,7 @@ public class Bull1 : FSM
         // 为了防止Bull1走出地图边缘，当bull1的移动方向上的一定距离的点超出了范围，则返回True
         Vector3 position = transform.position;
         Vector3 direction = Velocity.normalized; // 获取当前移动方向
-        if ((position + direction * config.CheckMapEdgeDistance - mapCenter.position).magnitude > mapRadius) 
+        if ((position + direction * config.CheckMapEdgeDistance - mapCenter.position).magnitude > mapRadius)
         {
             // 如果Bull1接近地图边缘，则返回True，并且调整速度至面向玩家
             Velocity = (player.transform.position - position).normalized * config.SpeedBull1; // 面向玩家
@@ -158,8 +158,9 @@ public class Bull1 : FSM
             // 处理受击逻辑
             if (Stats.invulnerableTimeCounter > 0f) return;
             Stats.invulnerableTimeCounter = config.InvulnerableTime; // 设置无敌时间
-            Stats.Health -= f * Stats.takeDamageRate;
-            Debug.Log($"Bull1 受到了 {f} * {Stats.takeDamageRate} = {f * Stats.takeDamageRate}点伤害，当前生命值：{Stats.Health}");
+
+            var damage = f * Stats.takeDamageRate;
+
             if (atk.GetComponent<LanceWeapon>() != null)
             {
                 Stats.lanceAttackedCount++;
@@ -168,8 +169,12 @@ public class Bull1 : FSM
             else
             {
                 Stats.swordAttackedCount++;
+                damage *= 1.0f + Stats.lanceAttackedCount * 0.1f;
                 Debug.Log($"Bull1 被剑攻击次数：{Stats.swordAttackedCount}");
             }
+
+            Stats.Health -= damage;
+            Debug.Log($"Bull1 受到了 {damage} 点伤害，当前生命值：{Stats.Health}");
 
             if (Stats.Health <= 0)
             {
@@ -324,11 +329,11 @@ public class Bull1 : FSM
                 yield return null; // 等待下一帧
             }
 
-            
+
             // 攻击区域关闭
             Host.SetAttackAreaIsActive(false);
 
-            
+
             Stats.bigCircleFlag = false;
             Stats.moveAbleFlag = true; // 恢复移动能力
             onComplete?.Invoke();
