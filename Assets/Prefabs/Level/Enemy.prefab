@@ -78,6 +78,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   timeScale: 1
   config: {fileID: 11400000, guid: f299fbdfa6ccd364db9e13bbc54b9239, type: 2}
+  mapCenter: {fileID: 0}
   player: {fileID: 0}
 --- !u!95 &3742932221576577021
 Animator:
@@ -107,7 +108,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3742932222037988701}
-  - component: {fileID: 3742932222037988691}
+  - component: {fileID: 7077121154699994451}
   - component: {fileID: 3742932222037988690}
   m_Layer: 0
   m_Name: Body
@@ -125,14 +126,14 @@ Transform:
   m_GameObject: {fileID: 3742932222037988700}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2.5, y: 2.5, z: 2.5}
   m_Children:
   - {fileID: 3781660821747292280}
   m_Father: {fileID: 3742932221576577023}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!135 &3742932222037988691
-SphereCollider:
+--- !u!65 &7077121154699994451
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -142,8 +143,8 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.71492136
-  m_Center: {x: 0.21492136, y: 0, z: 0}
+  m_Size: {x: 2.2886045, y: 1, z: 2.0288033}
+  m_Center: {x: -0.048787594, y: 0, z: 0.014083529}
 --- !u!114 &3742932222037988690
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -167,7 +168,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3742932222111013982}
-  - component: {fileID: 3742932222111013980}
+  - component: {fileID: 7023926602970519843}
   - component: {fileID: 3742932222111013983}
   m_Layer: 0
   m_Name: Attack
@@ -185,13 +186,13 @@ Transform:
   m_GameObject: {fileID: 3742932222111013977}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2.5, y: 2.5, z: 2.5}
   m_Children: []
   m_Father: {fileID: 3742932221576577023}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!135 &3742932222111013980
-SphereCollider:
+--- !u!65 &7023926602970519843
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -201,8 +202,8 @@ SphereCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.6366662
-  m_Center: {x: 0.1366662, y: 0, z: 0}
+  m_Size: {x: 1.53492, y: 0.95824444, z: 1.9373978}
+  m_Center: {x: -0.0011065484, y: 0.020877792, z: 0.031492997}
 --- !u!114 &3742932222111013983
 MonoBehaviour:
   m_ObjectHideFlags: 0

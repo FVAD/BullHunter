@@ -1,5 +1,51 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1188050503979028701
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2055286620353786037}
+  - component: {fileID: 3310040480494276013}
+  m_Layer: 0
+  m_Name: MapCenter
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2055286620353786037
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1188050503979028701}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 20, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4251608686694106216}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3310040480494276013
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1188050503979028701}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90a923c8d63c8c1408b71bfeb4589547, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerInstance: {fileID: 4251608688120140181}
+  bull1Instances:
+  - {fileID: 7057824105117691899}
 --- !u!1 &4251608686694106217
 GameObject:
   m_ObjectHideFlags: 0
@@ -32,6 +78,7 @@ Transform:
   - {fileID: 4251608688045875588}
   - {fileID: 4251608688120140178}
   - {fileID: 7057824105117691896}
+  - {fileID: 2055286620353786037}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -147,6 +194,18 @@ PrefabInstance:
       propertyPath: m_LocalRotation.z
       value: 2.1015562e-10
       objectReference: {fileID: 0}
+    - target: {fileID: 2117074187871527564, guid: e44fc07367cabd147a5e9fa4a444d46b, type: 3}
+      propertyPath: mNoiseOffsets.x
+      value: -922.14465
+      objectReference: {fileID: 0}
+    - target: {fileID: 2117074187871527564, guid: e44fc07367cabd147a5e9fa4a444d46b, type: 3}
+      propertyPath: mNoiseOffsets.y
+      value: -965.27856
+      objectReference: {fileID: 0}
+    - target: {fileID: 2117074187871527564, guid: e44fc07367cabd147a5e9fa4a444d46b, type: 3}
+      propertyPath: mNoiseOffsets.z
+      value: -986.95996
+      objectReference: {fileID: 0}
     - target: {fileID: 2117074188544657232, guid: e44fc07367cabd147a5e9fa4a444d46b, type: 3}
       propertyPath: m_Name
       value: Camera
@@ -233,6 +292,10 @@ PrefabInstance:
       propertyPath: player
       value: 
       objectReference: {fileID: 4251608688120140181}
+    - target: {fileID: 3742932221576577020, guid: 7d65a0196cec01f4aa7eb6a648b52c77, type: 3}
+      propertyPath: mapCenter
+      value: 
+      objectReference: {fileID: 2055286620353786037}
     - target: {fileID: 3742932221576577023, guid: 7d65a0196cec01f4aa7eb6a648b52c77, type: 3}
       propertyPath: m_RootOrder
       value: 4
@@ -302,6 +365,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4251608686694106216}
     m_Modifications:
+    - target: {fileID: 6081560351088648697, guid: e95662df4cf77a8429c8a09c78d47775, type: 3}
+      propertyPath: flag
+      value: 
+      objectReference: {fileID: 3310040480494276013}
     - target: {fileID: 6081560351088648697, guid: e95662df4cf77a8429c8a09c78d47775, type: 3}
       propertyPath: enemy
       value: 

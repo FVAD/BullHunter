@@ -74,10 +74,13 @@ public class ClothWeapon : MonoBehaviour
         switch (CurrentColour)
         {
             case Colour.Red:
+                BattleManager.Instance.Flag.SetBullPassionateFlag(true);
                 break;
             case Colour.Green:
+                BattleManager.Instance.Flag.SetBullHesitateFlag(true);
                 break;
             case Colour.Chaos:
+                configs.Where(c => c.Colour != Colour.Chaos).ForEach(c => c.Tick(30));
                 break;
         }
         Debug.Log($"使用了{CurrentColour}斗牛布");

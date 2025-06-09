@@ -6,7 +6,7 @@ using Cinemachine;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Bull1 : FSM
+public class SuperBull : FSM
 {
     [SerializeField, Title("配置")] private BullConfig config;
     [SerializeField, Title("地图中心定位（半径为scale.y）")] private Transform mapCenter;
@@ -14,19 +14,20 @@ public class Bull1 : FSM
     public class BullStats
     {
         public float Health { get; set; }
-        public float takeDamageRate { get; set; }
+        public float TakeDamageRate { get; set; }
         public float Speed { get; set; }
         public float AttackPower { get; set; }
-        public int swordAttackedCount { get; set; } // 用于记录剑攻击次数
-        public int lanceAttackedCount { get; set; } // 用于记录枪攻击次数
-        public float invulnerableTimeCounter { get; set; } // 用于记录无敌时间计数器
-        public bool passionateFlag { get; set; } = false; // 激昂状态Flag
-        public float passionateTimeCounter { get; set; } // 激昂状态时间计数器
-        public bool hesitateFlag { get; set; } = false; // 犹疑状态Flag
-        public float hesitateTimeCounter { get; set; } // 犹疑状态时间计数器
-        public bool moveAbleFlag { get; set; }  // 移动标志，触发Bull技能时这个标志应当变为False
-        public bool dashFlag { get; set; } // 冲刺正在进行标志
-        public bool bigCircleFlag { get; set; } // 大回旋正在进行标志
+        public int SwordAttackedCount { get; set; } // 用于记录剑攻击次数
+        public int LanceAttackedCount { get; set; } // 用于记录枪攻击次数
+        public float InvulnerableTimeCounter { get; set; } // 用于记录无敌时间计数器
+        public bool PassionateFlag { get; set; } = false; // 激昂状态Flag
+        public float PassionateTimeCounter { get; set; } // 激昂状态时间计数器
+        public bool HesitateFlag { get; set; } = false; // 犹疑状态Flag
+        public float HesitateTimeCounter { get; set; } // 犹疑状态时间计数器
+        public bool MoveAbleFlag { get; set; }  // 移动标志，触发Bull技能时这个标志应当变为False
+        public bool DashFlag { get; set; } // 冲刺正在进行标志
+        public bool BigCircleFlag { get; set; } // 大回旋正在进行标志
+        public bool JumpAttackFlag { get; set; } // 大回旋正在进行标志
 
     }
 
@@ -43,7 +44,7 @@ public class Bull1 : FSM
             v.y = rb.velocity.y; // 保持当前y速度（受重力影响）
             rb.velocity = v;
 
-            // 旋转Bull1，只用水平分量
+            // 旋转SuperBull，只用水平分量
             Vector3 horizontal = new Vector3(value.x, 0, value.z);
             if (horizontal.sqrMagnitude > 0.01f)
             {
@@ -55,52 +56,64 @@ public class Bull1 : FSM
 
     private Quaternion _targetRotation;
 
+    public void AddSpeedByRate(float rate, float duration)
+    {
+        StartCoroutine(AddSpeedByRateInTimeProgress(rate, duration));
+    }
+
+    private IEnumerator AddSpeedByRateInTimeProgress(float rate, float duration)
+    {
+        Stats.Speed *= 1f + rate;
+        yield return new WaitForSeconds(duration);
+        Stats.Speed /= 1f + rate;
+    }
+
     public void SetPassionateFlag(bool flag = true)
     {
-        // 设置Bull1的激昂状态标志
-        Stats.passionateFlag = flag;
+        // 设置SuperBull的激昂状态标志
+        Stats.PassionateFlag = flag;
         if (flag)
         {
-            Stats.passionateTimeCounter = 90f; // 重置激昂时间计数器（90s）
-            Debug.Log("Bull1 进入激昂状态");
+            Stats.PassionateTimeCounter = 90f; // 重置激昂时间计数器（90s）
+            Debug.Log("SuperBull 进入激昂状态");
         }
         else
         {
-            Stats.passionateTimeCounter = 0f; // 清除激昂时间计数器
-            Debug.Log("Bull1 离开激昂状态");
-            // 激昂状态一旦结束，Bull1会进入Tired状态
-            ChangeState(typeof(TiredState)); // 进入Tired状态
+            Stats.PassionateTimeCounter = 0f; // 清除激昂时间计数器
+            Debug.Log("SuperBull 离开激昂状态");
+            // 激昂状态一旦结束，SuperBull会进入PrepareState状态
+            ChangeState(typeof(PrepareState)); // 进入PrepareState状态
         }
     }
 
     public void SetHesitateFlag(bool flag = true)
     {
-        // 设置Bull1的犹疑状态标志
-        Stats.hesitateFlag = flag;
+        // 设置SuperBull的犹疑状态标志
+        Stats.HesitateFlag = flag;
         if (flag)
         {
-            Stats.hesitateTimeCounter = 60f; // 重置犹疑时间计数器（60s）
-            Debug.Log("Bull1 进入犹疑状态");
+            Stats.HesitateTimeCounter = 60f; // 重置犹疑时间计数器（60s）
+            Debug.Log("SuperBull 进入犹疑状态");
             // 该状态一进入就会立刻进入Idle
             ChangeState(typeof(IdleState)); // 进入Idle状态
         }
         else
         {
-            Stats.hesitateTimeCounter = 0f; // 清除犹疑时间计数器
-            Debug.Log("Bull1 离开犹疑状态");
+            Stats.HesitateTimeCounter = 0f; // 清除犹疑时间计数器
+            Debug.Log("SuperBull 离开犹疑状态");
         }
     }
 
     protected bool DetectMapEdge()
     {
-        // 检测Bull1是否接近地图边缘，地图定义为mapCenter为中心，scale.y为半径
-        // 为了防止Bull1走出地图边缘，当bull1的移动方向上的一定距离的点超出了范围，则返回True
+        // 检测SuperBull是否接近地图边缘，地图定义为mapCenter为中心，scale.y为半径
+        // 为了防止SuperBull走出地图边缘，当superBull的移动方向上的一定距离的点超出了范围，则返回True
         Vector3 position = transform.position;
         Vector3 direction = Velocity.normalized; // 获取当前移动方向
         if ((position + direction * config.CheckMapEdgeDistance - mapCenter.position).magnitude > mapCenter.localScale.y)
         {
-            // 如果Bull1接近地图边缘，则返回True，并且调整速度至面向玩家
-            Velocity = (player.transform.position - position).normalized * config.SpeedBull1; // 面向玩家
+            // 如果SuperBull接近地图边缘，则返回True，并且调整速度至面向玩家
+            Velocity = (player.transform.position - position).normalized * config.SpeedSuperBull; // 面向玩家
             return true;
         }
 
@@ -125,45 +138,45 @@ public class Bull1 : FSM
         anim = GetComponent<Animator>();
         Stats = new BullStats
         {
-            Health = config.HealthBull1,
-            takeDamageRate = config.TakeDamageRateBull1,
-            Speed = config.SpeedBull1,
-            AttackPower = config.AttackPowerBull1,
-            swordAttackedCount = 0,
-            lanceAttackedCount = 0,
-            invulnerableTimeCounter = 0f, // 初始化无敌时间计数器
-            dashFlag = false,
-            bigCircleFlag = false,
-            moveAbleFlag = true,
-            passionateFlag = false,
-            hesitateFlag = false,
-            passionateTimeCounter = 0f,
-            hesitateTimeCounter = 0f,
+            Health = config.HealthSuperBull,
+            TakeDamageRate = config.TakeDamageRateSuperBull,
+            Speed = config.SpeedSuperBull,
+            AttackPower = config.AttackPowerSuperBull,
+            SwordAttackedCount = 0,
+            LanceAttackedCount = 0,
+            InvulnerableTimeCounter = 0f, // 初始化无敌时间计数器
+            DashFlag = false,
+            BigCircleFlag = false,
+            MoveAbleFlag = true,
+            PassionateFlag = false,
+            HesitateFlag = false,
+            PassionateTimeCounter = 0f,
+            HesitateTimeCounter = 0f,
         };
 
         GetComponentInChildren<DefendArea>().OnAttacked += (atk, def, f) =>
         {
             // 处理受击逻辑
-            if (Stats.invulnerableTimeCounter > 0f) return;
-            Stats.invulnerableTimeCounter = config.InvulnerableTime; // 设置无敌时间
-            Stats.Health -= f * Stats.takeDamageRate;
-            Debug.Log($"Bull1 受到了 {f} * {Stats.takeDamageRate} = {f * Stats.takeDamageRate}点伤害，当前生命值：{Stats.Health}");
+            if (Stats.InvulnerableTimeCounter > 0f) return;
+            Stats.InvulnerableTimeCounter = config.InvulnerableTime; // 设置无敌时间
+            Stats.Health -= f * Stats.TakeDamageRate;
+            Debug.Log($"SuperBull 受到了 {f} * {Stats.TakeDamageRate} = {f * Stats.TakeDamageRate}点伤害，当前生命值：{Stats.Health}");
             if (atk.GetComponent<LanceWeapon>() != null)
             {
-                Stats.lanceAttackedCount++;
-                Debug.Log($"Bull1 被枪攻击次数：{Stats.lanceAttackedCount}");
+                Stats.LanceAttackedCount++;
+                Debug.Log($"SuperBull 被枪攻击次数：{Stats.LanceAttackedCount}");
             }
             else
             {
-                Stats.swordAttackedCount++;
-                Debug.Log($"Bull1 被剑攻击次数：{Stats.swordAttackedCount}");
+                Stats.SwordAttackedCount++;
+                Debug.Log($"SuperBull 被剑攻击次数：{Stats.SwordAttackedCount}");
             }
 
             if (Stats.Health <= 0)
             {
                 // anim.SetTrigger("Die");
                 // 处理死亡逻辑
-                Debug.Log("Bull1 死亡");
+                Debug.Log("SuperBull 死亡");
             }
         };
 
@@ -175,32 +188,32 @@ public class Bull1 : FSM
         base.Update();
         RotateToTarget(_targetRotation); // 旋转到目标方向
 
-        if (Stats.invulnerableTimeCounter > 0f)
+        if (Stats.InvulnerableTimeCounter > 0f)
         {
             // 如果无敌时间计数器大于0，则减少计数器
-            Stats.invulnerableTimeCounter -= Time.deltaTime;
-            if (Stats.invulnerableTimeCounter < 0f)
+            Stats.InvulnerableTimeCounter -= Time.deltaTime;
+            if (Stats.InvulnerableTimeCounter < 0f)
             {
-                Stats.invulnerableTimeCounter = 0f; // 确保计数器不小于0
+                Stats.InvulnerableTimeCounter = 0f; // 确保计数器不小于0
             }
         }
 
         // 激昂和犹疑计时器变化
-        if (Stats.passionateFlag)
+        if (Stats.PassionateFlag)
         {
-            // 如果Bull1处于激昂状态，则减少激昂时间计数器
-            Stats.passionateTimeCounter -= Time.deltaTime;
-            if (Stats.passionateTimeCounter <= 0f)
+            // 如果SuperBull处于激昂状态，则减少激昂时间计数器
+            Stats.PassionateTimeCounter -= Time.deltaTime;
+            if (Stats.PassionateTimeCounter <= 0f)
             {
                 // 激昂时间结束，退出激昂状态
                 SetPassionateFlag(false);
             }
         }
-        if (Stats.hesitateFlag)
+        if (Stats.HesitateFlag)
         {
-            // 如果Bull1处于犹疑状态，则减少犹疑时间计数器
-            Stats.hesitateTimeCounter -= Time.deltaTime;
-            if (Stats.hesitateTimeCounter <= 0f)
+            // 如果SuperBull处于犹疑状态，则减少犹疑时间计数器
+            Stats.HesitateTimeCounter -= Time.deltaTime;
+            if (Stats.HesitateTimeCounter <= 0f)
             {
                 // 犹疑时间结束，退出犹疑状态
                 SetHesitateFlag(false);
@@ -214,19 +227,20 @@ public class Bull1 : FSM
         AddState(new AngryState(this));
         AddState(new VeryAngryState(this));
         AddState(new TiredState(this));
+        AddState(new PrepareState(this));
     }
 
     protected override Type GetDefaultState() => typeof(IdleState);
 
     private class BullState : FSMState
     {
-        protected new Bull1 Host;
+        protected new SuperBull Host;
 
         /// <summary>
         /// 构造函数，传入主机对象
         /// </summary>
         /// <param name="host"></param>
-        public BullState(Bull1 host) : base(host) => Host = host;
+        public BullState(SuperBull host) : base(host) => Host = host;
         protected BullStats Stats => Host.Stats;
         protected BullConfig Config => Host.config;
 
@@ -240,10 +254,83 @@ public class Bull1 : FSM
 
 
         protected Coroutine dashCoroutine; // 冲刺协程
-        protected bool bigCircleFlag = false; // 大回旋攻击标志
-        protected Coroutine bigCircleCoroutine; // 大回旋攻击协程
 
-        // Bull1 大回旋攻击逻辑
+        protected Coroutine bigCircleCoroutine; // 大回旋攻击协程
+        protected Coroutine jumpAttackCoroutine; // 跳跃震击协程
+
+        // SuperBull 跳跃震击攻击逻辑
+        protected void JumpAttack(Action onComplete = null)
+        {
+            if (Stats.JumpAttackFlag)
+            {
+                // 如果已经在跳跃震击中，则不再触发新的跳跃震击
+                return;
+            }
+            Debug.Log("跳跃震击触发");
+
+            Stats.JumpAttackFlag = true;
+            Stats.MoveAbleFlag = false; // 禁止移动
+            Host.Velocity = Vector3.zero; // 停止当前速度
+
+            if (jumpAttackCoroutine != null)
+            {
+                Host.StopCoroutine(jumpAttackCoroutine); // 如果已有跳跃震击协程在运行，则停止它
+                jumpAttackCoroutine = null; // 清空跳跃震击协程引用
+            }
+            jumpAttackCoroutine = Host.StartCoroutine(BigCircleAttackCoroutine(onComplete)); // 启动跳跃震击协程
+        }
+        protected IEnumerator JumpAttackCoroutine(Action onComplete = null)
+        {
+            Vector3 startPoint = Host.transform.position;
+            // 高高跃起
+            // 下面的内容设重力加速度9.8
+            float g = 9.8f;
+            // 上升时间决定初速
+            float riseInitSpeed = g * Config.JumpAttackRisingDurationSuperBull;
+            // x = 1 / 2 g * t^2
+            float timer = 0f;
+            float x = 0f;
+            while (timer < Config.JumpAttackRisingDurationSuperBull)
+            {
+                x = 0.5f * g * timer * timer;
+                timer += Time.deltaTime;
+                Host.transform.position = startPoint + Vector3.up * x;
+                yield return null;
+            }
+
+            // 归位
+            Host.transform.position = startPoint + 0.5f * g * Mathf.Pow(Config.JumpAttackRisingDurationSuperBull, 2f) * Vector3.up;
+
+            // 进入下落阶段
+            timer = 0f;
+            Vector3 halfPoint = Host.transform.position;
+            while (timer < Config.JumpAttackFallingDurationSuperBull)
+            {
+                x = 0.5f * g * timer * timer;
+                timer += Time.deltaTime;
+                Host.transform.position = halfPoint - Vector3.up * x;
+                yield return null;
+            }
+
+            // 归位
+            Host.transform.position = startPoint;
+
+            // 造成伤害，伤害半径见配置
+            Vector3 toPlayer = PlayerRef.transform.position - Host.transform.position;
+            toPlayer.y = 0f;
+            if (toPlayer.magnitude < Config.JumpAttackAttackRangeSuperBull)
+            {
+                // 造成伤害
+                PlayerRef.GetComponentInChildren<DefendArea>().ReceiveDamage(Host.GetComponentInChildren<AttackArea>(), PlayerRef.GetComponentInChildren<DefendArea>(), 0f);
+            }
+
+            // 后摇
+            yield return new WaitForSeconds(Config.JumpAttackAfterDelaySuperBull);
+
+            onComplete?.Invoke();
+        }
+
+        // SuperBull 大回旋攻击逻辑
         protected void BigCircleAttack(Action onComplete = null)
         {
             // 这里可以实现大回旋攻击的逻辑
@@ -251,14 +338,14 @@ public class Bull1 : FSM
             // 然后触发动画和伤害逻辑
             // Anim.SetTrigger("BigCircleAttack");
 
-            if (Stats.bigCircleFlag)
+            if (Stats.BigCircleFlag)
             {
                 // 如果已经在大回旋攻击中，则不再触发新的大回旋攻击
                 return;
             }
             Debug.Log("大回旋攻击触发");
-            Stats.bigCircleFlag = true; // 设置大回旋攻击标志
-            Stats.moveAbleFlag = false; // 禁止移动
+            Stats.BigCircleFlag = true; // 设置大回旋攻击标志
+            Stats.MoveAbleFlag = false; // 禁止移动
             Host.Velocity = Vector3.zero; // 停止当前速度
 
             if (bigCircleCoroutine != null)
@@ -273,10 +360,10 @@ public class Bull1 : FSM
         {
             // 大回旋攻击协程
             Debug.Log("开始大回旋攻击");
-            yield return new WaitForSeconds(Config.BigCircleBeforeDelayBull1); // 前摇时间
+            yield return new WaitForSeconds(Config.BigCircleBeforeDelaySuperBull); // 前摇时间
 
             // 开始旋转
-            float rotateSpeed = Config.BigCircleSpeedBull1 * Mathf.Deg2Rad; // 转换为弧度
+            float rotateSpeed = Config.BigCircleSpeedSuperBull * Mathf.Deg2Rad; // 转换为弧度
 
             // 旋转360度
             float totalRotation = 0f;
@@ -284,11 +371,11 @@ public class Bull1 : FSM
             {
                 float deltaRotation = rotateSpeed * Time.deltaTime; // 每帧旋转的角度
                 totalRotation += deltaRotation * Mathf.Rad2Deg; // 累计旋转角度
-                Host.transform.Rotate(Vector3.up, deltaRotation * Mathf.Rad2Deg); // 旋转Bull1
+                Host.transform.Rotate(Vector3.up, deltaRotation * Mathf.Rad2Deg); // 旋转SuperBull
                 yield return null; // 等待下一帧
             }
-            Stats.bigCircleFlag = false;
-            Stats.moveAbleFlag = true; // 恢复移动能力
+            Stats.BigCircleFlag = false;
+            Stats.MoveAbleFlag = true; // 恢复移动能力
             onComplete?.Invoke();
         }
 
@@ -299,16 +386,16 @@ public class Bull1 : FSM
             // 然后触发动画和伤害逻辑
             // Anim.SetTrigger("DashAttack");
 
-            if (Stats.dashFlag)
+            if (Stats.DashFlag)
             {
                 // 如果已经在冲刺中，则不再触发新的冲刺
-                // Debug.Log("Bull1 正在冲刺中，无法再次触发冲刺攻击");
+                // Debug.Log("SuperBull 正在冲刺中，无法再次触发冲刺攻击");
                 return;
             }
 
             Debug.Log("冲刺攻击触发");
-            Stats.dashFlag = true; // 设置冲刺标志
-            Stats.moveAbleFlag = false; // 禁止移动
+            Stats.DashFlag = true; // 设置冲刺标志
+            Stats.MoveAbleFlag = false; // 禁止移动
             Host.Velocity = Vector3.zero; // 停止当前速度
             if (dashCoroutine != null) // 不一定需要
             {
@@ -327,50 +414,133 @@ public class Bull1 : FSM
             AudioMap.Bull.Warning.Play();
 
             Debug.Log("开始冲刺攻击");
-            if (Stats.hesitateFlag)
+            if (Stats.HesitateFlag)
             {
                 // 如果处于犹疑状态，则前摇时间增加
-                yield return new WaitForSeconds(Config.DashBeforeDelayBull1 * Config.HesitateDashBeforeDelayRateBull1);
+                yield return new WaitForSeconds(Config.DashBeforeDelaySuperBull * Config.HesitateDashBeforeDelayRateSuperBull);
             }
             else
             {
-                yield return new WaitForSeconds(Config.DashBeforeDelayBull1); // 前摇时间
+                yield return new WaitForSeconds(Config.DashBeforeDelaySuperBull); // 前摇时间
             }
             Vector3 direction = (targetPosition - Host.transform.position).normalized;
             direction.y = 0; // 保持水平运动
             Vector3 startPosition = Host.transform.position; // 记录运动距离
 
             // 进入冲刺
-            Host.Velocity = direction * Config.DashSpeedBull1; // 设置冲刺速度
+            Host.Velocity = direction * Config.DashSpeedSuperBull; // 设置冲刺速度
             float targetDistance = new Vector3(targetPosition.x - startPosition.x, 0, targetPosition.z - startPosition.z).magnitude; // 计算目标距离
 
             Vector3 finishedDistance = Host.transform.position - startPosition; // 计算当前位置与起始位置的距离
             while (targetDistance - finishedDistance.magnitude > 0.1f)
             {
-                // Rb.MovePosition(Host.transform.position + direction * Config.DashSpeedBull1 * Time.deltaTime);
+                // Rb.MovePosition(Host.transform.position + direction * Config.DashSpeedSuperBull * Time.deltaTime);
                 finishedDistance = Host.transform.position - startPosition;
                 yield return null; // 等待下一帧
             }
             Host.Velocity = Vector3.zero; // 停止冲刺
             // 冲刺结束，进入后摇
             Debug.Log("冲刺攻击结束");
-            if (Stats.passionateFlag)
+            if (Stats.PassionateFlag)
             {
-                yield return new WaitForSeconds(Config.DashAfterDelayBull1 / 2f); // 后摇时间，激昂时减半
+                yield return new WaitForSeconds(Config.DashAfterDelaySuperBull / 2f); // 后摇时间，激昂时减半
             }
-            else if (Stats.hesitateFlag)
+            else if (Stats.HesitateFlag)
             {
                 // 如果处于犹疑状态，则后摇时间略微缩短
-                yield return new WaitForSeconds(Config.DashAfterDelayBull1 * 3f / 4f);
+                yield return new WaitForSeconds(Config.DashAfterDelaySuperBull * 3f / 4f);
             }
             else
             {
-                yield return new WaitForSeconds(Config.DashAfterDelayBull1); // 后摇时间
+                yield return new WaitForSeconds(Config.DashAfterDelaySuperBull); // 后摇时间
             }
 
-            Stats.dashFlag = false;
-            Stats.moveAbleFlag = true; // 恢复移动能力
+            Stats.DashFlag = false;
+            Stats.MoveAbleFlag = true; // 恢复移动能力
             onComplete?.Invoke(); // 处理后续事件
+        }
+    }
+
+    private class PrepareState : BullState
+    {
+        private float prepareTimer; // 整备状态计时器
+        private float realPrepareTimer;
+        private float dirChangeLockTimer; // 用于锁定方向变化的计时器
+
+
+        public PrepareState(SuperBull host) : base(host)
+        {
+
+        }
+
+        public override void OnEnter()
+        {
+            base.OnEnter();
+            prepareTimer = 30f; // 初始会有最大时间30s，这个时间同时还会收到玩家攻击造成伤害的影响
+            realPrepareTimer = 0f;
+
+            Stats.Speed = Stats.Speed * 0.8f; // 速度减小20%
+
+            Host.GetComponentInChildren<DefendArea>().OnAttacked += PrepareSpecialOnAttackedEvent;
+        }
+
+        private void PrepareSpecialOnAttackedEvent(AttackArea area1, DefendArea area2, float arg3)
+        {
+            if (prepareTimer > 0f)
+            {
+                // 这里设定的是 每次受击都会让计时器减去当次实际受伤的2%数值的秒
+                prepareTimer -= arg3 * Stats.TakeDamageRate * 0.02f;
+                if (prepareTimer < 0f) prepareTimer = 0f;
+            }
+
+        }
+
+        public override void OnExit()
+        {
+            base.OnExit();
+            Debug.Log($"SuperBull退出了整备阶段，这一阶段内停留了{realPrepareTimer}秒，之后的1分钟内移速提升{5f * realPrepareTimer}%");
+            Host.AddSpeedByRate(1f + 0.05f * realPrepareTimer, 60f); // 速度增加，应该能叠速度
+            Host.GetComponentInChildren<DefendArea>().OnAttacked -= PrepareSpecialOnAttackedEvent;
+        }
+
+        public override void OnUpdate(float delta)
+        {
+            base.OnUpdate(delta);
+
+            realPrepareTimer += delta;
+            prepareTimer -= delta;
+
+            if (prepareTimer == 0f && realPrepareTimer >= 5f)
+            {
+                // 至少经过5s切换到愤怒状态
+                Host.ChangeState(typeof(AngryState));
+            }
+
+            if (!Host.DetectMapEdge())
+            {
+                MoveAwayFromPlayer();
+            }
+            else
+            {
+                Vector3 direction = -(Host.transform.position - PlayerRef.transform.position).normalized;
+                Host.Velocity = direction * Stats.Speed;
+                // 进入愤怒状态
+                Host.ChangeState(typeof(AngryState));
+            }
+        }
+
+        private void MoveAwayFromPlayer()
+        {
+            // 尽可能远离Player
+            // 方向需要在计数器归零的时候改变
+            if (dirChangeLockTimer > 0f)
+            {
+                dirChangeLockTimer -= Time.deltaTime;
+                return;
+            }
+            dirChangeLockTimer = Config.IdleDirChangeLockTime[1]; // 重置方向变化锁定时间
+            Vector3 direction = (Host.transform.position - PlayerRef.transform.position).normalized;
+            Host.Velocity = direction * Stats.Speed;
         }
     }
 
@@ -392,9 +562,8 @@ public class Bull1 : FSM
                 yield return new WaitForSeconds(idleDirAdjustTime); // 更新一次
             }
         }
-        public IdleState(Bull1 host) : base(host)
+        public IdleState(SuperBull host) : base(host)
         {
-
 
         }
 
@@ -403,15 +572,15 @@ public class Bull1 : FSM
             base.OnEnter();
             // Anim.SetTrigger("Idle");
             // IDLE状态下承伤系数为85%
-            Stats.takeDamageRate = Config.TakeDamageRateIdleBull1;
-            idleDirAdjustTime = Config.IdleDirAdjustTimeBull1;
+            Stats.TakeDamageRate = Config.TakeDamageRateIdleSuperBull;
+            idleDirAdjustTime = Config.IdleDirAdjustTimeSuperBull;
 
             dirChangeLockTimer = 0f;
             idleDirFlag = 0f;
-            angryTransitionTimer = Config.IdleAngryConvertTimeBull1; // 设置愤怒状态转换计时器
+            angryTransitionTimer = Config.IdleAngryConvertTimeSuperBull; // 设置愤怒状态转换计时器
 
             // 添加额外的受伤操作
-            Host.GetComponentInChildren<DefendArea>().OnAttacked += IdleSpecialOnAttackedEvent;
+            Host.GetComponentInChildren<DefendArea>().OnAttacked += IdleSpecialOnAttackEvent;
 
             // 设置激昂状态下的愤怒计时器
             passionateTransToAngryTimer = 5f;
@@ -421,20 +590,20 @@ public class Bull1 : FSM
 
         }
 
-        private void IdleSpecialOnAttackedEvent(AttackArea area1, DefendArea area2, float arg3)
+        private void IdleSpecialOnAttackEvent(AttackArea area1, DefendArea area2, float arg3)
         {
-            if (Stats.invulnerableTimeCounter > 0f) return;
-            Stats.invulnerableTimeCounter = Config.InvulnerableTime; // 设置无敌时间
-            angryTransitionTimer = Config.IdleAngryConvertTimeBull1; // 重置愤怒状态转换计时器
+            if (Stats.InvulnerableTimeCounter > 0f) return;
+            Stats.InvulnerableTimeCounter = Config.InvulnerableTime; // 设置无敌时间
+            angryTransitionTimer = Config.IdleAngryConvertTimeSuperBull; // 重置愤怒状态转换计时器
 
-            lastDamage = arg3 * Stats.takeDamageRate; // 记录上次受到的伤害
+            lastDamage = arg3 * Stats.TakeDamageRate; // 记录上次受到的伤害
         }
 
         public override void OnExit()
         {
             base.OnExit();
             // 退出IDLE状态时恢复承伤系数
-            Stats.takeDamageRate = Config.TakeDamageRateBull1;
+            Stats.TakeDamageRate = Config.TakeDamageRateSuperBull;
             // 停止获取方向的协程
             if (getDirFlagCoroutine != null)
             {
@@ -442,7 +611,7 @@ public class Bull1 : FSM
                 getDirFlagCoroutine = null;
             }
 
-            Host.GetComponentInChildren<DefendArea>().OnAttacked -= IdleSpecialOnAttackedEvent;
+            Host.GetComponentInChildren<DefendArea>().OnAttacked -= IdleSpecialOnAttackEvent;
         }
 
         public override void OnUpdate(float delta)
@@ -478,12 +647,12 @@ public class Bull1 : FSM
             // 检测玩家距离
             float distance = Vector3.Distance(PlayerRef.transform.position, Host.transform.position);
 
-            if (distance < Config.IdleTriggerBigCircleDistanceBull1)
+            if (distance < Config.IdleTriggerBigCircleDistanceSuperBull)
             {
                 // 如果距离小于触发大回旋攻击的距离，则触发大回旋攻击
                 BigCircleAttack(() => TransToAngryState()); // 同时愤怒
             }
-            else if (Stats.moveAbleFlag)
+            else if (Stats.MoveAbleFlag)
             {
                 // 否则，维持当前状态
                 MaintainDistanceFromPlayer(distance);
@@ -516,10 +685,10 @@ public class Bull1 : FSM
             // 比如检测玩家位置、血量等
 
             // 1. 攻击次数检测
-            if (Stats.swordAttackedCount >= 1 || Stats.lanceAttackedCount > 3)
+            if (Stats.SwordAttackedCount >= 1 || Stats.LanceAttackedCount > 3)
             {
                 // 如果被剑攻击次数大于等于1次，或者被枪攻击次数大于3次，则转换到愤怒状态
-                Debug.Log("Bull1 攻击次数条件达成，转换到愤怒状态");
+                Debug.Log("SuperBull 攻击次数条件达成，转换到愤怒状态");
                 return true;
             }
 
@@ -527,19 +696,19 @@ public class Bull1 : FSM
             if (angryTransitionTimer <= 0f)
             {
                 // 如果愤怒转换计时器小于等于0，则转换到愤怒状态
-                Debug.Log("Bull1 愤怒转换计时器到达，转换到愤怒状态");
+                Debug.Log("SuperBull 愤怒转换计时器到达，转换到愤怒状态");
                 return true;
             }
 
             // 2.5 激昂状态的计时器
-            if (Stats.passionateFlag)
+            if (Stats.PassionateFlag)
             {
-                // 如果Bull1处于激昂状态，则减少激昂时间计数器
+                // 如果SuperBull处于激昂状态，则减少激昂时间计数器
                 passionateTransToAngryTimer -= Time.deltaTime;
                 if (passionateTransToAngryTimer <= 0f)
                 {
                     // 激昂时间结束，转换到愤怒状态
-                    Debug.Log("Bull1 激昂状态愤怒转换计时器到达，转换到愤怒状态");
+                    Debug.Log("SuperBull 激昂状态愤怒转换计时器到达，转换到愤怒状态");
                     return true;
                 }
             }
@@ -547,8 +716,8 @@ public class Bull1 : FSM
             // 3. 场地边缘检测（目前未定义场地边缘，暂不实现）
             if (Host.DetectMapEdge()) // 这里可以添加具体的场地边缘检测逻辑
             {
-                // 如果Bull1接近场地边缘，则转换到愤怒状态
-                Debug.Log("Bull1 接近场地边缘，转换到愤怒状态");
+                // 如果SuperBull接近场地边缘，则转换到愤怒状态
+                Debug.Log("SuperBull 接近场地边缘，转换到愤怒状态");
                 return true;
             }
 
@@ -572,7 +741,7 @@ public class Bull1 : FSM
             // 这里可以根据具体逻辑判断是否需要转换状态
             // 比如检测玩家位置、血量等
             // 0. 首先不能是犹疑状态
-            if (Stats.hesitateFlag)
+            if (Stats.HesitateFlag)
             {
                 // 如果处于犹疑状态，则不转换到红温状态
                 return false;
@@ -582,7 +751,7 @@ public class Bull1 : FSM
             if (lastDamage >= (Host.Stats.Health + lastDamage) / 2f)
             {
                 // 如果单次受到伤害超过半数生命值，则转换到红温状态
-                Debug.Log("Bull1 单次受到伤害超过半数生命值，转换到红温状态");
+                Debug.Log("SuperBull 单次受到伤害超过半数生命值，转换到红温状态");
                 return true;
             }
 
@@ -605,10 +774,10 @@ public class Bull1 : FSM
             // 比如检测玩家位置、血量等
 
             // 1. 生命值检测
-            if (Stats.Health <= Config.HealthBull1 * Config.IdleToTiredHealthDeRateBull1)
+            if (Stats.Health <= Config.HealthSuperBull * Config.IdleToTiredHealthDeRateSuperBull)
             {
                 // 如果生命值低于一定比例，则转换到疲劳状态
-                Debug.Log($"Bull1 生命值低于{Config.IdleToTiredHealthDeRateBull1}阈值，转换到疲劳状态");
+                Debug.Log($"SuperBull 生命值低于{Config.IdleToTiredHealthDeRateSuperBull}阈值，转换到疲劳状态");
                 return true;
             }
 
@@ -629,37 +798,38 @@ public class Bull1 : FSM
         private void MaintainDistanceFromPlayer(float distance)
         {
             Vector3 direction;
-            // 维持Bull1与玩家距离
-            if (distance > Config.IdleMaintainTargetDistanceBull1 + Config.IdleMaintainTargetDistanceOffsetBull1)
+            // 维持SuperBull与玩家距离
+            if (distance > Config.IdleMaintainTargetDistanceSuperBull + Config.IdleMaintainTargetDistanceOffsetSuperBull)
             {
-                // 如果距离小于维持距离，则Bull1尝试远离玩家
+                // 如果距离小于维持距离，则SuperBull尝试远离玩家
                 direction = (PlayerRef.transform.position - Host.transform.position).normalized;
                 dirChangeLockTimer = Config.IdleDirChangeLockTime[0]; // 锁定方向变化的时间
             }
-            else if (distance < Config.IdleMaintainTargetDistanceBull1 - Config.IdleMaintainTargetDistanceOffsetBull1)
+            else if (distance < Config.IdleMaintainTargetDistanceSuperBull - Config.IdleMaintainTargetDistanceOffsetSuperBull)
             {
-                // 如果距离大于维持距离，则Bull1尝试靠近玩家
+                // 如果距离大于维持距离，则SuperBull尝试靠近玩家
                 direction = (Host.transform.position - PlayerRef.transform.position).normalized;
                 dirChangeLockTimer = Config.IdleDirChangeLockTime[0]; // 锁定方向变化的时间
             }
             else
             {
-                // 如果距离在这个区间内，则Bull1尝试围绕玩家运动并保持距离
+                // 如果距离在这个区间内，则SuperBull尝试围绕玩家运动并保持距离
                 // 拿到一个圆周运动方向，圆周方向随机
                 direction = (Vector3.Cross(PlayerRef.transform.position - Host.transform.position, Vector3.up) * (idleDirFlag < 0 ? -1f : 1f)).normalized;
                 dirChangeLockTimer = Config.IdleDirChangeLockTime[1]; // 锁定方向变化的时间
             }
             direction.y = 0; // 保持水平运动
-            Host.Velocity = direction * Stats.Speed; // 设置Bull1的速度
+            Host.Velocity = direction * Stats.Speed; // 设置SuperBull的速度
         }
     }
     private class AngryState : BullState
     {
 
         private bool adjustDistanceFlag = false; // 是否需要调整距离的标志
+        private bool prepareToDashFlag; // 是否准备冲刺，如果是否则表示尝试进行跳跃震击
         private float adjustDistanceTimer = 0f; // 调整距离的计时器
         private int maxCounter = 3;
-        public AngryState(Bull1 host) : base(host)
+        public AngryState(SuperBull host) : base(host)
         {
         }
 
@@ -672,16 +842,22 @@ public class Bull1 : FSM
 
             // Anim.SetTrigger("Angry");
             // 愤怒状态下承伤系数为100%
-            Stats.takeDamageRate = Config.TakeDamageRateBull1;
+            Stats.TakeDamageRate = Config.TakeDamageRateSuperBull;
             // 这里可以实现愤怒状态的逻辑，比如增加攻击力、改变行为等
             Debug.Log("进入愤怒状态");
             adjustDistanceFlag = true;
-            adjustDistanceTimer = Config.AngryAdjustMaxTimeBull1; // 设置调整距离的最大时间
+            adjustDistanceTimer = Config.AngryAdjustMaxTimeSuperBull; // 设置调整距离的最大时间
+            // 检测玩家距离
+            Vector3 bullToPlayer = Host.transform.position - PlayerRef.transform.position;
+            bullToPlayer.y = 0;
+            float distanceToPlayer = bullToPlayer.magnitude;
+            if (distanceToPlayer < Config.AngryDashTryDistanceSuperBull) prepareToDashFlag = false;
+            else prepareToDashFlag = true;
 
             // 如果愤怒状态计数器大于3，且不犹疑，则转换到红温状态
-            if (!Stats.hesitateFlag && angryStateCounter > maxCounter)
+            if (!Stats.HesitateFlag && angryStateCounter > maxCounter)
             {
-                Debug.Log("Bull1 愤怒状态计数器超过3，转换到红温状态");
+                Debug.Log("SuperBull 愤怒状态计数器超过3，转换到红温状态");
                 Host.ChangeState(typeof(VeryAngryState));
                 return; // 直接转换状态，不再执行后续逻辑
             }
@@ -698,10 +874,10 @@ public class Bull1 : FSM
             if (!healthFirstLowerThan20p)
             {
                 // 如果生命值第一次低于20%且不犹疑，则转换到红温状态
-                if (Stats.Health <= Config.HealthBull1 * 0.2f)
+                if (Stats.Health <= Config.HealthSuperBull * 0.2f)
                 {
                     healthFirstLowerThan20p = true;
-                    if (!Stats.hesitateFlag)
+                    if (!Stats.HesitateFlag)
                     {
                         Host.ChangeState(typeof(VeryAngryState));
                     }
@@ -709,38 +885,74 @@ public class Bull1 : FSM
                 }
             }
 
-            if (adjustDistanceFlag && Host.DetectMapEdge())
+            if (adjustDistanceFlag && prepareToDashFlag && Host.DetectMapEdge())
             {
                 // 如果接近地图边缘，则调整距离
                 adjustDistanceFlag = false; // 停止调整距离
-                Debug.Log("Bull1 接近地图边缘，停止调整距离");
+                Debug.Log("SuperBull 接近地图边缘，停止调整距离");
             }
 
             if (adjustDistanceFlag)
             {
-                // 尝试去远离玩家，这里之后需要调整使得能够修改flag，目前的考虑是给一个协程每隔一定时间更新一个位置，比较前后位置的距离差
-                Vector3 direction = (Host.transform.position - PlayerRef.transform.position).normalized;
-                direction.y = 0f;
-
-                Host.Velocity = direction * Stats.Speed; // 设置Bull1的速度
-                adjustDistanceTimer -= delta; // 减少调整距离的计时器
-                if (adjustDistanceTimer <= 0f)
+                if (prepareToDashFlag)
                 {
-                    // 如果调整距离的计时器小于等于0，则停止调整距离
-                    Debug.Log("Bull1 达到调整最大时间，停止调整距离");
-                    adjustDistanceFlag = false;
-                    adjustDistanceTimer = 0f; // 确保计时器不小于0
+                    // 尝试去远离玩家，这里之后需要调整使得能够修改flag，目前的考虑是给一个协程每隔一定时间更新一个位置，比较前后位置的距离差
+                    Vector3 direction = (Host.transform.position - PlayerRef.transform.position).normalized;
+                    direction.y = 0f;
+
+                    Host.Velocity = direction * Stats.Speed; // 设置SuperBull的速度
+                    adjustDistanceTimer -= delta; // 减少调整距离的计时器
+                    if (adjustDistanceTimer <= 0f)
+                    {
+                        // 如果调整距离的计时器小于等于0，则停止调整距离
+                        Debug.Log("SuperBull 达到调整最大时间，停止调整距离");
+                        adjustDistanceFlag = false;
+                        adjustDistanceTimer = 0f; // 确保计时器不小于0
+                    }
                 }
+                else
+                {
+                    // 尝试靠近玩家
+                    Vector3 direction = (PlayerRef.transform.position - Host.transform.position).normalized;
+                    direction.y = 0f;
+
+                    Host.Velocity = direction * Stats.Speed; // 设置SuperBull的速度
+                    adjustDistanceTimer -= delta; // 减少调整距离的计时器
+                    if (adjustDistanceTimer <= 0f)
+                    {
+                        // 如果调整距离的计时器小于等于0，则停止调整距离
+                        Debug.Log("SuperBull 达到调整最大时间，停止调整距离");
+                        adjustDistanceFlag = false;
+                        adjustDistanceTimer = 0f; // 确保计时器不小于0
+                    }
+                }
+
             }
             else
             {
-                if (!Stats.dashFlag)
+                if (prepareToDashFlag)
                 {
-                    DashAttack(() =>
+                    if (!Stats.DashFlag)
                     {
-                        Debug.Log("冲刺执行完毕，转为IDLE状态");
-                        Host.ChangeState(typeof(IdleState));
-                    });
+                        DashAttack(() =>
+                        {
+                            Debug.Log("冲刺执行完毕，转为IDLE状态");
+                            Host.ChangeState(typeof(IdleState));
+                        });
+                    }
+                }
+                else
+                {
+                    // 发动跳跃
+                    if (!Stats.JumpAttackFlag)
+                    {
+                        JumpAttack(() =>
+                        {
+                            Debug.Log("跳跃攻击执行完毕，转为IDLE状态");
+                            Host.ChangeState(typeof(IdleState));
+                        });
+
+                    }
                 }
             }
         }
@@ -748,7 +960,7 @@ public class Bull1 : FSM
 
     private class VeryAngryState : BullState
     {
-        public VeryAngryState(Bull1 host) : base(host)
+        public VeryAngryState(SuperBull host) : base(host)
         {
         }
         public override void OnEnter()
@@ -756,8 +968,8 @@ public class Bull1 : FSM
             base.OnEnter();
             // Anim.SetTrigger("Angry");
             // 红温状态下承伤系数为125%
-            Stats.takeDamageRate = Config.TakeDamageRateVeryAngryBull1;
-            Stats.Speed = Config.SpeedBull1 * Config.VeryAngrySpeedRateBull1;
+            Stats.TakeDamageRate = Config.TakeDamageRateVeryAngrySuperBull;
+            Stats.Speed = Stats.Speed * Config.VeryAngrySpeedRateSuperBull;
             // 这里可以实现红温状态的逻辑，比如增加攻击力、改变行为等
             Debug.Log("进入红温状态");
 
@@ -768,8 +980,8 @@ public class Bull1 : FSM
         {
             base.OnExit();
             // 参数还原
-            Stats.takeDamageRate = Config.TakeDamageRateBull1;
-            Stats.Speed = Config.SpeedBull1;
+            Stats.TakeDamageRate = Config.TakeDamageRateSuperBull;
+            Stats.Speed = Stats.Speed / Config.VeryAngrySpeedRateSuperBull;
             Debug.Log("离开红温状态");
         }
     }
@@ -780,9 +992,9 @@ public class Bull1 : FSM
         private float healthRate
         {
             // 生命值百分比
-            get => Mathf.Abs(initHealth - Stats.Health) / Config.HealthBull1;
+            get => Mathf.Abs(initHealth - Stats.Health) / Config.HealthSuperBull;
         }
-        public TiredState(Bull1 host) : base(host)
+        public TiredState(SuperBull host) : base(host)
         {
 
         }
@@ -792,12 +1004,12 @@ public class Bull1 : FSM
             base.OnEnter();
             Debug.Log("进入疲劳状态");
             initHealth = Stats.Health;
-            Stats.takeDamageRate = Config.TakeDamageRateTiredBull1;
+            Stats.TakeDamageRate = Config.TakeDamageRateTiredSuperBull;
             Flow.Create()
-            .Delay(Host.Stats.passionateFlag ? (Config.TiredDurationBull1 / 2f) : Config.TiredDurationBull1) // 激昂状态下这个时间减半
+            .Delay(Config.TiredDurationSuperBull) // 激昂状态下这个时间不减半，与Bull1不同
             .Then(() =>
             {
-                if (healthRate <= Config.TiredHealthDeRateBull1)
+                if (healthRate <= Config.TiredHealthDeRateSuperBull)
                 {
                     Host.ChangeState(typeof(IdleState));
                 }
