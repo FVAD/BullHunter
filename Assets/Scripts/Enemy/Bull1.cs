@@ -311,6 +311,7 @@ public class Bull1 : FSM
             Host.circleTip.GetComponentsInChildren<ParticleSystem>().ForEach(p => p.Play());
 
             Debug.Log("开始大回旋攻击");
+            RingEffectManager.Instance.SpawnRing(Host.transform.position, RingEffectManager.CalculateMaxCoverRadius(Host.GetComponentInChildren<AttackArea>().GetComponent<BoxCollider>()), Config.BigCircleBeforeDelaySuperBull, Color.blue);
             yield return new WaitForSeconds(Config.BigCircleBeforeDelayBull1); // 前摇时间
 
             // 攻击区域激活
