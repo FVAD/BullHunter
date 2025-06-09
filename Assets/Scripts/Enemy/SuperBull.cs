@@ -12,6 +12,7 @@ public class SuperBull : FSM
     [SerializeField, Title("地图中心定位（半径为Render中提到的Length）")] private Transform mapCenter;
     private float mapRadius;
     public BullStats Stats { get; private set; }
+    [SerializeField, Title("当前状态")] private string curState;
     public class BullStats
     {
         public float Health { get; set; }
@@ -31,7 +32,10 @@ public class SuperBull : FSM
         public bool JumpAttackFlag { get; set; } // 大回旋正在进行标志
 
     }
-
+    public string GetState()
+    {
+        return curState;
+    }
     private Rigidbody rb;
     private Animator anim;
 
@@ -537,6 +541,7 @@ public class SuperBull : FSM
         public override void OnEnter()
         {
             base.OnEnter();
+            Host.curState = "准备";
             prepareTimer = 30f; // 初始会有最大时间30s，这个时间同时还会收到玩家攻击造成伤害的影响
             realPrepareTimer = 0f;
 
@@ -631,6 +636,7 @@ public class SuperBull : FSM
         public override void OnEnter()
         {
             base.OnEnter();
+            Host.curState = "空闲";
             // Anim.SetTrigger("Idle");
             // IDLE状态下承伤系数为85%
             Stats.TakeDamageRate = Config.TakeDamageRateIdleSuperBull;
@@ -899,7 +905,7 @@ public class SuperBull : FSM
             base.OnEnter();
             // 计数器+1
             angryStateCounter++;
-
+            Host.curState = "愤怒";
 
             // Anim.SetTrigger("Angry");
             // 愤怒状态下承伤系数为100%
@@ -1053,6 +1059,7 @@ public class SuperBull : FSM
         public override void OnEnter()
         {
             base.OnEnter();
+            Host.curState = "红温";
             // Anim.SetTrigger("Angry");
             // 红温状态下承伤系数为125%
             Stats.TakeDamageRate = Config.TakeDamageRateVeryAngrySuperBull;
@@ -1089,6 +1096,7 @@ public class SuperBull : FSM
         public override void OnEnter()
         {
             base.OnEnter();
+            Host.curState = "疲劳";
             Debug.Log("进入疲劳状态");
             initHealth = Stats.Health;
             Stats.TakeDamageRate = Config.TakeDamageRateTiredSuperBull;
