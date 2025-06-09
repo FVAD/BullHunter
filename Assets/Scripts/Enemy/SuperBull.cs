@@ -917,9 +917,20 @@ public class SuperBull : FSM
             Vector3 bullToPlayer = Host.transform.position - PlayerRef.transform.position;
             bullToPlayer.y = 0;
             float distanceToPlayer = bullToPlayer.magnitude;
+            // 如果状态发生了切换，那么重置计时器时间
+            if (!(distanceToPlayer < Config.AngryDashTryDistanceSuperBull && !prepareToDashFlag)) adjustDistanceTimer = Config.AngryAdjustMaxTimeSuperBull;
             if (distanceToPlayer < Config.AngryDashTryDistanceSuperBull) prepareToDashFlag = false;
             else prepareToDashFlag = true;
             return prepareToDashFlag;
+        }
+
+        private bool DetectPlayerInAttackRange()
+        {
+            // 检测玩家是否在跳跃攻击的攻击范围
+            Vector3 bullToPlayer = Host.transform.position - PlayerRef.transform.position;
+            bullToPlayer.y = 0f;
+            if (bullToPlayer.magnitude <= Config.JumpAttackAttackRangeSuperBull) return true;
+            return false;
         }
 
         public override void OnUpdate(float delta)
@@ -944,9 +955,16 @@ public class SuperBull : FSM
 
             if (adjustDistanceFlag && prepareToDashFlag && Host.DetectMapEdge())
             {
-                // 如果接近地图边缘，则调整距离
+                // 如果接近地图边缘，则停止调整距离
                 adjustDistanceFlag = false; // 停止调整距离
                 Debug.Log("SuperBull 接近地图边缘，停止调整距离");
+            }
+
+            if (adjustDistanceFlag && !prepareToDashFlag && DetectPlayerInAttackRange())
+            {
+                // 如果Player位于跳跃攻击范围之内，则停止调整距离
+                adjustDistanceFlag = false; // 停止调整距离
+                Debug.Log("SuperBull 进入跳跃攻击范围，停止调整距离");
             }
 
             if (adjustDistanceFlag)
