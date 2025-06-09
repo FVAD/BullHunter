@@ -9,7 +9,8 @@ using UnityEngine.EventSystems;
 public class SuperBull : FSM
 {
     [SerializeField, Title("配置")] private BullConfig config;
-    [SerializeField, Title("地图中心定位（半径为scale.y）")] private Transform mapCenter;
+    [SerializeField, Title("地图中心定位（半径为Render中提到的Length）")] private Transform mapCenter;
+    private float mapRadius;
     public BullStats Stats { get; private set; }
     public class BullStats
     {
@@ -110,7 +111,7 @@ public class SuperBull : FSM
         // 为了防止SuperBull走出地图边缘，当superBull的移动方向上的一定距离的点超出了范围，则返回True
         Vector3 position = transform.position;
         Vector3 direction = Velocity.normalized; // 获取当前移动方向
-        if ((position + direction * config.CheckMapEdgeDistance - mapCenter.position).magnitude > mapCenter.localScale.y)
+        if ((position + direction * config.CheckMapEdgeDistance - mapCenter.position).magnitude > mapRadius)
         {
             // 如果SuperBull接近地图边缘，则返回True，并且调整速度至面向玩家
             Velocity = (player.transform.position - position).normalized * config.SpeedSuperBull; // 面向玩家
@@ -153,6 +154,12 @@ public class SuperBull : FSM
             PassionateTimeCounter = 0f,
             HesitateTimeCounter = 0f,
         };
+
+
+        // 获取地图半径
+        MapRadiusRender mapRadiusRender = mapCenter.GetComponent<MapRadiusRender>();
+        if (mapRadiusRender == null) Debug.LogError("mapCenter对象应当挂载以一个MapRadiusRender脚本，这个脚本用于获取地图半径。");
+        mapRadius = mapRadiusRender.LineLength; // 获取地图半径
 
         GetComponentInChildren<DefendArea>().OnAttacked += (atk, def, f) =>
         {
@@ -295,7 +302,7 @@ public class SuperBull : FSM
                 Host.StopCoroutine(jumpAttackCoroutine); // 如果已有跳跃震击协程在运行，则停止它
                 jumpAttackCoroutine = null; // 清空跳跃震击协程引用
             }
-            jumpAttackCoroutine = Host.StartCoroutine(BigCircleAttackCoroutine(onComplete)); // 启动跳跃震击协程
+            jumpAttackCoroutine = Host.StartCoroutine(JumpAttackCoroutine(onComplete)); // 启动跳跃震击协程
         }
         protected IEnumerator JumpAttackCoroutine(Action onComplete = null)
         {
@@ -344,6 +351,9 @@ public class SuperBull : FSM
 
             // 后摇
             yield return new WaitForSeconds(Config.JumpAttackAfterDelaySuperBull);
+
+            Stats.JumpAttackFlag = false;
+            Stats.MoveAbleFlag = true; // 恢复移动能力
 
             onComplete?.Invoke();
         }
@@ -1023,8 +1033,10 @@ public class SuperBull : FSM
                     {
                         JumpAttack(() =>
                         {
-                            Debug.Log("跳跃攻击执行完毕，转为IDLE状态");
-                            Host.ChangeState(typeof(IdleState));
+                            Debug.Log("跳跃攻击执行完毕，重新开始判断距离");
+                            adjustDistanceTimer = Config.AngryAdjustMaxTimeSuperBull;
+                            adjustDistanceFlag = true; // 重新开始
+                            SetPrepareToDashFlag();
                         });
 
                     }

@@ -8,6 +8,8 @@ public class GameManager : MonoBehaviour
     {
         GetComponentsInChildren<ManagerBase>().ForEach(m => m.Init());
 
+        AudioMap.BGM.Title.Stop();
+        AudioMap.BGM.Battle.Stop();
         if(bgm) bgm.PlaySingleton();
     }
 }
