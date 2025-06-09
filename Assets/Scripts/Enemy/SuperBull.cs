@@ -321,6 +321,8 @@ public class SuperBull : FSM
         protected IEnumerator JumpAttackCoroutine(Action onComplete = null)
         {
             Vector3 startPoint = Host.transform.position;
+
+            RingEffectManager.Instance.SpawnRing(startPoint, Config.JumpAttackAttackRangeSuperBull, Config.JumpAttackRisingDurationSuperBull + Config.JumpAttackFallingDurationSuperBull, Color.red);
             // 高高跃起
             // 下面的内容设重力加速度9.8
             float g = 9.8f;
