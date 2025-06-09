@@ -169,7 +169,28 @@ public class Bull1 : FSM
             }
         };
 
+        Flow.Create()
+            .Delay(1)
+            .Then(() => GetComponentsInChildren<AttackArea>().ForEach(a =>
+            {
+                a.Active = true;
+                a.OnAttacking += (atk, def) =>
+                {
+                    def.ReceiveDamage(atk, def, 0);
+                    Debug.Log($"{atk.name}对{def.name}发起攻击，伤害为0");
+                };
+            }))
+            .Run();
+
+        // 攻击区域初始关闭
+        SetAttackAreaIsActive(false);
+
         AudioMap.Bull.Roar.Play();
+    }
+
+    protected void SetAttackAreaIsActive(bool flag)
+    {
+        GetComponentsInChildren<AttackArea>().ForEach(a => a.Active = flag);
     }
 
     protected override void Update()
@@ -279,6 +300,9 @@ public class Bull1 : FSM
             Debug.Log("开始大回旋攻击");
             yield return new WaitForSeconds(Config.BigCircleBeforeDelayBull1); // 前摇时间
 
+            // 攻击区域激活
+            Host.SetAttackAreaIsActive(true);
+
             // 开始旋转
             float rotateSpeed = Config.BigCircleSpeedBull1 * Mathf.Deg2Rad; // 转换为弧度
 
@@ -291,6 +315,12 @@ public class Bull1 : FSM
                 Host.transform.Rotate(Vector3.up, deltaRotation * Mathf.Rad2Deg); // 旋转Bull1
                 yield return null; // 等待下一帧
             }
+
+            
+            // 攻击区域关闭
+            Host.SetAttackAreaIsActive(false);
+
+            
             Stats.bigCircleFlag = false;
             Stats.moveAbleFlag = true; // 恢复移动能力
             onComplete?.Invoke();
@@ -341,6 +371,11 @@ public class Bull1 : FSM
             {
                 yield return new WaitForSeconds(Config.DashBeforeDelayBull1); // 前摇时间
             }
+
+            // 攻击区域激活
+            Host.SetAttackAreaIsActive(true);
+
+
             Vector3 direction = (targetPosition - Host.transform.position).normalized;
             direction.y = 0; // 保持水平运动
             Vector3 startPosition = Host.transform.position; // 记录运动距离
@@ -359,6 +394,10 @@ public class Bull1 : FSM
             Host.Velocity = Vector3.zero; // 停止冲刺
             // 冲刺结束，进入后摇
             Debug.Log("冲刺攻击结束");
+
+            // 攻击区域关闭
+            Host.SetAttackAreaIsActive(false);
+
             if (Stats.passionateFlag)
             {
                 yield return new WaitForSeconds(Config.DashAfterDelayBull1 / 2f); // 后摇时间，激昂时减半
