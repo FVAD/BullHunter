@@ -9,7 +9,8 @@ using UnityEngine.EventSystems;
 public class Bull1 : FSM
 {
     [SerializeField, Title("配置")] private BullConfig config;
-    [SerializeField, Title("地图中心定位（半径为scale.y）")] private Transform mapCenter;
+    [SerializeField, Title("地图中心定位（半径为Render中提到的Length）")] private Transform mapCenter;
+    private float mapRadius;
     [SerializeField, Title("冲刺提示")] private Transform dashTip;
     [SerializeField, Title("回旋提示")] private Transform circleTip;
     public BullStats Stats { get; private set; }
@@ -95,11 +96,11 @@ public class Bull1 : FSM
 
     protected bool DetectMapEdge()
     {
-        // 检测Bull1是否接近地图边缘，地图定义为mapCenter为中心，scale.y为半径
+        // 检测Bull1是否接近地图边缘，地图定义为mapCenter为中心，其中挂载的MapRadiusRender组件定义了地图的半径
         // 为了防止Bull1走出地图边缘，当bull1的移动方向上的一定距离的点超出了范围，则返回True
         Vector3 position = transform.position;
         Vector3 direction = Velocity.normalized; // 获取当前移动方向
-        if ((position + direction * config.CheckMapEdgeDistance - mapCenter.position).magnitude > mapCenter.localScale.y)
+        if ((position + direction * config.CheckMapEdgeDistance - mapCenter.position).magnitude > mapRadius) 
         {
             // 如果Bull1接近地图边缘，则返回True，并且调整速度至面向玩家
             Velocity = (player.transform.position - position).normalized * config.SpeedBull1; // 面向玩家
@@ -142,6 +143,11 @@ public class Bull1 : FSM
             passionateTimeCounter = 0f,
             hesitateTimeCounter = 0f,
         };
+
+        // 获取地图半径
+        MapRadiusRender mapRadiusRender = mapCenter.GetComponent<MapRadiusRender>();
+        if (mapRadiusRender == null) Debug.LogError("mapCenter对象应当挂载以一个MapRadiusRender脚本，这个脚本用于获取地图半径。");
+        mapRadius = mapRadiusRender.LineLength; // 获取地图半径
 
         GetComponentInChildren<DefendArea>().OnAttacked += (atk, def, f) =>
         {
