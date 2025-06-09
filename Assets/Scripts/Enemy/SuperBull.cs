@@ -171,18 +171,23 @@ public class SuperBull : FSM
             // 处理受击逻辑
             if (Stats.InvulnerableTimeCounter > 0f) return;
             Stats.InvulnerableTimeCounter = config.InvulnerableTime; // 设置无敌时间
-            Stats.Health -= f * Stats.TakeDamageRate;
-            Debug.Log($"SuperBull 受到了 {f} * {Stats.TakeDamageRate} = {f * Stats.TakeDamageRate}点伤害，当前生命值：{Stats.Health}");
+
+            var damage = f * Stats.TakeDamageRate;
+
             if (atk.GetComponent<LanceWeapon>() != null)
             {
                 Stats.LanceAttackedCount++;
-                Debug.Log($"SuperBull 被枪攻击次数：{Stats.LanceAttackedCount}");
+                Debug.Log($"Bull1 被枪攻击次数：{Stats.LanceAttackedCount}");
             }
             else
             {
                 Stats.SwordAttackedCount++;
-                Debug.Log($"SuperBull 被剑攻击次数：{Stats.SwordAttackedCount}");
+                damage *= 1.0f + Stats.LanceAttackedCount * 0.2f;
+                Debug.Log($"Bull1 被剑攻击次数：{Stats.SwordAttackedCount}");
             }
+
+            Stats.Health -= damage;
+            Debug.Log($"Bull1 受到了 {damage} 点伤害，当前生命值：{Stats.Health}");
 
             if (Stats.Health <= 0)
             {
