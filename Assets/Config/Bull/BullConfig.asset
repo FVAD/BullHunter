@@ -25,7 +25,7 @@ MonoBehaviour:
   dashSpeed_bull1: 15
   dashBeforeDelay_bull1: 1
   dashAfterDelay_bull1: 1
-  bigCircleSpeed_bull1: 180
+  bigCircleSpeed_bull1: 360
   bigCircleBeforeDelay_bull1: 1
   bigCircleAfterDelay_bull1: 1
   idleMaintainTargetDistance_bull1: 10
@@ -49,7 +49,7 @@ MonoBehaviour:
   dashSpeed_superBull: 30
   dashBeforeDelay_superBull: 1
   dashAfterDelay_superBull: 1
-  bigCircleSpeed_superBull: 180
+  bigCircleSpeed_superBull: 360
   bigCircleBeforeDelay_superBull: 1
   bigCircleAfterDelay_superBull: 1
   jumpAttackRisingDuration_superBull: 2
