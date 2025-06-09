@@ -401,6 +401,7 @@ public class SuperBull : FSM
         {
             // 大回旋攻击协程
             Debug.Log("开始大回旋攻击");
+            RingEffectManager.Instance.SpawnRing(Host.transform.position, RingEffectManager.CalculateMaxCoverRadius(Host.GetComponentInChildren<AttackArea>().GetComponent<BoxCollider>()), Config.BigCircleBeforeDelaySuperBull, Color.blue);
             yield return new WaitForSeconds(Config.BigCircleBeforeDelaySuperBull); // 前摇时间
 
             // 攻击区域激活

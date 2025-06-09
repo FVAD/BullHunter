@@ -36,32 +36,77 @@ public class RingEffectManager : MonoBehaviour
     {
         GameObject ringContainer = new GameObject("RingEffect");
         ringContainer.transform.position = position;
-        
+
         SpriteRenderer ringRenderer = CreateRingMesh(ringContainer, radius, color ?? Color.cyan);
-        
+
         ParticleSystem ringParticles = Instantiate(config.ringParticlePrefab, position, Quaternion.Euler(90f, 0f, 0f), ringContainer.transform);
         ParticleSystem impactParticles = Instantiate(config.impactParticlePrefab, position, Quaternion.identity, ringContainer.transform);
         ConfigureParticles(ringParticles, radius, color ?? Color.cyan);
         ConfigureParticles(impactParticles, radius, color ?? Color.cyan);
-        
+
         ActiveRing newRing = new ActiveRing(ringContainer, ringRenderer, ringParticles, impactParticles, duration);
         activeRings.Add(newRing);
         newRing.Start();
+    }
+
+    // 计算旋转覆盖的最大圆半径
+    public static float CalculateMaxCoverRadius(BoxCollider targetCollider)
+    {
+        if (targetCollider == null)
+        {
+            Debug.LogError("Target collider is not assigned!");
+            return 0f;
+        }
+
+        // 获取BoxCollider的局部坐标点
+        Vector3 center = targetCollider.center;
+        Vector3 size = targetCollider.size;
+
+        // 计算BoxCollider的8个顶点（局部坐标）
+        Vector3[] vertices = new Vector3[8];
+
+        // 底部四个顶点
+        vertices[0] = center + new Vector3(-size.x / 2, -size.y / 2, -size.z / 2);
+        vertices[1] = center + new Vector3(-size.x / 2, -size.y / 2, size.z / 2);
+        vertices[2] = center + new Vector3(size.x / 2, -size.y / 2, -size.z / 2);
+        vertices[3] = center + new Vector3(size.x / 2, -size.y / 2, size.z / 2);
+
+        // 顶部四个顶点
+        vertices[4] = center + new Vector3(-size.x / 2, size.y / 2, -size.z / 2);
+        vertices[5] = center + new Vector3(-size.x / 2, size.y / 2, size.z / 2);
+        vertices[6] = center + new Vector3(size.x / 2, size.y / 2, -size.z / 2);
+        vertices[7] = center + new Vector3(size.x / 2, size.y / 2, size.z / 2);
+
+        float maxRadius = 0f;
+
+        // 计算每个顶点到Y轴的距离（忽略Y坐标）
+        foreach (Vector3 vertex in vertices)
+        {
+            // 计算在X-Z平面上的距离
+            float radius = Mathf.Sqrt(vertex.x * vertex.x + vertex.z * vertex.z);
+
+            if (radius > maxRadius)
+            {
+                maxRadius = radius;
+            }
+        }
+
+        return maxRadius;
     }
 
     private SpriteRenderer CreateRingMesh(GameObject parent, float radius, Color color)
     {
         GameObject ringObject = Instantiate(config.ringPrefab, parent.transform);
         ringObject.name = "RingMesh";
-        
+
         ringObject.transform.localPosition = Vector3.zero;
         // ringObject.transform.localRotation = Quaternion.Euler(90, 0, 0);
         ringObject.transform.localScale = new Vector3(radius, 1f, radius);
-        
+
         // 设置材质
         SpriteRenderer renderer = ringObject.GetComponentInChildren<SpriteRenderer>();
         renderer.material.color = color;
-        
+
         return renderer;
     }
 
@@ -69,12 +114,12 @@ public class RingEffectManager : MonoBehaviour
     {
         var main = ps.main;
         var shape = ps.shape;
-        
+
         shape.shapeType = ParticleSystemShapeType.Circle;
         shape.radius = radius;
 
         main.startColor = color;
-        
+
         main.startSize = new ParticleSystem.MinMaxCurve(radius * 0.1f, radius * 0.2f);
     }
 
@@ -111,8 +156,8 @@ public class RingEffectManager : MonoBehaviour
         public float elapsedTime;
         public bool isActive;
 
-        public ActiveRing(GameObject container, SpriteRenderer ringRenderer, 
-                         ParticleSystem ringParticles, ParticleSystem impactParticles, 
+        public ActiveRing(GameObject container, SpriteRenderer ringRenderer,
+                         ParticleSystem ringParticles, ParticleSystem impactParticles,
                          float duration)
         {
             this.container = container;
@@ -156,7 +201,7 @@ public class RingEffectManager : MonoBehaviour
             }
 
             elapsedTime += deltaTime;
-            
+
             // 更新透明度
             float alpha = Mathf.Clamp01(1 - (elapsedTime / duration));
             Color color = ringRenderer.material.color;
@@ -171,5 +216,7 @@ public class RingEffectManager : MonoBehaviour
 
             return true;
         }
+
+
     }
 }
