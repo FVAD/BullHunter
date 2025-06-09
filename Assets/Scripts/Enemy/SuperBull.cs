@@ -185,6 +185,9 @@ public class SuperBull : FSM
 
             if (Stats.Health <= 0)
             {
+                AudioMap.Misc.Otto.Play();
+                //两秒后执行下面的指令
+                Invoke("LoadStart", 2f);
                 // anim.SetTrigger("Die");
                 // 处理死亡逻辑
                 Debug.Log("SuperBull 死亡");
@@ -206,7 +209,10 @@ public class SuperBull : FSM
 
         AudioMap.Bull.Roar.Play();
     }
+    public void LoadStart()
+    {
 
+    }
     protected void SetAttackAreaIsActive(bool flag)
     {
         GetComponentsInChildren<AttackArea>().ForEach(a => a.Active = flag);
