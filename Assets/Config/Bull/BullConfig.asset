@@ -42,7 +42,7 @@ MonoBehaviour:
   tiredDuration_bull1: 3
   tiredHealthDeRate_bull1: 0.2
   hesitateDashBeforeDelayRate_bull1: 1.5
-  health_superBull: 100
+  health_superBull: 11451
   takeDamageRate_superBull: 1
   speed_superBull: 5
   attackPower_superBull: 10
