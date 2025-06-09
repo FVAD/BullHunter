@@ -10,6 +10,8 @@ public class Bull1 : FSM
 {
     [SerializeField, Title("配置")] private BullConfig config;
     [SerializeField, Title("地图中心定位（半径为scale.y）")] private Transform mapCenter;
+    [SerializeField, Title("冲刺提示")] private Transform dashTip;
+    [SerializeField, Title("回旋提示")] private Transform circleTip;
     public BullStats Stats { get; private set; }
     public class BullStats
     {
@@ -272,6 +274,8 @@ public class Bull1 : FSM
         protected IEnumerator BigCircleAttackCoroutine(Action onComplete = null)
         {
             // 大回旋攻击协程
+            Host.circleTip.GetComponentsInChildren<ParticleSystem>().ForEach(p => p.Play());
+
             Debug.Log("开始大回旋攻击");
             yield return new WaitForSeconds(Config.BigCircleBeforeDelayBull1); // 前摇时间
 
@@ -324,6 +328,7 @@ public class Bull1 : FSM
             // 这里可以实现冲刺攻击的协程逻辑
             // 比如计算冲刺方向和速度，处理前摇和后摇等
             // Anim.SetTrigger("DashAttack");
+            Host.dashTip.GetComponentsInChildren<ParticleSystem>().ForEach(p => p.Play());
             AudioMap.Bull.Warning.Play();
 
             Debug.Log("开始冲刺攻击");
