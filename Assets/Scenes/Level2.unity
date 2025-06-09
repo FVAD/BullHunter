@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 122359703}
-  m_IndirectSpecularColor: {r: 0.5231037, g: 0.39918563, b: 0.16609675, a: 1}
+  m_IndirectSpecularColor: {r: 0.5231031, g: 0.39918503, b: 0.16609672, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -97,7 +97,7 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 0}
+  m_LightingDataAsset: {fileID: 112000000, guid: 219b3329a38d4a74f804c1e056d8c054, type: 2}
   m_LightingSettings: {fileID: 4890085278179872738, guid: 293ef436745171b4ebce55723a167455, type: 2}
 --- !u!196 &4
 NavMeshSettings:
@@ -156,11 +156,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4251608686384018491, guid: 4dc42727d28c03844a18759e95d5409c, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.0000000023044364
+      value: -0.0000000017667451
       objectReference: {fileID: 0}
     - target: {fileID: 4251608686384018491, guid: 4dc42727d28c03844a18759e95d5409c, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -1.2609458e-11
+      value: -9.6673095e-12
       objectReference: {fileID: 0}
     - target: {fileID: 4251608686694106216, guid: 4dc42727d28c03844a18759e95d5409c, type: 3}
       propertyPath: m_RootOrder
@@ -228,11 +228,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4251608687089532498, guid: 4dc42727d28c03844a18759e95d5409c, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.0000000023044364
+      value: -0.0000000017667451
       objectReference: {fileID: 0}
     - target: {fileID: 4251608687089532498, guid: 4dc42727d28c03844a18759e95d5409c, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -1.2609458e-11
+      value: -9.6673095e-12
       objectReference: {fileID: 0}
     - target: {fileID: 4251608687537515453, guid: 4dc42727d28c03844a18759e95d5409c, type: 3}
       propertyPath: enemy

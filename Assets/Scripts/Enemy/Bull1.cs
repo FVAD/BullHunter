@@ -178,9 +178,10 @@ public class Bull1 : FSM
 
             if (Stats.Health <= 0)
             {
-                // anim.SetTrigger("Die");
-                // 处理死亡逻辑
+                AudioMap.Misc.Otto.Play();
                 Debug.Log("Bull1 死亡");
+                SceneLoader.To("Start", 5);
+                enabled = false;
             }
         };
 

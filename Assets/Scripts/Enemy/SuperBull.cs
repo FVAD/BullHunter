@@ -192,11 +192,9 @@ public class SuperBull : FSM
             if (Stats.Health <= 0)
             {
                 AudioMap.Misc.Otto.Play();
-                //两秒后执行下面的指令
-                Invoke("LoadStart", 2f);
-                // anim.SetTrigger("Die");
-                // 处理死亡逻辑
                 Debug.Log("SuperBull 死亡");
+                SceneLoader.To("Start", 5);
+                enabled = false;
             }
         };
 
@@ -214,10 +212,6 @@ public class SuperBull : FSM
             .Run();
 
         AudioMap.Bull.Roar.Play();
-    }
-    public void LoadStart()
-    {
-        SceneManager.LoadScene("Start");
     }
     protected void SetAttackAreaIsActive(bool flag)
     {

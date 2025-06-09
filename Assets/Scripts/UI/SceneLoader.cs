@@ -1,3 +1,4 @@
+using Bingyan;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -19,5 +20,10 @@ public class SceneLoader : MonoBehaviour
 #endif
     }
 
+    public static void To(string name, float time) =>
+        Flow.Create()
+            .Delay(time)
+            .Then(() => SceneManager.LoadScene(name))
+            .Run();
 
 }
