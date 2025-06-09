@@ -9,16 +9,10 @@ public class GlobalFlagController : MonoBehaviour
 
     [SerializeField] private Player playerInstance;
     [SerializeField] private List<Bull1> bull1Instances;
-    [SerializeField] private List<Bull1> superBullInstances;
+    [SerializeField] private List<SuperBull> superBullInstances;
 
     public void SetBullPassionateFlag(bool flag)
     {
-        if (bull1Instances == null || bull1Instances.Count == 0)
-        {
-            Debug.LogWarning("No Bull1 instances found to set passionate flag.");
-            return;
-        }
-
         foreach (var bull in bull1Instances)
         {
             if (bull != null)
@@ -38,12 +32,6 @@ public class GlobalFlagController : MonoBehaviour
 
     public void SetBullHesitateFlag(bool flag)
     {
-        if (bull1Instances == null || bull1Instances.Count == 0)
-        {
-            Debug.LogWarning("No Bull1 instances found to set hesitate flag.");
-            return;
-        }
-
         foreach (var bull in bull1Instances)
         {
             if (bull != null)
