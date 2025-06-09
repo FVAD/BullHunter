@@ -650,6 +650,7 @@ public class Player : FSM
         {
             Anim.SetTrigger("Die");
             AudioMap.Cat.Die.Play();
+            AudioMap.Misc.Laugh.Play();
         }
     }
 }

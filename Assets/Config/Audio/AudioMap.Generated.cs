@@ -43,4 +43,9 @@ public static class AudioMap
 	{
 		public static readonly AudioRef Change = new AudioRef("Weapon/Change");
 	}
+	public static class Misc
+	{
+		public static readonly AudioRef Otto = new AudioRef("Misc/Otto");
+		public static readonly AudioRef Laugh = new AudioRef("Misc/Laugh");
+	}
 }
