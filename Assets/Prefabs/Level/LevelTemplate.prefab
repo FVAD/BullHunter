@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2055286620353786037}
   - component: {fileID: 3310040480494276013}
+  - component: {fileID: 8103804843000503705}
   m_Layer: 0
   m_Name: MapCenter
   m_TagString: Untagged
@@ -46,6 +47,22 @@ MonoBehaviour:
   playerInstance: {fileID: 4251608688120140181}
   bull1Instances:
   - {fileID: 7057824105117691899}
+  superBullInstances: []
+--- !u!114 &8103804843000503705
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1188050503979028701}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ff9cc55ecc8fb84b9131f92363d4e94, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startPoint: {x: 0, y: 0, z: 0}
+  endPoint: {x: 14.205692, y: 0, z: -0.025536418}
+  lineColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!1 &4251608686694106217
 GameObject:
   m_ObjectHideFlags: 0

@@ -10,6 +10,7 @@ public class SuperBull : FSM
 {
     [SerializeField, Title("配置")] private BullConfig config;
     [SerializeField, Title("地图中心定位（半径为scale.y）")] private Transform mapCenter;
+    private float mapRadius;
     public BullStats Stats { get; private set; }
     public class BullStats
     {
@@ -110,7 +111,7 @@ public class SuperBull : FSM
         // 为了防止SuperBull走出地图边缘，当superBull的移动方向上的一定距离的点超出了范围，则返回True
         Vector3 position = transform.position;
         Vector3 direction = Velocity.normalized; // 获取当前移动方向
-        if ((position + direction * config.CheckMapEdgeDistance - mapCenter.position).magnitude > mapCenter.localScale.y)
+        if ((position + direction * config.CheckMapEdgeDistance - mapCenter.position).magnitude > mapRadius)
         {
             // 如果SuperBull接近地图边缘，则返回True，并且调整速度至面向玩家
             Velocity = (player.transform.position - position).normalized * config.SpeedSuperBull; // 面向玩家
@@ -153,6 +154,12 @@ public class SuperBull : FSM
             PassionateTimeCounter = 0f,
             HesitateTimeCounter = 0f,
         };
+
+
+        // 获取地图半径
+        MapRadiusRender mapRadiusRender = mapCenter.GetComponent<MapRadiusRender>();
+        if (mapRadiusRender == null) Debug.LogError("mapCenter对象应当挂载以一个MapRadiusRender脚本，这个脚本用于获取地图半径。");
+        mapRadius = mapRadiusRender.LineLength; // 获取地图半径
 
         GetComponentInChildren<DefendArea>().OnAttacked += (atk, def, f) =>
         {
@@ -1023,8 +1030,9 @@ public class SuperBull : FSM
                     {
                         JumpAttack(() =>
                         {
-                            Debug.Log("跳跃攻击执行完毕，转为IDLE状态");
-                            Host.ChangeState(typeof(IdleState));
+                            Debug.Log("跳跃攻击执行完毕，重新开始判断距离");
+                            adjustDistanceTimer = Config.AngryAdjustMaxTimeSuperBull;
+                            SetPrepareToDashFlag();
                         });
 
                     }
