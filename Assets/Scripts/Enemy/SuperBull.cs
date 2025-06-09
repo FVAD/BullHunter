@@ -14,6 +14,7 @@ public class SuperBull : FSM
     private float mapRadius;
     public BullStats Stats { get; private set; }
     [SerializeField, Title("当前状态")] private string curState;
+    [SerializeField, Title("冲刺提示")] private Transform dashTip;
     public class BullStats
     {
         public float Health { get; set; }
@@ -468,6 +469,7 @@ public class SuperBull : FSM
             Host.Velocity = PlayerRef.transform.position - Host.transform.position;
             Host.Velocity = Vector3.zero;
 
+            Host.dashTip.GetComponentsInChildren<ParticleSystem>().ForEach(p => p.Play());
             AudioMap.Bull.Warning.Play();
 
             Debug.Log("开始冲刺攻击");

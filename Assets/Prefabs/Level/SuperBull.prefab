@@ -130,6 +130,8 @@ MonoBehaviour:
   timeScale: 1
   config: {fileID: 11400000, guid: f299fbdfa6ccd364db9e13bbc54b9239, type: 2}
   mapCenter: {fileID: 0}
+  curState: 
+  dashTip: {fileID: 5072840925715952201}
   player: {fileID: 0}
 --- !u!95 &5956601923344390979
 Animator:
@@ -291,15 +293,15 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8934618205055629168}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5, z: 2}
+  m_LocalRotation: {x: 0, y: 0.5, z: 0, w: 0.8660254}
+  m_LocalPosition: {x: 0.626, y: 0.763, z: 1.046}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2891364550519298536}
   - {fileID: 608020756421303539}
   m_Father: {fileID: 6793567820791950683}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 60, z: 0}
 --- !u!1001 &1539402734011944151
 PrefabInstance:
   m_ObjectHideFlags: 0
