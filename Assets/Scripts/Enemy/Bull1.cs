@@ -597,6 +597,8 @@ public class Bull1 : FSM
             {
                 // 如果被剑攻击次数大于等于1次，或者被枪攻击次数大于3次，则转换到愤怒状态
                 Debug.Log("Bull1 攻击次数条件达成，转换到愤怒状态");
+                Stats.swordAttackedCount = 0;
+                Stats.lanceAttackedCount = 0;
                 return true;
             }
 
@@ -760,6 +762,7 @@ public class Bull1 : FSM
             {
                 Debug.Log("Bull1 愤怒状态计数器超过3，转换到红温状态");
                 Host.ChangeState(typeof(VeryAngryState));
+                angryStateCounter = 0; // 重置愤怒状态计数器
                 return; // 直接转换状态，不再执行后续逻辑
             }
 
