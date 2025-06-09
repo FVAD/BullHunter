@@ -22,6 +22,7 @@ public class Bull1 : FSM
         public float Speed { get; set; }
         public float AttackPower { get; set; }
         public int swordAttackedCount { get; set; } // 用于记录剑攻击次数
+        public int weakCount { get; set; } // 易伤层数
         public int lanceAttackedCount { get; set; } // 用于记录枪攻击次数
         public float invulnerableTimeCounter { get; set; } // 用于记录无敌时间计数器
         public bool passionateFlag { get; set; } = false; // 激昂状态Flag
@@ -146,6 +147,7 @@ public class Bull1 : FSM
             hesitateFlag = false,
             passionateTimeCounter = 0f,
             hesitateTimeCounter = 0f,
+            weakCount = 0,
         };
 
         // 获取地图半径
@@ -164,13 +166,15 @@ public class Bull1 : FSM
             if (atk.GetComponent<LanceWeapon>() != null)
             {
                 Stats.lanceAttackedCount++;
+                Stats.weakCount++;
                 Debug.Log($"Bull1 被枪攻击次数：{Stats.lanceAttackedCount}");
             }
             else
             {
                 Stats.swordAttackedCount++;
-                damage *= 1.0f + Stats.lanceAttackedCount * 0.2f;
+                damage *= 1.0f + Stats.weakCount * 0.2f;
                 Debug.Log($"Bull1 被剑攻击次数：{Stats.swordAttackedCount}");
+                Debug.Log($"易伤层数：{Stats.weakCount}");
             }
 
             Stats.Health -= damage;

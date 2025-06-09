@@ -22,6 +22,7 @@ public class SuperBull : FSM
         public float AttackPower { get; set; }
         public int SwordAttackedCount { get; set; } // 用于记录剑攻击次数
         public int LanceAttackedCount { get; set; } // 用于记录枪攻击次数
+        public int WeakCount { get; set; } // 用于记录易伤层数
         public float InvulnerableTimeCounter { get; set; } // 用于记录无敌时间计数器
         public bool PassionateFlag { get; set; } = false; // 激昂状态Flag
         public float PassionateTimeCounter { get; set; } // 激昂状态时间计数器
@@ -158,6 +159,7 @@ public class SuperBull : FSM
             HesitateFlag = false,
             PassionateTimeCounter = 0f,
             HesitateTimeCounter = 0f,
+            WeakCount = 0,
         };
 
 
@@ -177,13 +179,15 @@ public class SuperBull : FSM
             if (atk.GetComponent<LanceWeapon>() != null)
             {
                 Stats.LanceAttackedCount++;
+                Stats.WeakCount++;
                 Debug.Log($"Bull1 被枪攻击次数：{Stats.LanceAttackedCount}");
             }
             else
             {
                 Stats.SwordAttackedCount++;
-                damage *= 1.0f + Stats.LanceAttackedCount * 0.2f;
+                damage *= 1.0f + Stats.WeakCount * 0.2f;
                 Debug.Log($"Bull1 被剑攻击次数：{Stats.SwordAttackedCount}");
+                Debug.Log($"易伤层数：{Stats.WeakCount}");
             }
 
             Stats.Health -= damage;
