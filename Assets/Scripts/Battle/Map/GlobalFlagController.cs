@@ -9,6 +9,7 @@ public class GlobalFlagController : MonoBehaviour
 
     [SerializeField] private Player playerInstance;
     [SerializeField] private List<Bull1> bull1Instances;
+    [SerializeField] private List<Bull1> superBullInstances;
 
     public void SetBullPassionateFlag(bool flag)
     {
@@ -23,6 +24,14 @@ public class GlobalFlagController : MonoBehaviour
             if (bull != null)
             {
                 bull.SetPassionateFlag(flag);
+            }
+        }
+
+        foreach (var superBull in superBullInstances)
+        {
+            if (superBull != null)
+            {
+                superBull.SetPassionateFlag(flag);
             }
         }
     }
@@ -40,6 +49,14 @@ public class GlobalFlagController : MonoBehaviour
             if (bull != null)
             {
                 bull.SetHesitateFlag(flag);
+            }
+        }
+
+        foreach (var superBull in superBullInstances)
+        {
+            if (superBull != null)
+            {
+                superBull.SetHesitateFlag(flag);
             }
         }
     }
