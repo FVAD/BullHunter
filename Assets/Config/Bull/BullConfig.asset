@@ -18,7 +18,7 @@ MonoBehaviour:
   - 1
   - 2
   dashStopTime: 0.5
-  health_bull1: 2000
+  health_bull1: 19198
   takeDamageRate_bull1: 1
   speed_bull1: 4
   attackPower_bull1: 10

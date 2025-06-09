@@ -5,6 +5,7 @@ using Bingyan;
 using Cinemachine;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 
 public class SuperBull : FSM
 {
@@ -211,11 +212,7 @@ public class SuperBull : FSM
     }
     public void LoadStart()
     {
-        var sceneLoader = GameObject.FindGameObjectWithTag("UIManager").GetComponent<SceneLoader>();
-        if (sceneLoader != null)
-        {
-            sceneLoader.LoadScene("Start");
-        }
+        SceneManager.LoadScene("Start");
     }
     protected void SetAttackAreaIsActive(bool flag)
     {
