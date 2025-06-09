@@ -184,7 +184,7 @@ public class SuperBull : FSM
             .Delay(1)
             .Then(() => GetComponentsInChildren<AttackArea>().ForEach(a =>
             {
-                a.Active = true;
+                a.Active = false; // 攻击区域初始关闭
                 a.OnAttacking += (atk, def) =>
                 {
                     def.ReceiveDamage(atk, def, 0);
@@ -192,9 +192,6 @@ public class SuperBull : FSM
                 };
             }))
             .Run();
-
-        // 攻击区域初始关闭
-        SetAttackAreaIsActive(false);
 
         AudioMap.Bull.Roar.Play();
     }
@@ -439,6 +436,11 @@ public class SuperBull : FSM
             // 这里可以实现冲刺攻击的协程逻辑
             // 比如计算冲刺方向和速度，处理前摇和后摇等
             // Anim.SetTrigger("DashAttack");
+
+            // 小巧思
+            Host.Velocity = PlayerRef.transform.position - Host.transform.position;
+            Host.Velocity = Vector3.zero;
+
             AudioMap.Bull.Warning.Play();
 
             Debug.Log("开始冲刺攻击");
@@ -470,6 +472,19 @@ public class SuperBull : FSM
                 finishedDistance = Host.transform.position - startPosition;
                 yield return null; // 等待下一帧
             }
+
+            // 减小速度至0,时间固定为DashStopTime
+            float timer = 0f;
+            float newSpeed;
+            while (timer < Config.DashStopTime)
+            {
+                timer += Time.deltaTime;
+                if (timer > Config.DashStopTime) timer = Config.DashStopTime; // 确保timer
+                newSpeed = Mathf.SmoothStep(Config.DashSpeedBull1, 0f, timer / Config.DashStopTime);
+                Host.Velocity = direction * newSpeed;
+                yield return null; // 等待下一帧
+            }
+
             Host.Velocity = Vector3.zero; // 停止冲刺
             // 冲刺结束，进入后摇
             Debug.Log("冲刺攻击结束");
@@ -883,12 +898,7 @@ public class SuperBull : FSM
             Debug.Log("进入愤怒状态");
             adjustDistanceFlag = true;
             adjustDistanceTimer = Config.AngryAdjustMaxTimeSuperBull; // 设置调整距离的最大时间
-            // 检测玩家距离
-            Vector3 bullToPlayer = Host.transform.position - PlayerRef.transform.position;
-            bullToPlayer.y = 0;
-            float distanceToPlayer = bullToPlayer.magnitude;
-            if (distanceToPlayer < Config.AngryDashTryDistanceSuperBull) prepareToDashFlag = false;
-            else prepareToDashFlag = true;
+            SetPrepareToDashFlag();
 
             // 如果愤怒状态计数器大于3，且不犹疑，则转换到红温状态
             if (!Stats.HesitateFlag && angryStateCounter > maxCounter)
@@ -899,6 +909,17 @@ public class SuperBull : FSM
             }
 
             AudioMap.Bull.Roar.Play();
+        }
+
+        private bool SetPrepareToDashFlag()
+        {
+            // 检测玩家距离
+            Vector3 bullToPlayer = Host.transform.position - PlayerRef.transform.position;
+            bullToPlayer.y = 0;
+            float distanceToPlayer = bullToPlayer.magnitude;
+            if (distanceToPlayer < Config.AngryDashTryDistanceSuperBull) prepareToDashFlag = false;
+            else prepareToDashFlag = true;
+            return prepareToDashFlag;
         }
 
         public override void OnUpdate(float delta)
