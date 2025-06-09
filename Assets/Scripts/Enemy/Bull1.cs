@@ -10,6 +10,8 @@ public class Bull1 : FSM
 {
     [SerializeField, Title("配置")] private BullConfig config;
     [SerializeField, Title("地图中心定位（半径为scale.y）")] private Transform mapCenter;
+    [SerializeField, Title("冲刺提示")] private Transform dashTip;
+    [SerializeField, Title("回旋提示")] private Transform circleTip;
     public BullStats Stats { get; private set; }
     public class BullStats
     {
@@ -167,7 +169,26 @@ public class Bull1 : FSM
             }
         };
 
+        Flow.Create()
+            .Delay(1)
+            .Then(() => GetComponentsInChildren<AttackArea>().ForEach(a =>
+            {
+                a.Active = false;
+                a.OnAttacking += (atk, def) =>
+                {
+                    def.ReceiveDamage(atk, def, 0);
+                    Debug.Log($"{atk.name}对{def.name}发起攻击，伤害为0");
+                };
+            }))
+            .Run();
+
+
         AudioMap.Bull.Roar.Play();
+    }
+
+    protected void SetAttackAreaIsActive(bool flag)
+    {
+        GetComponentsInChildren<AttackArea>().ForEach(a => a.Active = flag);
     }
 
     protected override void Update()
@@ -272,8 +293,13 @@ public class Bull1 : FSM
         protected IEnumerator BigCircleAttackCoroutine(Action onComplete = null)
         {
             // 大回旋攻击协程
+            Host.circleTip.GetComponentsInChildren<ParticleSystem>().ForEach(p => p.Play());
+
             Debug.Log("开始大回旋攻击");
             yield return new WaitForSeconds(Config.BigCircleBeforeDelayBull1); // 前摇时间
+
+            // 攻击区域激活
+            Host.SetAttackAreaIsActive(true);
 
             // 开始旋转
             float rotateSpeed = Config.BigCircleSpeedBull1 * Mathf.Deg2Rad; // 转换为弧度
@@ -287,6 +313,12 @@ public class Bull1 : FSM
                 Host.transform.Rotate(Vector3.up, deltaRotation * Mathf.Rad2Deg); // 旋转Bull1
                 yield return null; // 等待下一帧
             }
+
+            
+            // 攻击区域关闭
+            Host.SetAttackAreaIsActive(false);
+
+            
             Stats.bigCircleFlag = false;
             Stats.moveAbleFlag = true; // 恢复移动能力
             onComplete?.Invoke();
@@ -324,6 +356,12 @@ public class Bull1 : FSM
             // 这里可以实现冲刺攻击的协程逻辑
             // 比如计算冲刺方向和速度，处理前摇和后摇等
             // Anim.SetTrigger("DashAttack");
+
+            // 小巧思
+            Host.Velocity = PlayerRef.transform.position - Host.transform.position;
+            Host.Velocity = Vector3.zero;
+
+            Host.dashTip.GetComponentsInChildren<ParticleSystem>().ForEach(p => p.Play());
             AudioMap.Bull.Warning.Play();
 
             Debug.Log("开始冲刺攻击");
@@ -336,6 +374,11 @@ public class Bull1 : FSM
             {
                 yield return new WaitForSeconds(Config.DashBeforeDelayBull1); // 前摇时间
             }
+
+            // 攻击区域激活
+            Host.SetAttackAreaIsActive(true);
+
+
             Vector3 direction = (targetPosition - Host.transform.position).normalized;
             direction.y = 0; // 保持水平运动
             Vector3 startPosition = Host.transform.position; // 记录运动距离
@@ -351,9 +394,26 @@ public class Bull1 : FSM
                 finishedDistance = Host.transform.position - startPosition;
                 yield return null; // 等待下一帧
             }
+
+            // 减小速度至0,时间固定为DashStopTime
+            float timer = 0f;
+            float newSpeed;
+            while (timer < Config.DashStopTime)
+            {
+                timer += Time.deltaTime;
+                if (timer > Config.DashStopTime) timer = Config.DashStopTime; // 确保timer
+                newSpeed = Mathf.SmoothStep(Config.DashSpeedBull1, 0f, timer / Config.DashStopTime);
+                Host.Velocity = direction * newSpeed;
+                yield return null; // 等待下一帧
+            }
+
             Host.Velocity = Vector3.zero; // 停止冲刺
             // 冲刺结束，进入后摇
             Debug.Log("冲刺攻击结束");
+
+            // 攻击区域关闭
+            Host.SetAttackAreaIsActive(false);
+
             if (Stats.passionateFlag)
             {
                 yield return new WaitForSeconds(Config.DashAfterDelayBull1 / 2f); // 后摇时间，激昂时减半

@@ -8,6 +8,7 @@ public class BullConfig : ScriptableObject
     [SerializeField, Title("受击无敌时间")] private float invulnerableTime = 1f;
     [SerializeField, Title("检测地图边缘距离")] private float checkMapEdgeDistance = 2f;
     [SerializeField, Header("IDLE状态随机调整速度时间（靠近远离， 环绕）")] private float[] idleDirChangeLockTime = new float[2] { 1f, 2f };
+    [SerializeField, Title("冲刺攻击停下所需要的时间")] private float dashStopTime = 0.5f;
     [Header("Bull1基础")]
     [SerializeField, Title("bull1生命值")] private float health_bull1 = 100f;
     [SerializeField, Title("bull1受伤倍率")] private float takeDamageRate_bull1 = 1f;
@@ -92,6 +93,7 @@ public class BullConfig : ScriptableObject
     public float CheckMapEdgeDistance => checkMapEdgeDistance;
 
     public float[] IdleDirChangeLockTime => idleDirChangeLockTime;
+    public float DashStopTime => dashStopTime;
     public float IdleAngryConvertTimeBull1 => idleAngryConvertTime_bull1;
     public float IdleToTiredHealthDeRateBull1 => idleToTiredHealthDeRate_bull1;
     public float AngryAdjustMaxTimeBull1 => angryAdjustMaxTime_bull1;

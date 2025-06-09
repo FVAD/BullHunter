@@ -457,5 +457,9 @@ PrefabInstance:
       propertyPath: m_FollowOffset.z
       value: -10.15923
       objectReference: {fileID: 0}
+    - target: {fileID: 7057824105117691903, guid: 4dc42727d28c03844a18759e95d5409c, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4dc42727d28c03844a18759e95d5409c, type: 3}
