@@ -540,7 +540,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2800000, guid: 62888cefd4e466f4baa8d68538b193ea, type: 3}
+  m_Texture: {fileID: 2800000, guid: 1e2de0617c9b13a448bbdf6fa3e59555, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -584,9 +584,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89f98173d4422bd4f8b8680a6e95a0dc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Startname: Start
-  FirsLevelname: 
-  LastLevelname: 
 --- !u!4 &753684272
 Transform:
   m_ObjectHideFlags: 0
