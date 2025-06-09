@@ -169,7 +169,7 @@ public class Bull1 : FSM
             else
             {
                 Stats.swordAttackedCount++;
-                damage *= 1.0f + Stats.lanceAttackedCount * 0.1f;
+                damage *= 1.0f + Stats.lanceAttackedCount * 0.2f;
                 Debug.Log($"Bull1 被剑攻击次数：{Stats.swordAttackedCount}");
             }
 
