@@ -13,6 +13,7 @@ public class Bull1 : FSM
     private float mapRadius;
     [SerializeField, Title("冲刺提示")] private Transform dashTip;
     [SerializeField, Title("回旋提示")] private Transform circleTip;
+    [SerializeField, Title("当前状态")] private string curState;
     public BullStats Stats { get; private set; }
     public class BullStats
     {
@@ -57,7 +58,10 @@ public class Bull1 : FSM
     }
 
     private Quaternion _targetRotation;
-
+    public string GetState()
+    {
+        return curState;
+    }
     public void SetPassionateFlag(bool flag = true)
     {
         // 设置Bull1的激昂状态标志
@@ -469,6 +473,7 @@ public class Bull1 : FSM
             base.OnEnter();
             // Anim.SetTrigger("Idle");
             // IDLE状态下承伤系数为85%
+            Host.curState = "空闲";
             Stats.takeDamageRate = Config.TakeDamageRateIdleBull1;
             idleDirAdjustTime = Config.IdleDirAdjustTimeBull1;
 
@@ -735,7 +740,7 @@ public class Bull1 : FSM
             // 计数器+1
             angryStateCounter++;
 
-
+            Host.curState = "愤怒";
             // Anim.SetTrigger("Angry");
             // 愤怒状态下承伤系数为100%
             Stats.takeDamageRate = Config.TakeDamageRateBull1;
@@ -822,6 +827,7 @@ public class Bull1 : FSM
             base.OnEnter();
             // Anim.SetTrigger("Angry");
             // 红温状态下承伤系数为125%
+            Host.curState = "红温";
             Stats.takeDamageRate = Config.TakeDamageRateVeryAngryBull1;
             Stats.Speed = Config.SpeedBull1 * Config.VeryAngrySpeedRateBull1;
             // 这里可以实现红温状态的逻辑，比如增加攻击力、改变行为等
@@ -856,6 +862,7 @@ public class Bull1 : FSM
         public override void OnEnter()
         {
             base.OnEnter();
+            Host.curState = "疲劳";
             Debug.Log("进入疲劳状态");
             initHealth = Stats.Health;
             Stats.takeDamageRate = Config.TakeDamageRateTiredBull1;

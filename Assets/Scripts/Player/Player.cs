@@ -4,6 +4,7 @@ using System;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
 using UnityEngine.AddressableAssets;
+using UnityEngine.SceneManagement;
 
 public class Player : FSM
 {
@@ -650,6 +651,12 @@ public class Player : FSM
         {
             Anim.SetTrigger("Die");
             AudioMap.Cat.Die.Play();
+            AudioMap.Misc.Laugh.Play();
+
+            Flow.Create()
+                .Delay(5)
+                .Then(() => SceneManager.LoadScene("Start"))
+                .Run();
         }
     }
 }

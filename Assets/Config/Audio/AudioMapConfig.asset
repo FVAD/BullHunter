@@ -207,3 +207,24 @@ MonoBehaviour:
         min: -0.2
         max: 0.2
       Bus: {fileID: -2652002863448231291, guid: 18354a452b4022041b9c489a2dfb1082, type: 2}
+  - Name: Misc
+    Bus: {fileID: -2652002863448231291, guid: 18354a452b4022041b9c489a2dfb1082, type: 2}
+    Infos:
+    - Name: Otto
+      Clips:
+      - {fileID: 8300000, guid: 9a478bd6806c5d7409cb089c3c083814, type: 3}
+      Loop: 0
+      Range: 0
+      Pitch:
+        min: 0
+        max: 0
+      Bus: {fileID: 0}
+    - Name: Laugh
+      Clips:
+      - {fileID: 8300000, guid: 37e4d52725994564fb5b4db58165a664, type: 3}
+      Loop: 0
+      Range: 0
+      Pitch:
+        min: 0
+        max: 0
+      Bus: {fileID: 0}
