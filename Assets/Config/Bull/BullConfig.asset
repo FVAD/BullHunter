@@ -25,7 +25,7 @@ MonoBehaviour:
   dashSpeed_bull1: 15
   dashBeforeDelay_bull1: 1
   dashAfterDelay_bull1: 1
-  bigCircleSpeed_bull1: 180
+  bigCircleSpeed_bull1: 720
   bigCircleBeforeDelay_bull1: 1
   bigCircleAfterDelay_bull1: 1
   idleMaintainTargetDistance_bull1: 10
@@ -55,7 +55,7 @@ MonoBehaviour:
   jumpAttackRisingDuration_superBull: 2
   jumpAttackFallingDuration_superBull: 2
   jumpAttackAfterDelay_superBull: 2
-  jumpAttackAttackRange_superBull: 5
+  jumpAttackAttackRange_superBull: 9
   idleMaintainTargetDistance_superBull: 2
   idleMaintainTargetDistanceOffset_superBull: 0.3
   idleTriggerBigCircleDistance_superBull: 5
@@ -63,7 +63,7 @@ MonoBehaviour:
   idleMoveDirectionAdjustMinTime_superBull: 5
   idleAngryConvertTime_superBull: 30
   idleToTiredHealthDeRate_superBull: 0.1
-  angryTryDashDistance_superBull: 6
+  angryTryDashDistance_superBull: 8
   angryAdjustMaxTime_superBull: 10
   takeDamageRateVeryAngry_superBull: 1.25
   veryAngrySpeedRate_superBull: 1.5

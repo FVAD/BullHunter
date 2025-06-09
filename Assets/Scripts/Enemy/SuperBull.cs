@@ -9,7 +9,7 @@ using UnityEngine.EventSystems;
 public class SuperBull : FSM
 {
     [SerializeField, Title("配置")] private BullConfig config;
-    [SerializeField, Title("地图中心定位（半径为scale.y）")] private Transform mapCenter;
+    [SerializeField, Title("地图中心定位（半径为Render中提到的Length）")] private Transform mapCenter;
     private float mapRadius;
     public BullStats Stats { get; private set; }
     public class BullStats
@@ -302,7 +302,7 @@ public class SuperBull : FSM
                 Host.StopCoroutine(jumpAttackCoroutine); // 如果已有跳跃震击协程在运行，则停止它
                 jumpAttackCoroutine = null; // 清空跳跃震击协程引用
             }
-            jumpAttackCoroutine = Host.StartCoroutine(BigCircleAttackCoroutine(onComplete)); // 启动跳跃震击协程
+            jumpAttackCoroutine = Host.StartCoroutine(JumpAttackCoroutine(onComplete)); // 启动跳跃震击协程
         }
         protected IEnumerator JumpAttackCoroutine(Action onComplete = null)
         {
@@ -351,6 +351,9 @@ public class SuperBull : FSM
 
             // 后摇
             yield return new WaitForSeconds(Config.JumpAttackAfterDelaySuperBull);
+
+            Stats.JumpAttackFlag = false;
+            Stats.MoveAbleFlag = true; // 恢复移动能力
 
             onComplete?.Invoke();
         }
@@ -1032,6 +1035,7 @@ public class SuperBull : FSM
                         {
                             Debug.Log("跳跃攻击执行完毕，重新开始判断距离");
                             adjustDistanceTimer = Config.AngryAdjustMaxTimeSuperBull;
+                            adjustDistanceFlag = true; // 重新开始
                             SetPrepareToDashFlag();
                         });
 
