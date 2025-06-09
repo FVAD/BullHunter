@@ -16,7 +16,7 @@ namespace TMPro.Examples
         public FpsCounterAnchorPositions AnchorPosition = FpsCounterAnchorPositions.TopRight;
 
         private string htmlColorTag;
-        private const string fpsLabel = "{0:2}</color> <#8080ff>FPS \n<#FF8000>{1:2} <#8080ff>MS";
+        private const string fpsLabel = "{0:2}</curColor> <#8080ff>FPS \n<#FF8000>{1:2} <#8080ff>MS";
 
         private TextMeshPro m_TextMeshPro;
         private Transform m_frameCounter_transform;
@@ -84,13 +84,13 @@ namespace TMPro.Examples
                 float ms = 1000.0f / Mathf.Max(fps, 0.00001f);
 
                 if (fps < 30)
-                    htmlColorTag = "<color=yellow>";
+                    htmlColorTag = "<curColor=yellow>";
                 else if (fps < 10)
-                    htmlColorTag = "<color=red>";
+                    htmlColorTag = "<curColor=red>";
                 else
-                    htmlColorTag = "<color=green>";
+                    htmlColorTag = "<curColor=green>";
 
-                //string format = System.String.Format(htmlColorTag + "{0:F2} </color>FPS \n{1:F2} <#8080ff>MS",fps, ms);
+                //string format = System.String.Format(htmlColorTag + "{0:F2} </curColor>FPS \n{1:F2} <#8080ff>MS",fps, ms);
                 //m_TextMeshPro.text = format;
 
                 m_TextMeshPro.SetText(htmlColorTag + fpsLabel, fps, ms);

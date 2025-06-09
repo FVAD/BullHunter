@@ -1,4 +1,5 @@
 ﻿using Bingyan;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -41,7 +42,7 @@ public class ClothWeapon : MonoBehaviour
     }
 
     public void SetVisible(bool visible) => GetComponent<Renderer>().enabled = visible;
-
+    public Action<ClothWeapon.Colour> OnColorChange;
     public Colour CurrentColour => Colours[idx];
     public enum Colour
     {
@@ -57,7 +58,7 @@ public class ClothWeapon : MonoBehaviour
         idx = target;
         rend.material = Dict[CurrentColour].Mat;
         timer = 0;
-
+        OnColorChange?.Invoke(Colours[idx]);
         AudioMap.Cloth.Change.Play();
     }
     public void Next() => Change(1);

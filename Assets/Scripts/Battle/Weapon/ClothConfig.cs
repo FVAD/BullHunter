@@ -1,4 +1,5 @@
 ﻿using Bingyan;
+using System;
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "Config/Close")]
@@ -17,6 +18,7 @@ public class ClothConfig : ScriptableObject
     public GameObject Eff => eff;
 
     public bool Ready => timer >= Cooldown;
+    public Action<ClothWeapon.Colour,float> OnCDChange;
     private float timer;
 
     public ClothConfig Init()
@@ -26,7 +28,9 @@ public class ClothConfig : ScriptableObject
     }
     public void Tick(float delta)
     {
+        OnCDChange?.Invoke(Colour, Mathf.Max(0, Cooldown - timer));
         if (!Ready) timer += delta;
+        
     }
     public void Refresh() => timer = 0;
 }

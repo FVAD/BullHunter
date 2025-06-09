@@ -19,7 +19,7 @@ namespace TMPro.Examples
         //private TMP_InputField m_inputfield;
 
 
-        private const string k_label = "The count is <#0080ff>{0}</color>";
+        private const string k_label = "The count is <#0080ff>{0}</curColor>";
         private int count;
 
         void Awake()
@@ -41,7 +41,7 @@ namespace TMPro.Examples
             m_text.fontSize = 120;
 
             // Set the text
-            m_text.text = "A <#0080ff>simple</color> line of text.";
+            m_text.text = "A <#0080ff>simple</curColor> line of text.";
 
             // Get the preferred width and height based on the supplied width and height as opposed to the actual size of the current text container.
             Vector2 size = m_text.GetPreferredValues(Mathf.Infinity, Mathf.Infinity);

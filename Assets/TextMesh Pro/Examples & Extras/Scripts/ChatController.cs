@@ -29,7 +29,7 @@ public class ChatController : MonoBehaviour {
 
         var timeNow = System.DateTime.Now;
 
-        string formattedInput = "[<#FFFF80>" + timeNow.Hour.ToString("d2") + ":" + timeNow.Minute.ToString("d2") + ":" + timeNow.Second.ToString("d2") + "</color>] " + newText;
+        string formattedInput = "[<#FFFF80>" + timeNow.Hour.ToString("d2") + ":" + timeNow.Minute.ToString("d2") + ":" + timeNow.Second.ToString("d2") + "</curColor>] " + newText;
 
         if (ChatDisplayOutput != null)
         {

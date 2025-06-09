@@ -47,7 +47,18 @@ public class Player : FSM
             Lance,
             Sword,
         }
-        public Weapon CurrentWeapon { get; set; }
+        private Weapon curWeapon;
+        public Weapon CurrentWeapon
+        {
+            get => curWeapon;
+            set
+            {
+                curWeapon = value;
+                OnCurrentWeaponChange?.Invoke(curWeapon);
+            }
+        }
+
+        public Action<Weapon> OnCurrentWeaponChange;
         public ClothWeapon Cloth { get; set; }
         public GameObject WeaponObject { get; set; }
     }
