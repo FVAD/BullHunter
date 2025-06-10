@@ -76,7 +76,21 @@ public class SuperBull : FSM
         Stats.Speed /= 1f + rate;
     }
 
+    private Coroutine passionateFlagChangeCorotine;
+
     public void SetPassionateFlag(bool flag = true)
+    {
+        if (passionateFlagChangeCorotine == null)
+        {
+            passionateFlagChangeCorotine = StartCoroutine(WaitToSetPassionateFlag(flag));
+        }
+        else
+        {
+            Debug.Log("已经在调整状态中");
+        }
+    }
+
+    public void SetPassionateFlagI(bool flag = true)
     {
         // 设置SuperBull的激昂状态标志
         Stats.PassionateFlag = flag;
@@ -94,7 +108,35 @@ public class SuperBull : FSM
         }
     }
 
+    private IEnumerator WaitToSetPassionateFlag(bool flag)
+    {
+        while (true)
+        {
+            if (Stats.MoveAbleFlag)
+            {
+                SetPassionateFlagI(flag);
+                break;
+            }
+            yield return new WaitForSeconds(1);
+        }
+        passionateFlagChangeCorotine = null;
+    }
+
+    private Coroutine hesitateFlagChangeCorotine;
+
     public void SetHesitateFlag(bool flag = true)
+    {
+        if (hesitateFlagChangeCorotine == null)
+        {
+            hesitateFlagChangeCorotine = StartCoroutine(WaitToSetHesitateFlag(flag));
+        }
+        else
+        {
+            Debug.Log("已经在调整状态中");
+        }        
+    }
+
+    public void SetHesitateFlagI(bool flag = true)
     {
         // 设置SuperBull的犹疑状态标志
         Stats.HesitateFlag = flag;
@@ -102,6 +144,7 @@ public class SuperBull : FSM
         {
             Stats.HesitateTimeCounter = 60f; // 重置犹疑时间计数器（60s）
             Debug.Log("SuperBull 进入犹疑状态");
+            //
             // 该状态一进入就会立刻进入Idle
             ChangeState(typeof(IdleState)); // 进入Idle状态
         }
@@ -110,6 +153,20 @@ public class SuperBull : FSM
             Stats.HesitateTimeCounter = 0f; // 清除犹疑时间计数器
             Debug.Log("SuperBull 离开犹疑状态");
         }
+    }
+
+    private IEnumerator WaitToSetHesitateFlag(bool flag)
+    {
+        while (true)
+        {
+            if (Stats.MoveAbleFlag)
+            {
+                SetHesitateFlagI(flag);
+                break;
+            }
+            yield return new WaitForSeconds(1);
+        }
+        hesitateFlagChangeCorotine = null;
     }
 
     protected bool DetectMapEdge()
@@ -372,6 +429,9 @@ public class SuperBull : FSM
             Stats.JumpAttackFlag = false;
             Stats.MoveAbleFlag = true; // 恢复移动能力
 
+            // 给一个朝向玩家的移动速度
+            Host.Velocity = (PlayerRef.transform.position - Host.transform.position).normalized * Stats.Speed;
+
             onComplete?.Invoke();
         }
 
@@ -429,6 +489,12 @@ public class SuperBull : FSM
             Host.SetAttackAreaIsActive(false);
             Stats.BigCircleFlag = false;
             Stats.MoveAbleFlag = true; // 恢复移动能力
+
+            yield return new WaitForSeconds(Config.BigCircleAfterDelaySuperBull); // 后摇时间
+
+            Debug.Log("大回旋攻击结束");
+            // 给一个朝向玩家的移动速度
+            Host.Velocity = (PlayerRef.transform.position - Host.transform.position).normalized * Stats.Speed;
             onComplete?.Invoke();
         }
 
@@ -537,6 +603,9 @@ public class SuperBull : FSM
 
             Stats.DashFlag = false;
             Stats.MoveAbleFlag = true; // 恢复移动能力
+
+            // 给一个朝向玩家的移动速度
+            Host.Velocity = (PlayerRef.transform.position - Host.transform.position).normalized * Stats.Speed;
             onComplete?.Invoke(); // 处理后续事件
         }
     }
@@ -559,7 +628,7 @@ public class SuperBull : FSM
             Host.curState = "准备";
             prepareTimer = 30f; // 初始会有最大时间30s，这个时间同时还会收到玩家攻击造成伤害的影响
             realPrepareTimer = 0f;
-
+            Debug.Log("Super BUll进入整备状态");
             Stats.Speed = Stats.Speed * 0.8f; // 速度减小20%
 
             Host.GetComponentInChildren<DefendArea>().OnAttacked += PrepareSpecialOnAttackedEvent;

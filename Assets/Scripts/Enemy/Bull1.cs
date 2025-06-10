@@ -63,7 +63,13 @@ public class Bull1 : FSM
     {
         return curState;
     }
+
     public void SetPassionateFlag(bool flag = true)
+    {
+        StartCoroutine(WaitToSetPassionateFlag(flag));
+    }
+
+    public void SetPassionateFlagI(bool flag = true)
     {
         // 设置Bull1的激昂状态标志
         Stats.passionateFlag = flag;
@@ -81,7 +87,25 @@ public class Bull1 : FSM
         }
     }
 
+    private IEnumerator WaitToSetPassionateFlag(bool flag)
+    {
+        while (true)
+        {
+            if (Stats.moveAbleFlag)
+            {
+                SetPassionateFlagI(flag);
+                break;
+            }
+            yield return new WaitForSeconds(1);
+        }
+    }
+
     public void SetHesitateFlag(bool flag = true)
+    {
+        StartCoroutine(WaitToSetHesitateFlag(flag));
+    }
+
+    public void SetHesitateFlagI(bool flag = true)
     {
         // 设置Bull1的犹疑状态标志
         Stats.hesitateFlag = flag;
@@ -96,6 +120,19 @@ public class Bull1 : FSM
         {
             Stats.hesitateTimeCounter = 0f; // 清除犹疑时间计数器
             Debug.Log("Bull1 离开犹疑状态");
+        }
+    }
+
+    private IEnumerator WaitToSetHesitateFlag(bool flag)
+    {
+        while (true)
+        {
+            if (Stats.moveAbleFlag)
+            {
+                SetHesitateFlagI(flag);
+                break;
+            }
+            yield return new WaitForSeconds(1);
         }
     }
 
@@ -316,7 +353,10 @@ public class Bull1 : FSM
             Host.circleTip.GetComponentsInChildren<ParticleSystem>().ForEach(p => p.Play());
 
             Debug.Log("开始大回旋攻击");
-            RingEffectManager.Instance.SpawnRing(Host.transform.position, RingEffectManager.CalculateMaxCoverRadius(Host.GetComponentInChildren<AttackArea>().GetComponent<BoxCollider>()), Config.BigCircleBeforeDelaySuperBull, Color.blue);
+            RingEffectManager.Instance.SpawnRing(
+                Host.transform.position,
+                RingEffectManager.CalculateMaxCoverRadius(Host.GetComponentInChildren<AttackArea>().GetComponent<BoxCollider>()),
+                Config.BigCircleBeforeDelaySuperBull, Color.blue);
             yield return new WaitForSeconds(Config.BigCircleBeforeDelayBull1); // 前摇时间
 
             // 攻击区域激活
@@ -339,7 +379,9 @@ public class Bull1 : FSM
             // 攻击区域关闭
             Host.SetAttackAreaIsActive(false);
 
+            yield return new WaitForSeconds(Config.BigCircleAfterDelayBull1); // 后摇时间
 
+            Debug.Log("大回旋攻击结束");
             Stats.bigCircleFlag = false;
             Stats.moveAbleFlag = true; // 恢复移动能力
             onComplete?.Invoke();
